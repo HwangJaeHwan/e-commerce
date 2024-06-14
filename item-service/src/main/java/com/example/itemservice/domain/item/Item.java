@@ -1,8 +1,7 @@
-package com.example.itemservice.domain;
+package com.example.itemservice.domain.item;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -18,20 +17,26 @@ public class Item {
     @Column(name = "item_id")
     private Long id;
 
-    @NotBlank
     private String name;
 
-    @NotBlank
     @Lob
     private String itemDescription;
 
-    @NotNull
     private Integer price;
 
+    private int stock;
 
-    public Item(String name, String itemDescription, Integer price) {
+    @Enumerated(EnumType.STRING)
+    private Category category;
+
+    private String itemUUID;
+    @Builder
+    public Item(String name, String itemDescription, Integer price, int stock, Category category, String itemUUID) {
         this.name = name;
         this.itemDescription = itemDescription;
         this.price = price;
+        this.stock = stock;
+        this.category = category;
+        this.itemUUID = itemUUID;
     }
 }
