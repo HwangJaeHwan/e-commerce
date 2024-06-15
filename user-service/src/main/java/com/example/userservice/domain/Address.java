@@ -23,8 +23,16 @@ public class Address {
 
     @NotNull
     private String name;
+
     @NotNull
-    private String address;
+    private String street;
+
+    @NotNull
+    private String city;
+
+    @NotNull
+    private String zipcode;
+
     @NotNull
     @Pattern(regexp = "^\\+?[0-9. ()-]{7,25}$", message = "휴대폰 번호가 잘못되었습니다.")
     private String phoneNumber;
@@ -32,11 +40,5 @@ public class Address {
     @ManyToOne(fetch = LAZY)
     private User user;
 
-    @Builder
-    public Address(String name, String address, String phoneNumber, User user) {
-        this.name = name;
-        this.address = address;
-        this.phoneNumber = phoneNumber;
-        this.user = user;
-    }
+
 }

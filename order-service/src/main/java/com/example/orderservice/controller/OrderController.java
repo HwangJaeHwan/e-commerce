@@ -1,31 +1,26 @@
 package com.example.orderservice.controller;
 
-import com.example.orderservice.repository.OrderItemRepository;
-import com.example.orderservice.repository.OrderRepository;
-import com.example.orderservice.request.ItemRequest;
+import com.example.orderservice.request.OrderRequest;
+import com.example.orderservice.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/")
 public class OrderController {
 
-    private final OrderRepository orderRepository;
-    private final OrderItemRepository orderItemRepository;
+    private final OrderService orderService;
 
-    @PostMapping("/{userId}/order")
-    public void createOrder(@PathVariable String userId, List<ItemRequest> itemRequests) {
+    @PostMapping("/orders")
+    public void createOrder(@RequestBody OrderRequest orderRequest) {
 
-
-
+        orderService.createOrder(orderRequest);
 
     }
 
-    @GetMapping("/{userId}/orders")
-    public void orders(@PathVariable String userId) {
-
+    @GetMapping("/{userUUID}/orders")
+    public void orders(@PathVariable String userUUID) {
+        orderService.getOrdersByUserUUID(userUUID);
     }
 }
