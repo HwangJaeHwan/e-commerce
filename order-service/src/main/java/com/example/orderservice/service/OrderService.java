@@ -56,24 +56,33 @@ public class OrderService {
         orderRepository.save(order);
     }
 
-    public void getOrdersByUserUUID(String userUUID) {
+    public List<OrderResponse> getOrdersByUserUUID(String userUUID) {
 
         List<OrderResponse> orderResponses = new ArrayList<>();
 
         List<Order> orders = orderRepository.findAllByUserUUID(userUUID);
         for (Order order : orders) {
 
-            List<ItemResponse> list = order.getOrderItems().stream().map(ItemResponse::new).toList();
+            List<OrderItem> orderItems = order.getOrderItems();
 
-            OrderResponse.builder()
+            OrderResponse orderResponse = OrderResponse.builder()
                     .orderUUID(order.getOrderUUID())
                     .userUUID(order.getUserUUID())
                     .orderDate(order.getOrderDate())
                     .build();
 
+            orderResponse.addItems(orderItems.stream().map(ItemResponse::new).toList());
+            orderResponse.calTotalPrice(orderItems);
+
+
         }
+
+        return orderResponses;
 
     }
 
 
+    public void cancel() {
+
+    }
 }

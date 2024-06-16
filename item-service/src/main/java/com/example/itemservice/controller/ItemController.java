@@ -1,5 +1,6 @@
 package com.example.itemservice.controller;
 
+import com.example.itemservice.request.ItemQuantity;
 import com.example.itemservice.request.ItemRequest;
 import com.example.itemservice.response.ItemResponse;
 import com.example.itemservice.service.ItemService;
@@ -35,6 +36,12 @@ public class ItemController {
     public void deleteItem(@PathVariable String itemId) {
 
         itemService.deleteItem(itemId);
+    }
+
+    @PatchMapping("/quantity")
+    public void quantity(@RequestBody List<ItemQuantity> quantities) {
+        itemService.reduceQuantity(quantities);
+
     }
 
 

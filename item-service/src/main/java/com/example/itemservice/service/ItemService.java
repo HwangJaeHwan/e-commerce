@@ -1,8 +1,8 @@
 package com.example.itemservice.service;
 
-import com.example.itemservice.domain.item.Category;
 import com.example.itemservice.domain.item.Item;
 import com.example.itemservice.repository.ItemRepository;
+import com.example.itemservice.request.ItemQuantity;
 import com.example.itemservice.request.ItemRequest;
 import com.example.itemservice.response.ItemResponse;
 import lombok.RequiredArgsConstructor;
@@ -48,6 +48,15 @@ public class ItemService {
 
         itemRepository.delete(item);
 
+    }
+
+
+    public void reduceQuantity(List<ItemQuantity> quantities) {
+
+        for (ItemQuantity quantity : quantities) {
+            Item item = itemRepository.findByItemUUID(quantity.getItemUUID()).orElseThrow(() -> new RuntimeException("아이템 없음"));
+            item.reduceQuantity(quantity.getQuantity());
+        }
 
     }
 }

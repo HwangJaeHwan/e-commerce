@@ -1,9 +1,12 @@
 package com.example.orderservice.controller;
 
 import com.example.orderservice.request.OrderRequest;
+import com.example.orderservice.response.OrderResponse;
 import com.example.orderservice.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,7 +23,15 @@ public class OrderController {
     }
 
     @GetMapping("/{userUUID}/orders")
-    public void orders(@PathVariable String userUUID) {
-        orderService.getOrdersByUserUUID(userUUID);
+    public List<OrderResponse> orders(@PathVariable String userUUID) {
+        return orderService.getOrdersByUserUUID(userUUID);
     }
+
+    @PutMapping("/{userUUID}/{orderUUID}}")
+    public void cancelOrder(@PathVariable String userUUID,@PathVariable String orderUUID) {
+
+        orderService.cancel();
+
+    }
+
 }

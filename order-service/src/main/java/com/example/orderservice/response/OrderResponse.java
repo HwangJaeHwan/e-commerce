@@ -1,5 +1,6 @@
 package com.example.orderservice.response;
 
+import com.example.orderservice.domain.OrderItem;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -25,8 +26,14 @@ public class OrderResponse {
         this.totalPrice = totalPrice;
     }
 
-    void addItem(ItemResponse itemResponse) {
-        this.items.add(itemResponse);
-
+    public void addItems(List<ItemResponse> items) {
+        this.items.addAll(items);
     }
+
+    public void calTotalPrice(List<OrderItem> items) {
+        this.totalPrice = items.stream().mapToInt(o -> o.getQuantity() * o.getPrice()).sum();
+    }
+
+
+
 }

@@ -39,4 +39,15 @@ public class Item {
         this.category = category;
         this.itemUUID = itemUUID;
     }
+
+    public void reduceQuantity(int quantity) {
+        if (stock < quantity) {
+            throw new RuntimeException("수량 부족");
+        }
+
+        this.stock -= quantity;
+    }
+
+
+
 }
