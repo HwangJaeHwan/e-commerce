@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/")
+@RequestMapping("/item-service")
 @RequiredArgsConstructor
 public class ItemController {
 
@@ -38,8 +38,14 @@ public class ItemController {
         itemService.deleteItem(itemId);
     }
 
-    @PatchMapping("/quantity")
-    public void quantity(@RequestBody List<ItemQuantity> quantities) {
+    @PatchMapping("/quantity/add")
+    public void quantityAdd(@RequestBody List<ItemQuantity> quantities) {
+        itemService.addQuantity(quantities);
+
+    }
+
+    @PatchMapping("/quantity/reduce")
+    public void quantityReduce(@RequestBody List<ItemQuantity> quantities) {
         itemService.reduceQuantity(quantities);
 
     }

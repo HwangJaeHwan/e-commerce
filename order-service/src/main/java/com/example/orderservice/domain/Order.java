@@ -52,4 +52,8 @@ public class Order {
         orderItems.add(orderItem);
         orderItem.linkOrder(this);
     }
+
+    public void changeStatus(OrderStatus status) {
+        this.orderStatus = status;
+    }
 }

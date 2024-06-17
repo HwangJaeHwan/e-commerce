@@ -59,4 +59,12 @@ public class ItemService {
         }
 
     }
+
+    public void addQuantity(List<ItemQuantity> quantities) {
+
+        for (ItemQuantity quantity : quantities) {
+            Item item = itemRepository.findByItemUUID(quantity.getItemUUID()).orElseThrow(() -> new RuntimeException("아이템 없음"));
+            item.addQuantity(quantity.getQuantity());
+        }
+    }
 }

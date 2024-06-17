@@ -40,6 +40,10 @@ public class Item {
         this.itemUUID = itemUUID;
     }
 
+    public void addQuantity(int quantity) {
+        this.stock += quantity;
+    }
+
     public void reduceQuantity(int quantity) {
         if (stock < quantity) {
             throw new RuntimeException("수량 부족");

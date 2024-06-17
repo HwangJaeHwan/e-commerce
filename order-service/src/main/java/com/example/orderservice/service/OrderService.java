@@ -1,10 +1,12 @@
 package com.example.orderservice.service;
 
+import com.example.orderservice.client.ItemServiceClient;
 import com.example.orderservice.domain.Order;
 import com.example.orderservice.domain.OrderItem;
 import com.example.orderservice.domain.OrderStatus;
 import com.example.orderservice.repository.OrderItemRepository;
 import com.example.orderservice.repository.OrderRepository;
+import com.example.orderservice.request.ItemQuantity;
 import com.example.orderservice.request.ItemRequest;
 import com.example.orderservice.request.OrderRequest;
 import com.example.orderservice.response.ItemResponse;
@@ -28,6 +30,7 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
+    private final ItemServiceClient itemServiceClient;
 
 
     public void createOrder(OrderRequest orderRequest) {
@@ -52,6 +55,8 @@ public class OrderService {
                             .build()
             );
         }
+
+        itemServiceClient.reduceQuantity(orderRequest.getItems().stream().map(ItemQuantity::new).toList());
 
         orderRepository.save(order);
     }
@@ -82,7 +87,22 @@ public class OrderService {
     }
 
 
-    public void cancel() {
+    public void cancel(String userUUID, String orderUUID) {
+
+        Order deleteOrder = orderRepository.findByOrderUUID(orderUUID).orElseThrow(() -> new RuntimeException("주문 없음"));
+
+        if (!deleteOrder.getUserUUID().equals(userUUID)) {
+            throw new RuntimeException("주문한 유저가 아님");
+        }
+
+        if (!deleteOrder.getOrderStatus().equals(OrderStatus.ORDER)) {
+            throw new RuntimeException("주문 취소가 불가능합니다.");
+        }
+
+        itemServiceClient.addQuantity(deleteOrder.getOrderItems().stream().map(ItemQuantity::new).toList());
+
+        deleteOrder.changeStatus(OrderStatus.CANCELLED);
+
 
     }
 }
