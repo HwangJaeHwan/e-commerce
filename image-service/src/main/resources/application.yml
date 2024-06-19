@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: image-service
+
+file:
+  dir: C:\Users\ghkd3\work\image\
