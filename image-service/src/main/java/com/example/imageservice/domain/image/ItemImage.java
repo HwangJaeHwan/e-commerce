@@ -15,9 +15,11 @@ public class ItemImage extends Image{
 
     String itemUUID;
 
-    public ItemImage(String itemUUID) {
+    public ItemImage(String userUUID, String itemUUID) {
+        super(userUUID);
         this.itemUUID = itemUUID;
     }
+
 }
 
 

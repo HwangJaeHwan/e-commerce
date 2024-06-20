@@ -2,6 +2,7 @@ package com.example.itemservice.controller;
 
 import com.example.itemservice.request.ItemQuantity;
 import com.example.itemservice.request.ItemRequest;
+import com.example.itemservice.response.ItemDetailResponse;
 import com.example.itemservice.response.ItemResponse;
 import com.example.itemservice.service.ItemService;
 import jakarta.validation.Valid;
@@ -19,9 +20,16 @@ public class ItemController {
 
 
     @GetMapping("/")
-    public List<ItemResponse> items() {
+    public List<ItemResponse> items(@RequestParam String search, @RequestParam String category) {
 
-         return itemService.items();
+        return itemService.items();
+
+    }
+
+    @GetMapping("/{itemId}")
+    public ItemDetailResponse getItem(@PathVariable Long itemId) {
+
+        return itemService.getItem(itemId);
 
     }
 

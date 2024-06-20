@@ -14,7 +14,8 @@ public class ReviewImage extends Image{
 
     private String reviewUUID;
 
-    public ReviewImage(String reviewUUID) {
+    public ReviewImage(String userUUID, String reviewUUID) {
+        super(userUUID);
         this.reviewUUID = reviewUUID;
     }
 }

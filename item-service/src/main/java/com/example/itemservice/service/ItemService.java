@@ -4,6 +4,7 @@ import com.example.itemservice.domain.item.Item;
 import com.example.itemservice.repository.ItemRepository;
 import com.example.itemservice.request.ItemQuantity;
 import com.example.itemservice.request.ItemRequest;
+import com.example.itemservice.response.ItemDetailResponse;
 import com.example.itemservice.response.ItemResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,15 @@ public class ItemService {
     public List<ItemResponse> items() {
 
         return itemRepository.findAll().stream().map(ItemResponse::new).toList();
+
+    }
+
+    public ItemDetailResponse getItem(Long itemId) {
+
+        Item item = itemRepository.findById(itemId).orElseThrow(() -> new RuntimeException("아이템 없음"));
+
+        return new ItemDetailResponse(item);
+
 
     }
 

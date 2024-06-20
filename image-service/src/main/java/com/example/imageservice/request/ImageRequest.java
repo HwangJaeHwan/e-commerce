@@ -7,6 +7,7 @@ import lombok.Getter;
 public class ImageRequest {
 
     private String UUID;
+    private String userUUID;
     private ImageType imageType;
 
 }

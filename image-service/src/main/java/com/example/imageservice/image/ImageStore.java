@@ -2,16 +2,13 @@ package com.example.imageservice.image;
 
 import com.example.imageservice.domain.ImageUrl;
 import com.example.imageservice.domain.image.Image;
-import com.example.imageservice.repository.ImageRepository;
-import com.example.imageservice.repository.UrlRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,8 +19,6 @@ public class ImageStore {
     @Value("${file.dir}")
     private String fileDir;
 
-    private final ImageRepository imageRepository;
-    private final UrlRepository urlRepository;
     public String getFullPath(String filename) {
         return fileDir + filename;
     }
@@ -37,6 +32,16 @@ public class ImageStore {
             }
         }
 
+    }
+
+    public void deleteImage(String filename) {
+        File file = new File(getFullPath(filename));
+
+        if (file.exists()) {
+            file.delete();
+        }
+
+        throw new RuntimeException("파일 존재 x");
     }
 
 

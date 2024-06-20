@@ -25,14 +25,17 @@ public class Review {
     private String userUUID;
     private double score;
     private String reviewUUID;
+    private String itemUUID;
     @Column(updatable = false)
     private LocalDateTime createTime;
+
     @Builder
-    public Review(String content, String userUUID, double score, String reviewUUID, LocalDateTime createTime) {
+    public Review(String content, String userUUID, double score, String reviewUUID, String itemUUID, LocalDateTime createTime) {
         this.content = content;
         this.userUUID = userUUID;
         this.score = score;
         this.reviewUUID = reviewUUID;
+        this.itemUUID = itemUUID;
         this.createTime = createTime;
     }
 }

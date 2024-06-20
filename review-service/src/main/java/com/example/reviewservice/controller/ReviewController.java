@@ -1,6 +1,7 @@
 package com.example.reviewservice.controller;
 
 import com.example.reviewservice.request.ReviewRequest;
+import com.example.reviewservice.response.PageResponse;
 import com.example.reviewservice.response.ReviewResponse;
 import com.example.reviewservice.service.ReviewService;
 import jakarta.validation.Valid;
@@ -24,9 +25,10 @@ public class ReviewController {
     }
 
     @GetMapping("/{itemUUID}")
-    public List<ReviewResponse> getReviews(@PathVariable String itemUUID) {
-        return reviewService.getReviews(itemUUID);
+    public PageResponse getReviews(@PathVariable String itemUUID, @RequestParam(defaultValue = "1") int page) {
+
+        return reviewService.getReviews(itemUUID, page);
     }
 
-    
+
 }

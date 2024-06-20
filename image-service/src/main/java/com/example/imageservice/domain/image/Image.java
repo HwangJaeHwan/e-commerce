@@ -22,6 +22,8 @@ public abstract class Image {
     @Column(name = "image_id")
     private Long id;
 
+    private String userUUID;
+
     @OneToMany(mappedBy = "uri_id",cascade = CascadeType.ALL)
     private List<ImageUrl> images = new ArrayList<>();
 
@@ -32,6 +34,7 @@ public abstract class Image {
 
     }
 
-
-
+    public Image(String userUUID) {
+        this.userUUID = userUUID;
+    }
 }
