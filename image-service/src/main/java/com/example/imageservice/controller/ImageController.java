@@ -1,5 +1,6 @@
 package com.example.imageservice.controller;
 
+import com.example.imageservice.domain.image.ImageType;
 import com.example.imageservice.image.ImageStore;
 import com.example.imageservice.request.ImageRequest;
 import com.example.imageservice.response.UrlResponse;
@@ -28,9 +29,14 @@ public class ImageController {
 
     }
 
+    @GetMapping("/{UUID}")
+    public List<UrlResponse> getUrls(@PathVariable String UUID, @RequestParam ImageType imageType) {
+        return imageService.getUrls(UUID, imageType);
+    }
     @GetMapping("/{filename}")
-    public UrlResource downloadImage(@PathVariable String filename) throws
+    public UrlResource showImage(@PathVariable String filename) throws
             MalformedURLException {
+
         return new UrlResource("file:" + imageStore.getFullPath(filename));
     }
 

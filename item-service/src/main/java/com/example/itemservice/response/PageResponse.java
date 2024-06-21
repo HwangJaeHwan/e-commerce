@@ -1,21 +1,19 @@
-package com.example.reviewservice.response;
+package com.example.itemservice.response;
 
 import lombok.Builder;
 import lombok.Getter;
 
 import java.util.List;
-
 @Getter
 public class PageResponse {
-
     private int totalPage;
     private long totalElement;
-    private List<ReviewResponse> reviews;
+    private List<ItemResponse> reviews;
     private boolean isFirst;
     private boolean isLast;
 
     @Builder
-    public PageResponse(int totalPage, long totalElement, List<ReviewResponse> reviews,
+    public PageResponse(int totalPage, long totalElement, List<ItemResponse> reviews,
                         boolean isFirst, boolean isLast) {
         this.totalPage = totalPage;
         this.totalElement = totalElement;
@@ -23,4 +21,5 @@ public class PageResponse {
         this.isFirst = isFirst;
         this.isLast = isLast;
     }
+
 }

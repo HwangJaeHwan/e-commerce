@@ -30,5 +30,9 @@ public class ReviewController {
         return reviewService.getReviews(itemUUID, page);
     }
 
+    @GetMapping("/{itemUUID}/score")
+    public Double getAverageScore(@PathVariable String itemUUID) {
+        return reviewService.getScoreAverage(itemUUID);
+    }
 
 }

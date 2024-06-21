@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 import java.util.Optional;
 
-public interface ItemRepository extends JpaRepository<Item,Long> {
+public interface ItemRepository extends JpaRepository<Item,Long>,ItemRepositoryCustom {
     Optional<Item> findByItemUUID(String UUID);
 
     List<Item> findAllByCategory(Category category);

@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -37,7 +38,7 @@ public class ImageService {
 
         imageRepository.save(image);
 
-        return image.getImages().stream().map(UrlResponse::new).toList();
+        return image.getUrls().stream().map(UrlResponse::new).toList();
 
 
     }
@@ -67,5 +68,20 @@ public class ImageService {
         }
 
         return image;
+    }
+
+    public List<UrlResponse> getUrls(String uuid, ImageType imageType) {
+
+        Image image;
+
+        if (imageType.equals(ImageType.ITEM)) {
+            image = imageRepository.getItemUrls(uuid).orElseThrow(() -> new RuntimeException("이미지 없음"));
+            return image.getUrls().stream().map(UrlResponse::new).toList();
+        } else {
+            image = imageRepository.getReviewUrls(uuid).orElseThrow(() -> new RuntimeException("이미지 없음"));
+        }
+
+        return image.getUrls().stream().map(UrlResponse::new).toList();
+
     }
 }

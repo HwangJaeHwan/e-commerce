@@ -1,12 +1,18 @@
 package com.example.itemservice.service;
 
+import com.example.itemservice.client.ImageServiceClient;
+import com.example.itemservice.client.ReviewServiceClient;
+import com.example.itemservice.domain.item.Category;
 import com.example.itemservice.domain.item.Item;
 import com.example.itemservice.repository.ItemRepository;
 import com.example.itemservice.request.ItemQuantity;
 import com.example.itemservice.request.ItemRequest;
 import com.example.itemservice.response.ItemDetailResponse;
 import com.example.itemservice.response.ItemResponse;
+import com.example.itemservice.response.PageResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.UrlResource;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,17 +25,32 @@ import java.util.UUID;
 public class ItemService {
 
     private final ItemRepository itemRepository;
+    private final ImageServiceClient imageServiceClient;
+    private final ReviewServiceClient reviewServiceClient;
+
+    @Transactional(readOnly = true)
+    public PageResponse items(String search, Category category, int page) {
+
+        Page<Item> items = itemRepository.getPage(search, category, page);
+
+        return PageResponse.builder()
+                .isFirst(items.isFirst())
+                .isLast(items.isFirst())
+                .reviews(items.map(ItemResponse::new).toList())
+                .totalElement(items.getTotalElements())
+                .totalPage(items.getTotalPages())
+                .build();
 
 
-    public List<ItemResponse> items() {
-
-        return itemRepository.findAll().stream().map(ItemResponse::new).toList();
 
     }
-
+    @Transactional(readOnly = true)
     public ItemDetailResponse getItem(Long itemId) {
 
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new RuntimeException("아이템 없음"));
+        ItemDetailResponse response = new ItemDetailResponse(item);
+        response.linkUrls(imageServiceClient.getURls(item.getItemUUID()));
+        response.linkScore(reviewServiceClient.getAverageScore(item.getItemUUID()));
 
         return new ItemDetailResponse(item);
 

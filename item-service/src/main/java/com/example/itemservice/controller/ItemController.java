@@ -1,9 +1,11 @@
 package com.example.itemservice.controller;
 
+import com.example.itemservice.domain.item.Category;
 import com.example.itemservice.request.ItemQuantity;
 import com.example.itemservice.request.ItemRequest;
 import com.example.itemservice.response.ItemDetailResponse;
 import com.example.itemservice.response.ItemResponse;
+import com.example.itemservice.response.PageResponse;
 import com.example.itemservice.service.ItemService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,9 +22,10 @@ public class ItemController {
 
 
     @GetMapping("/")
-    public List<ItemResponse> items(@RequestParam String search, @RequestParam String category) {
+    public PageResponse items(@RequestParam String search, @RequestParam int page,
+                              @RequestParam Category category) {
 
-        return itemService.items();
+        return itemService.items(search, category, page);
 
     }
 

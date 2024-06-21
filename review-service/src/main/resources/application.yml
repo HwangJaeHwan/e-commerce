@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: image-service
+    name: review-service
 
   h2:
     console:
@@ -31,6 +31,3 @@ eureka:
     fetch-registry: true
     service-url:
       defaultZone: http://127.0.0.1:8761/eureka
-
-file:
-  dir: C:\Users\ghkd3\work\image\

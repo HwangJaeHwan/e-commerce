@@ -49,4 +49,8 @@ public class ReviewService {
                 .build();
 
     }
+
+    public Double getScoreAverage(String itemUUID) {
+        return reviewRepository.averageScore(itemUUID);
+    }
 }

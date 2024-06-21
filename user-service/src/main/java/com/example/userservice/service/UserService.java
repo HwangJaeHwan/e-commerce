@@ -42,7 +42,7 @@ public class UserService {
                 .loginId(createUser.getLoginId())
                 .password(passwordEncoder.encode(createUser.getPassword()))
                 .email(createUser.getEmail())
-                .userId(UUID.randomUUID().toString())
+                .userUUID(UUID.randomUUID().toString())
                 .build());
 
 

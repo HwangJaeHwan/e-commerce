@@ -37,7 +37,9 @@ public class AddressService {
         addressRepository.save(
                 Address.builder()
                         .name(addressRequest.getName())
-                        .address(addressRequest.getAddress())
+                        .city(addressRequest.getCity())
+                        .street(addressRequest.getStreet())
+                        .zipcode(addressRequest.getZipcode())
                         .phoneNumber(addressRequest.getPhoneNumber())
                         .user(loginUser)
                         .build());

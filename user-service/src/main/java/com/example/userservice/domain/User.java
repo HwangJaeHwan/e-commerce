@@ -28,15 +28,15 @@ public class User {
     private String password;
 
     @Column(nullable = false,unique = true)
-    private String userId;
+    private String userUUID;
 
 
     @Builder
-    public User(Long id, String loginId, String email, String password, String userId) {
+    public User(Long id, String loginId, String email, String password, String userUUID) {
         this.id = id;
         this.loginId = loginId;
         this.email = email;
         this.password = password;
-        this.userId = userId;
+        this.userUUID = userUUID;
     }
 }

@@ -11,4 +11,7 @@ import java.util.List;
 public interface ReviewServiceClient {
     @GetMapping("/review-service/{itemUUID}")
     List<ReviewResponse> getReviews(@PathVariable String itemUUID);
+
+    @GetMapping("/review-service/{itemUUID}/score")
+    Double getAverageScore(@PathVariable String itemUUID);
 }

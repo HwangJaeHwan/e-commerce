@@ -17,11 +17,11 @@ import static com.example.itemservice.domain.item.QItem.*;
 import static org.springframework.util.StringUtils.hasText;
 
 @RequiredArgsConstructor
-public class ItemRepositoryImpl {
+public class ItemRepositoryImpl implements ItemRepositoryCustom{
 
     private final JPAQueryFactory queryFactory;
-
-    public Page<Item> getPage(String search, Category category, int page) {
+    @Override
+    public Page<Item> getPage(String search,Category category,int page) {
 
         BooleanBuilder builder = new BooleanBuilder();
 
@@ -48,4 +48,5 @@ public class ItemRepositoryImpl {
 
 
     }
+
 }

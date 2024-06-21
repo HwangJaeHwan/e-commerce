@@ -14,6 +14,7 @@ import static lombok.AccessLevel.*;
 
 @Entity
 @Getter
+@Table(name = "Orders")
 @NoArgsConstructor(access = PROTECTED)
 public class Order {
 
@@ -22,7 +23,7 @@ public class Order {
     @Column(name = "order_id")
     private Long id;
 
-    @OneToMany(mappedBy = "orderItem_id", cascade = ALL)
+    @OneToMany(mappedBy = "order", cascade = ALL)
     private List<OrderItem> orderItems = new ArrayList<>();
 
     private String userUUID;

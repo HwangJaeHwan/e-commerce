@@ -24,12 +24,12 @@ public abstract class Image {
 
     private String userUUID;
 
-    @OneToMany(mappedBy = "uri_id",cascade = CascadeType.ALL)
-    private List<ImageUrl> images = new ArrayList<>();
+    @OneToMany(mappedBy = "image",cascade = CascadeType.ALL)
+    private List<ImageUrl> urls = new ArrayList<>();
 
 
     public void addUrl(ImageUrl imageUrl) {
-        this.images.add(imageUrl);
+        this.urls.add(imageUrl);
         imageUrl.linkImage(this);
 
     }

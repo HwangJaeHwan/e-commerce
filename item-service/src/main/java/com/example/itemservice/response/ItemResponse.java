@@ -17,6 +17,8 @@ public class ItemResponse {
 
     private String name;
 
+    private String itemUUID;
+
 
     private Integer price;
 
@@ -27,6 +29,7 @@ public class ItemResponse {
     public ItemResponse(Item item) {
         this.id = item.getId();
         this.name = item.getName();
+        this.itemUUID = item.getItemUUID();
         this.price = item.getPrice();
         this.category = item.getCategory();
     }
