@@ -28,10 +28,9 @@ public class OrderController {
     }
 
     @PutMapping("/{userUUID}/{orderUUID}")
-    public void cancelOrder(@PathVariable String userUUID,@PathVariable String orderUUID) {
+    public void cancelOrder(@PathVariable String userUUID, @PathVariable String orderUUID) {
 
-        orderService.cancel(userUUID,orderUUID);
+        orderService.cancel(userUUID, orderUUID);
 
     }
-
 }

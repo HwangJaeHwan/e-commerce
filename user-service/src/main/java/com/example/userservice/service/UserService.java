@@ -4,6 +4,7 @@ import com.example.userservice.domain.User;
 import com.example.userservice.repository.UserRepository;
 import com.example.userservice.request.CreateUser;
 import com.example.userservice.request.LoginRequest;
+import com.example.userservice.request.PasswordChange;
 import com.example.userservice.response.UserInfoResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -62,6 +63,20 @@ public class UserService {
 
     public UserInfoResponse info(Long id) {
         return new UserInfoResponse(userRepository.findById(id).orElseThrow(RuntimeException::new));
+    }
+
+    public void changePassword(Long userId, PasswordChange passwordChange) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("유저 없음"));
+        validatePassword(passwordChange.getPassword(), user.getPassword());
+
+        if (isPasswordMatch(passwordChange.getPassword(), passwordChange.getChangePasswordCheck())) {
+            throw new RuntimeException("비밀번호 체크 오류");
+        }
+        
+        user.changePassword(passwordEncoder.encode(passwordChange.getChangePassword()));
+
+
+
     }
 
     private User findUserByLoginId(String loginId) {
