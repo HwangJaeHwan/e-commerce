@@ -1,0 +1,13 @@
+package com.example.userservice.exception;
+
+public abstract class UserException extends RuntimeException {
+    public UserException(String message) {
+        super(message);
+    }
+
+    public UserException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public abstract String getStatusCode();
+}

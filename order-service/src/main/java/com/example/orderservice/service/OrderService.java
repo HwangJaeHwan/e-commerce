@@ -4,6 +4,9 @@ import com.example.orderservice.client.ItemServiceClient;
 import com.example.orderservice.domain.Order;
 import com.example.orderservice.domain.OrderItem;
 import com.example.orderservice.domain.OrderStatus;
+import com.example.orderservice.exception.OrderCancellationDeniedException;
+import com.example.orderservice.exception.OrderNotFoundException;
+import com.example.orderservice.exception.UnauthorizedException;
 import com.example.orderservice.repository.OrderItemRepository;
 import com.example.orderservice.repository.OrderRepository;
 import com.example.orderservice.request.ItemQuantity;
@@ -89,14 +92,14 @@ public class OrderService {
 
     public void cancel(String userUUID, String orderUUID) {
 
-        Order deleteOrder = orderRepository.findByOrderUUID(orderUUID).orElseThrow(() -> new RuntimeException("주문 없음"));
+        Order deleteOrder = orderRepository.findByOrderUUID(orderUUID).orElseThrow(OrderNotFoundException::new);
 
         if (!deleteOrder.getUserUUID().equals(userUUID)) {
-            throw new RuntimeException("주문한 유저가 아님");
+            throw new UnauthorizedException();
         }
 
         if (!deleteOrder.getOrderStatus().equals(OrderStatus.ORDER)) {
-            throw new RuntimeException("주문 취소가 불가능합니다.");
+            throw new OrderCancellationDeniedException();
         }
 
         itemServiceClient.addQuantity(deleteOrder.getOrderItems().stream().map(ItemQuantity::new).toList());

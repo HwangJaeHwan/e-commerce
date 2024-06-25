@@ -5,6 +5,8 @@ import com.example.imageservice.domain.image.Image;
 import com.example.imageservice.domain.image.ImageType;
 import com.example.imageservice.domain.image.ItemImage;
 import com.example.imageservice.domain.image.ReviewImage;
+import com.example.imageservice.exception.ImageNotFoundException;
+import com.example.imageservice.exception.UnauthorizedException;
 import com.example.imageservice.image.ImageStore;
 import com.example.imageservice.repository.ImageRepository;
 import com.example.imageservice.repository.UrlRepository;
@@ -17,7 +19,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional
@@ -45,10 +46,10 @@ public class ImageService {
 
     public void deleteImage(String userUUID, String filename) {
 
-        ImageUrl url = urlRepository.findBystoredName(filename).orElseThrow(() -> new RuntimeException("파일 존재하지 않음"));
+        ImageUrl url = urlRepository.findBystoredName(filename).orElseThrow(ImageNotFoundException::new);
 
         if (!url.getImage().getUserUUID().equals(userUUID)) {
-            throw new RuntimeException("작성자가 아님");
+            throw new UnauthorizedException();
         }
 
         imageStore.deleteImage(filename);
@@ -75,10 +76,10 @@ public class ImageService {
         Image image;
 
         if (imageType.equals(ImageType.ITEM)) {
-            image = imageRepository.getItemUrls(uuid).orElseThrow(() -> new RuntimeException("이미지 없음"));
+            image = imageRepository.getItemUrls(uuid).orElseThrow(ImageNotFoundException::new);
             return image.getUrls().stream().map(UrlResponse::new).toList();
         } else {
-            image = imageRepository.getReviewUrls(uuid).orElseThrow(() -> new RuntimeException("이미지 없음"));
+            image = imageRepository.getReviewUrls(uuid).orElseThrow(ImageNotFoundException::new);
         }
 
         return image.getUrls().stream().map(UrlResponse::new).toList();

@@ -3,6 +3,9 @@ package com.example.userservice.service;
 import com.example.userservice.config.auth.UserSession;
 import com.example.userservice.domain.Address;
 import com.example.userservice.domain.User;
+import com.example.userservice.exception.AddressNotFoundException;
+import com.example.userservice.exception.UnauthorizedException;
+import com.example.userservice.exception.UserNotFoundException;
 import com.example.userservice.repository.AddressRepository;
 import com.example.userservice.repository.UserRepository;
 import com.example.userservice.request.AddressRequest;
@@ -50,10 +53,10 @@ public class AddressService {
 
         User loginUser = findLoginUser(session);
 
-        Address removeAddress = addressRepository.findById(addressId).orElseThrow(() -> new RuntimeException("주소록 없음"));
+        Address removeAddress = addressRepository.findById(addressId).orElseThrow(AddressNotFoundException::new);
 
         if (!removeAddress.getUser().equals(loginUser)) {
-            throw new RuntimeException("삭제 권한 없음");
+            throw new UnauthorizedException();
         }
 
         addressRepository.delete(removeAddress);
@@ -61,7 +64,7 @@ public class AddressService {
     }
 
     private User findLoginUser(UserSession session) {
-        return userRepository.findById(session.getId()).orElseThrow(RuntimeException::new);
+        return userRepository.findById(session.getId()).orElseThrow(UserNotFoundException::new);
     }
 
 
