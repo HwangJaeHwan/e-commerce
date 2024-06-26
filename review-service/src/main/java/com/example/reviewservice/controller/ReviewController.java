@@ -1,6 +1,7 @@
 package com.example.reviewservice.controller;
 
 import com.example.reviewservice.request.ReviewRequest;
+import com.example.reviewservice.request.ReviewRevise;
 import com.example.reviewservice.response.PageResponse;
 import com.example.reviewservice.response.ReviewResponse;
 import com.example.reviewservice.service.ReviewService;
@@ -33,6 +34,11 @@ public class ReviewController {
     @GetMapping("/{itemUUID}/score")
     public Double getAverageScore(@PathVariable String itemUUID) {
         return reviewService.getScoreAverage(itemUUID);
+    }
+
+    @PatchMapping("/revise/{reviewId}")
+    public void reviseReview(@PathVariable Long reviewId, ReviewRevise revise) {
+        reviewService.revise(reviewId, revise);
     }
 
 }
