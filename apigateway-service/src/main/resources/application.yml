@@ -36,3 +36,7 @@ spring:
             predicates:
               - Path=/image-service/**
 
+
+
+token:
+  key: secret

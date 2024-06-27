@@ -1,5 +1,6 @@
 package com.example.userservice.config.auth;
 
+import com.example.userservice.exception.UnauthorizedException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -24,18 +25,12 @@ public class AuthResolver implements HandlerMethodArgumentResolver {
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
 
         HttpServletRequest request = webRequest.getNativeRequest(HttpServletRequest.class);
-        HttpSession session = request.getSession(false);
+        String uuid = request.getHeader("uuid");
 
-        if (session == null) {
-            throw new RuntimeException("세션 오류");
+        if (uuid == null) {
+            throw new UnauthorizedException();
         }
 
-        Long id = (Long) session.getAttribute(SessionConst.SESSION_CONST);
-
-        if (id == null) {
-            throw new RuntimeException("세션 없음");
-        }
-
-        return new UserSession(id);
+        return new UserSession(uuid);
     }
 }
