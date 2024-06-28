@@ -1,6 +1,7 @@
 package com.example.userservice.controller;
 
 import com.example.userservice.config.auth.UserSession;
+import com.example.userservice.config.jwt.JwtProvider;
 import com.example.userservice.domain.User;
 import com.example.userservice.request.CreateUser;
 import com.example.userservice.request.LoginRequest;
@@ -8,10 +9,14 @@ import com.example.userservice.request.PasswordChange;
 import com.example.userservice.response.UserInfoResponse;
 import com.example.userservice.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import jakarta.ws.rs.core.HttpHeaders;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import static jakarta.ws.rs.core.HttpHeaders.*;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -20,6 +25,7 @@ public class UserController {
 
 
     private final UserService userService;
+    private final JwtProvider jwtProvider;
 
     @PostMapping("/users")
     public void createUser(@RequestBody @Valid CreateUser createUser) {
@@ -29,11 +35,13 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public void login(@RequestBody @Valid LoginRequest loginRequest, HttpServletRequest request) {
+    public void login(@RequestBody @Valid LoginRequest loginRequest, HttpServletResponse response) {
 
         User loginUser = userService.login(loginRequest);
-        HttpSession session = request.getSession();
-        session.setAttribute("login", loginUser.getId());
+        String token = jwtProvider.createToken(loginUser.getId(), loginUser.getUserUUID());
+
+
+        response.addHeader(AUTHORIZATION, "Bearer " + token);
     }
 
     @GetMapping("/info")

@@ -1,6 +1,13 @@
 package com.example.apigatewayservice.filter;
 
+import com.example.apigatewayservice.exception.JwtExpiredException;
+import com.example.apigatewayservice.exception.MyJwtException;
 import com.example.apigatewayservice.jwt.JwtDecoder;
+import com.example.apigatewayservice.jwt.JwtResponse;
+import com.example.apigatewayservice.response.ErrorResponse;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -8,6 +15,7 @@ import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
@@ -20,6 +28,7 @@ import reactor.core.publisher.Mono;
 public class AuthFilter extends AbstractGatewayFilterFactory<AuthFilter> {
 
     private final JwtDecoder jwtDecoder;
+    private final ObjectMapper objectMapper;
 
     @Override
     public GatewayFilter apply(AuthFilter config) {
@@ -29,15 +38,16 @@ public class AuthFilter extends AbstractGatewayFilterFactory<AuthFilter> {
             String authorizationHeader = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
             if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
                 String jwt = authorizationHeader.substring(7);
-                String uuid = null;
+                JwtResponse jwtResponse = null;
 
                 try {
-                    uuid = jwtDecoder.parseToken(jwt);
-                } catch (Exception e) {
-                    return onError(exchange, "error", HttpStatus.UNAUTHORIZED);
+                    jwtResponse = jwtDecoder.parseToken(jwt);
+                } catch (JwtException e) {
+                    return onError(exchange,new ErrorResponse(e.getMessage()));
                 }
 
-                exchange.getRequest().mutate().header("uuid", uuid).build();
+                addHeaders(exchange, jwtResponse);
+
             }
             return chain.filter(exchange);
         };
@@ -48,13 +58,31 @@ public class AuthFilter extends AbstractGatewayFilterFactory<AuthFilter> {
 
     }
 
-    private Mono<Void> onError(ServerWebExchange exchange, String error, HttpStatus httpStatus) {
+    private static void addHeaders(ServerWebExchange exchange, JwtResponse jwtResponse) {
+        exchange.getRequest().mutate()
+                .headers(httpHeaders -> {
+                    httpHeaders.add("id", jwtResponse.getUuid());
+                    httpHeaders.add("uuid", jwtResponse.getUuid());
+                })
+                .build();
+    }
+
+    private Mono<Void> onError(ServerWebExchange exchange, ErrorResponse error){
         ServerHttpResponse response = exchange.getResponse();
 
-        response.setStatusCode(httpStatus);
-        log.error(error);
+        byte[] bytes = convertBytes(error);
+        response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
+        response.setRawStatusCode(error.getCode());
 
-        return response.setComplete();
+        return exchange.getResponse().writeWith(Mono.just(exchange.getResponse().bufferFactory().wrap(bytes)));
+    }
+
+    private byte[] convertBytes(ErrorResponse error)  {
+        try {
+            return objectMapper.writeValueAsBytes(error);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

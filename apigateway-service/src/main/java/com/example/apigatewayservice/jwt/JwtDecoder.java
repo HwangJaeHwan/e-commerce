@@ -1,5 +1,6 @@
 package com.example.apigatewayservice.jwt;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,8 +13,9 @@ public class JwtDecoder {
 
     private final JwtKey key;
 
-    public String parseToken(String jwt) {
-        return Jwts.parser().verifyWith(key.getKey()).build().parseSignedClaims(jwt).getPayload().getSubject();
+    public JwtResponse parseToken(String jwt) {
+        Claims claims = Jwts.parser().verifyWith(key.getKey()).build().parseSignedClaims(jwt).getPayload();
+        return new JwtResponse(claims.get("uuid", String.class), claims.getSubject());
     }
 
 

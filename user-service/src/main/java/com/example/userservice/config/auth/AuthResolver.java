@@ -2,7 +2,6 @@ package com.example.userservice.config.auth;
 
 import com.example.userservice.exception.UnauthorizedException;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
@@ -26,11 +25,12 @@ public class AuthResolver implements HandlerMethodArgumentResolver {
 
         HttpServletRequest request = webRequest.getNativeRequest(HttpServletRequest.class);
         String uuid = request.getHeader("uuid");
+        String id = request.getHeader("id");
 
         if (uuid == null) {
             throw new UnauthorizedException();
         }
 
-        return new UserSession(uuid);
+        return new UserSession(Long.parseLong(id), uuid);
     }
 }
