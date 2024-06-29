@@ -40,16 +40,30 @@ public class Item {
         this.itemUUID = itemUUID;
     }
 
-    public void addQuantity(int quantity) {
-        this.stock += quantity;
-    }
+//    public void addQuantity(int quantity) {
+//        this.stock += quantity;
+//    }
 
-    public void reduceQuantity(int quantity) {
+//    public void reduceQuantity(int quantity) {
+//        if (stock < quantity) {
+//            throw new RuntimeException("수량 부족");
+//        }
+//
+//        this.stock -= quantity;
+//    }
+
+    public void updateQuantity(int quantity, boolean isAddition) {
+        if (isAddition) {
+            this.stock += quantity;
+            return;
+        }
+
         if (stock < quantity) {
             throw new RuntimeException("수량 부족");
         }
 
         this.stock -= quantity;
+
     }
 
 
