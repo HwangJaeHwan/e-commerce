@@ -7,6 +7,8 @@ import com.example.orderservice.domain.OrderStatus;
 import com.example.orderservice.exception.OrderCancellationDeniedException;
 import com.example.orderservice.exception.OrderNotFoundException;
 import com.example.orderservice.exception.UnauthorizedException;
+import com.example.orderservice.messagequeue.KafkaProducer;
+import com.example.orderservice.messagequeue.message.OrderMessage;
 import com.example.orderservice.repository.OrderItemRepository;
 import com.example.orderservice.repository.OrderRepository;
 import com.example.orderservice.request.ItemQuantity;
@@ -34,6 +36,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
     private final ItemServiceClient itemServiceClient;
+    private final KafkaProducer kafkaProducer;
 
 
     public void createOrder(OrderRequest orderRequest) {
@@ -59,9 +62,12 @@ public class OrderService {
             );
         }
 
-        itemServiceClient.reduceQuantity(orderRequest.getItems().stream().map(ItemQuantity::new).toList());
+
 
         orderRepository.save(order);
+
+        kafkaProducer.send("item-reduce-topic"
+                , new OrderMessage(orderRequest.getItems().stream().map(ItemQuantity::new).toList()));
     }
 
     public List<OrderResponse> getOrdersByUserUUID(String userUUID) {
@@ -102,10 +108,10 @@ public class OrderService {
             throw new OrderCancellationDeniedException();
         }
 
-        itemServiceClient.addQuantity(deleteOrder.getOrderItems().stream().map(ItemQuantity::new).toList());
-
         deleteOrder.changeStatus(OrderStatus.CANCELLED);
 
+        kafkaProducer.send("item-add-topic",
+                new OrderMessage(deleteOrder.getOrderItems().stream().map(ItemQuantity::new).toList()));
 
     }
 }
