@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -43,6 +44,12 @@ public class ItemController {
 
     }
 
+    @PostMapping("/amount")
+    public BigDecimal amount(@RequestBody List<ItemQuantity> items) {
+
+        return itemService.amount(items);
+
+    }
     @DeleteMapping("/{itemId}")
     public void deleteItem(@PathVariable String itemId) {
 

@@ -4,6 +4,7 @@ import com.example.itemservice.client.ImageServiceClient;
 import com.example.itemservice.client.ReviewServiceClient;
 import com.example.itemservice.domain.item.Category;
 import com.example.itemservice.domain.item.Item;
+import com.example.itemservice.exception.ItemNotFoundException;
 import com.example.itemservice.repository.ItemRepository;
 import com.example.itemservice.request.ItemQuantity;
 import com.example.itemservice.request.ItemRequest;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -75,27 +77,38 @@ public class ItemService {
 
     public void deleteItem(String itemId) {
 
-        Item item = itemRepository.findByItemUUID(itemId).orElseThrow(() -> new RuntimeException("상품 존재 x"));
+        Item item = itemRepository.findByItemUUID(itemId).orElseThrow(ItemNotFoundException::new);
 
         itemRepository.delete(item);
 
     }
 
-
-    public void reduceQuantity(List<ItemQuantity> quantities) {
-
+    public BigDecimal amount(List<ItemQuantity> quantities) {
+        int sum = 0;
         for (ItemQuantity quantity : quantities) {
-            Item item = itemRepository.findByItemUUID(quantity.getItemUUID()).orElseThrow(() -> new RuntimeException("아이템 없음"));
-            item.reduceQuantity(quantity.getQuantity());
+            Item item = itemRepository.findByItemUUID(quantity.getItemUUID()).orElseThrow(ItemNotFoundException::new);
+            sum += item.getPrice() * quantity.getQuantity();
         }
+
+        return new BigDecimal(sum);
 
     }
 
-    public void addQuantity(List<ItemQuantity> quantities) {
 
-        for (ItemQuantity quantity : quantities) {
-            Item item = itemRepository.findByItemUUID(quantity.getItemUUID()).orElseThrow(() -> new RuntimeException("아이템 없음"));
-            item.addQuantity(quantity.getQuantity());
-        }
-    }
+//    public void reduceQuantity(List<ItemQuantity> quantities) {
+//
+//        for (ItemQuantity quantity : quantities) {
+//            Item item = itemRepository.findByItemUUID(quantity.getItemUUID()).orElseThrow(() -> new RuntimeException("아이템 없음"));
+//            item.reduceQuantity(quantity.getQuantity());
+//        }
+//
+//    }
+
+//    public void addQuantity(List<ItemQuantity> quantities) {
+//
+//        for (ItemQuantity quantity : quantities) {
+//            Item item = itemRepository.findByItemUUID(quantity.getItemUUID()).orElseThrow(() -> new RuntimeException("아이템 없음"));
+//            item.addQuantity(quantity.getQuantity());
+//        }
+//    }
 }
