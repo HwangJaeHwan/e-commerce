@@ -20,7 +20,7 @@ import static jakarta.ws.rs.core.HttpHeaders.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/")
+@RequestMapping("/user-service")
 public class UserController {
 
 

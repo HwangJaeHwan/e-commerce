@@ -55,6 +55,9 @@ public class UserService {
 
     public User login(LoginRequest loginRequest) {
 
+        log.info("loginId : {}", loginRequest.getLoginId());
+        log.info("password : {}", loginRequest.getPassword());
+
         User loginUser = findUserByLoginId(loginRequest.getLoginId());
         validatePassword(loginRequest.getPassword(), loginUser.getPassword());
 

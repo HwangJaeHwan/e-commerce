@@ -56,17 +56,17 @@ public class ItemController {
         itemService.deleteItem(itemId);
     }
 
-    @PatchMapping("/quantity/add")
-    public void quantityAdd(@RequestBody List<ItemQuantity> quantities) {
-        itemService.addQuantity(quantities);
-
-    }
-
-    @PatchMapping("/quantity/reduce")
-    public void quantityReduce(@RequestBody List<ItemQuantity> quantities) {
-        itemService.reduceQuantity(quantities);
-
-    }
+//    @PatchMapping("/quantity/add")
+//    public void quantityAdd(@RequestBody List<ItemQuantity> quantities) {
+//        itemService.addQuantity(quantities);
+//
+//    }
+//
+//    @PatchMapping("/quantity/reduce")
+//    public void quantityReduce(@RequestBody List<ItemQuantity> quantities) {
+//        itemService.reduceQuantity(quantities);
+//
+//    }
 
 
 }

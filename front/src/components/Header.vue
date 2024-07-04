@@ -1,0 +1,30 @@
+<template>
+  <div class="header">
+    <img src="/images/logo.png" alt="logo" class="logo"/>
+    <div class="title">호돌맨 블로그</div>
+  </div>
+</template>
+
+<script setup lang="ts">
+</script>
+
+<style scoped>
+.header {
+  height: 120px;
+  margin: 1rem 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.logo {
+  width: 104px;
+  object-fit: cover;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 300;
+  margin-left: 5px;
+}
+</style>

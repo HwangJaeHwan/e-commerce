@@ -27,4 +27,5 @@ eureka:
     service-url:
       defaultZone: http://127.0.0.1:8761/eureka
 
-
+token:
+  key: "c7L0+z1bI67OpGIeYN9NcKgXBsHKiR2RlYX1Vzj4ULA="
