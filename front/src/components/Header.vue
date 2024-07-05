@@ -1,7 +1,7 @@
 <template>
   <div class="header">
     <img src="/images/logo.png" alt="logo" class="logo"/>
-    <div class="title">호돌맨 블로그</div>
+    <div class="title">테스트 헤드</div>
   </div>
 </template>
 

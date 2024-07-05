@@ -66,7 +66,6 @@ const options = [
     <el-select
         v-model="category"
         placeholder="카테고리를 선택해주세요."
-        size="large"
         style="width: 100%"
     >
       <el-option

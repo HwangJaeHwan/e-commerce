@@ -3,51 +3,73 @@
 
 <template>
   <div class="item-box">
-    <div class="w-40 image test2">
-      <img src="/images/dog.jpg" alt="logo" class="logo"/>
+
+    <div class="w-60 image test2">
+      <img  src="/images/logo.png" alt="logo" class="img"/>
     </div>
 
-    <el-row class="w-60 test">
-      <el-col class="mt-2">상품명</el-col>
-      <el-col class="mt-2">10000</el-col>
-      <el-col class="mt-2">
-        <el-button type="primary" style="width: 40%">상품 주문</el-button>
-        <el-button type="primary" style="width: 40%">장바구니</el-button>
-      </el-col>
+    <div class="w-40 test">
+      <p class="mt-2">상품명</p>
+      <p class="mt-2">10000</p>
+      <div class="mt-2 box">
 
-    </el-row>
+        <input type="number" style="width: 10%">
+
+        <button style="width: 40%">상품 주문</button>
+        <button style="width: 40%">장바구니</button>
+      </div>
+
+    </div>
+
   </div>
-
-
 </template>
 
 
 <style>
-.w-40{
-  width: 40%;
-}
-
-.w-60{
-  width: 40%;
-}
 
 .item-box {
+  display: flex;
   margin-top: 50px;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  height: 1200px;
+  height: 600px;
 }
+
+.img {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+@media screen and (max-width : 1000px) {
+.img {
+  height: auto;
+}
+}
+
+
+.w-40 {
+  width: 40%;
+}
+
+.w-60 {
+  width: 60%;
+}
+
 .image {
-  display: flex;
-  justify-content: center;
-  height: 50%;
+  position: relative;
+  height: 100%;
 }
-.test{
+
+.box {
+  display: flex;
+  justify-content: space-between;
+}
+
+.test {
   background-color: aqua;
 }
 
-.test2{
+.test2 {
   background-color: chocolate;
 }
 
