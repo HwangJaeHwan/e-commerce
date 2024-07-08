@@ -1,39 +1,33 @@
 <script setup lang="ts">
-import {reactive, ref} from "vue";
+import { reactive } from 'vue'
 
-import axios, {AxiosError, AxiosResponse} from 'axios';
-import Login from "@/entity/user/Login";
-import {ElMessage} from "element-plus";
-import {useRouter} from "vue-router";
-import AxiosHttpClient from "@/http/AxiosHttpClient";
-import type HttpError from "@/http/HttpError";
+import Login from '@/entity/user/Login'
+import { ElMessage } from 'element-plus'
+import { useRouter } from 'vue-router'
+import AxiosHttpClient from '@/http/AxiosHttpClient'
+import type HttpError from '@/http/HttpError'
+import UserRepository from '@/repository/UserRepository'
+import {container} from "tsyringe";
 
 const state = reactive({
   login: new Login()
-    }
-)
+})
 const router = useRouter()
 
+const USER_REPOSITORY = container.resolve(UserRepository)
+
 function doLogin() {
-  const httpClient = new AxiosHttpClient()
 
-  httpClient.post({
-    path: "api/user-service/login",
-    body: state.login
-  })
-      .then((data: any) => {
-        ElMessage({ type: 'success', message: "환영합니다." })
-        router.replace('/')
-
-  })
-      .catch((e: HttpError) => {
-        ElMessage({ type: 'error', message: e.getMessage })
-      })
-
+  USER_REPOSITORY.login(state.login)
+    .then(() => {
+      ElMessage({ type: 'success', message: '환영합니다.' })
+      router.replace('/')
+    })
+    .catch((e: HttpError) => {
+      ElMessage({ type: 'error', message: e.getMessage })
+    })
 }
 </script>
-
-
 
 <template>
   <el-row class="mt-5">

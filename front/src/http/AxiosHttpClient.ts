@@ -2,6 +2,7 @@ import {ElMessage} from "element-plus";
 import HttpError from "@/http/HttpError";
 import type {AxiosInstance, AxiosRequestConfig, AxiosResponse} from "axios";
 import axios from "axios";
+import {injectable, singleton} from "tsyringe";
 
 export type HttpRequestConfig = {
     path: string
@@ -10,6 +11,7 @@ export type HttpRequestConfig = {
     body?: any
 }
 
+@singleton()
 export default class AxiosHttpClient {
 
     private readonly client: AxiosInstance = axios.create({
@@ -18,7 +20,7 @@ export default class AxiosHttpClient {
     })
 
 
-    private async request(config:HttpRequestConfig) {
+    public async request(config:HttpRequestConfig) {
         return this.client
             .request({
                 method: config.method,
@@ -35,20 +37,5 @@ export default class AxiosHttpClient {
             })
     }
 
-    public async get(config: HttpRequestConfig) {
-        return this.request({ ...config, method: 'GET'})
-    }
-
-    public async post(config: HttpRequestConfig) {
-        return this.request({ ...config, method: 'POST'})
-    }
-
-    public async patch(config: HttpRequestConfig) {
-        return this.request({ ...config, method: 'PATCH'})
-    }
-
-    public async delete(config: HttpRequestConfig) {
-        return this.request({ ...config, method: 'DELETE'})
-    }
 
 }
