@@ -14,7 +14,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.net.http.HttpRequest;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -47,10 +51,6 @@ public class UserService {
                 .userUUID(UUID.randomUUID().toString())
                 .build());
 
-
-
-
-
     }
 
     public User login(LoginRequest loginRequest) {
@@ -79,7 +79,12 @@ public class UserService {
 
         user.changePassword(passwordEncoder.encode(passwordChange.getChangePassword()));
 
+    }
 
+    public Map<String, String> findLoginIds(Set<String> uuids) {
+
+        return userRepository.findUserByUserUUIDIn(uuids)
+                .stream().collect(Collectors.toMap(User::getUserUUID, User::getLoginId));
 
     }
 

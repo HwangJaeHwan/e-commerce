@@ -1,5 +1,6 @@
 package com.example.reviewservice.service;
 
+import com.example.reviewservice.client.UserServiceClient;
 import com.example.reviewservice.domain.Review;
 import com.example.reviewservice.exception.ReviewNotFoundException;
 import com.example.reviewservice.exception.UnauthorizedException;
@@ -14,8 +15,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -23,6 +24,7 @@ import java.util.UUID;
 public class ReviewService {
 
     private final ReviewRepository reviewRepository;
+    private final UserServiceClient userServiceClient;
 
 
     public void write(ReviewRequest request) {
@@ -46,12 +48,19 @@ public class ReviewService {
 
         Page<Review> reviewPage = reviewRepository.getPage(page, itemUUID);
 
+        Set<String> uuids = reviewPage.getContent().stream().map(Review::getReviewUUID).collect(Collectors.toSet());
+        Map<String, String> loginIds = userServiceClient.findLoginIds(uuids);
+
+        Page<ReviewResponse> map = reviewRepository.getPage(page, itemUUID)
+                .map(review -> new ReviewResponse(review).linkLoginId(loginIds.get(review.getUserUUID())));
+
+
         return PageResponse.builder()
                 .totalPage(reviewPage.getTotalPages())
                 .totalElement(reviewPage.getTotalElements())
                 .isFirst(reviewPage.isFirst())
                 .isLast(reviewPage.isLast())
-                .reviews(reviewPage.map(ReviewResponse::new).toList())
+                .reviews(map.getContent())
                 .build();
 
     }

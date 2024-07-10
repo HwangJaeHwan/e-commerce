@@ -15,6 +15,9 @@ import jakarta.ws.rs.core.HttpHeaders;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+import java.util.Set;
+
 import static jakarta.ws.rs.core.HttpHeaders.*;
 
 
@@ -48,6 +51,12 @@ public class UserController {
     public UserInfoResponse info(UserSession userSession) {
 
         return userService.info(userSession.getId());
+    }
+
+    @PostMapping("/loginId")
+    public Map<String, String> findLoginIds(@RequestBody Set<String> uuids) {
+
+        return userService.findLoginIds(uuids);
     }
 
     @PatchMapping("/passwordChange")

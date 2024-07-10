@@ -18,6 +18,7 @@ public class ReviewResponse {
 
     private LocalDateTime createTime;
 
+    private String loginId;
     public ReviewResponse(Review review) {
         this.content = review.getContent();
         this.score = review.getScore();
@@ -25,4 +26,11 @@ public class ReviewResponse {
         this.reviewUUID = review.getReviewUUID();
         this.createTime = review.getCreateTime();
     }
+
+    public ReviewResponse linkLoginId(String loginId) {
+        this.loginId = loginId;
+        return this;
+    }
+
+
 }
