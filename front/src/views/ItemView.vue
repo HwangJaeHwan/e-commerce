@@ -1,6 +1,40 @@
 <script setup lang="ts">
-import {ref} from 'vue'
+import {onMounted, reactive, ref} from 'vue'
+import {container} from "tsyringe";
+import ItemRepository from "@/repository/ItemRepository";
+import type HttpError from "@/http/HttpError";
+import {ElMessage} from "element-plus";
+import Item from "@/entity/item/Item";
+import Reviews from "@/components/Reviews.vue";
 const value = ref(3.7)
+
+// const props = defineProps<{
+//   itemId: number
+// }>()
+//
+// onMounted(() => (
+//     alert(props.itemId)
+// ))
+//
+// type Statetype = {
+//   item: Item
+// }
+//
+// const state = reactive<Statetype>({
+//   item: new Item()
+// })
+//
+// const ITEM_REPOSITORY = container.resolve(ItemRepository)
+//
+// function getItem() {
+//   ITEM_REPOSITORY.get(props.itemId)
+//       .then((item: Item) => {
+//         state.item = item
+//       })
+//       .catch((e:HttpError) => {
+//         ElMessage({ type: 'error', message: e.getMessage() })
+//       })
+// }
 
 
 </script>
@@ -45,10 +79,9 @@ const value = ref(3.7)
 
   <div>
     <p>상품평</p>
-
-
-
-
+  </div>
+  <div>
+    <Reviews/>
   </div>
 </template>
 

@@ -1,8 +1,7 @@
-import {ElMessage} from "element-plus";
 import HttpError from "@/http/HttpError";
-import type {AxiosInstance, AxiosRequestConfig, AxiosResponse} from "axios";
+import type {AxiosInstance, AxiosResponse} from "axios";
 import axios from "axios";
-import {injectable, singleton} from "tsyringe";
+import {singleton} from "tsyringe";
 
 export type HttpRequestConfig = {
     path: string

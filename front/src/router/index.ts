@@ -29,9 +29,11 @@ const router = createRouter({
       component: RegisterUser
     },
     {
-      path: "/item/:itemId",
+      path: "/item",
       name: "item",
-      component: ItemView
+      component: ItemView,
+      props: true
+
     }
   ]
 })
