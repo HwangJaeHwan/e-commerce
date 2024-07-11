@@ -1,9 +1,7 @@
 import HttpRepository from "@/repository/HttpRepository";
 import {inject, singleton} from "tsyringe";
 import type ItemAdd from "@/entity/item/ItemAdd";
-import {plainToClass, plainToInstance} from "class-transformer";
 import Item from "@/entity/item/Item";
-import Paging from "@/entity/data/Paging";
 
 @singleton()
 export default class ItemRepository {

@@ -48,8 +48,11 @@ public class ReviewService {
 
         Page<Review> reviewPage = reviewRepository.getPage(page, itemUUID);
 
-        Set<String> uuids = reviewPage.getContent().stream().map(Review::getReviewUUID).collect(Collectors.toSet());
+        Set<String> uuids = reviewPage.getContent().stream().map(Review::getUserUUID).collect(Collectors.toSet());
         Map<String, String> loginIds = userServiceClient.findLoginIds(uuids);
+
+        log.info("uuids= {}", uuids);
+        log.info("ids = {}", loginIds);
 
         Page<ReviewResponse> map = reviewRepository.getPage(page, itemUUID)
                 .map(review -> new ReviewResponse(review).linkLoginId(loginIds.get(review.getUserUUID())));
@@ -60,7 +63,7 @@ public class ReviewService {
                 .totalElement(reviewPage.getTotalElements())
                 .isFirst(reviewPage.isFirst())
                 .isLast(reviewPage.isLast())
-                .reviews(map.getContent())
+                .items(map.getContent())
                 .build();
 
     }

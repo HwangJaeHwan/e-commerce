@@ -3,7 +3,7 @@ import AxiosHttpClient from "@/http/AxiosHttpClient";
 import {inject, singleton} from "tsyringe";
 import {plainToInstance} from "class-transformer";
 import Null from "@/entity/data/Null";
-import type Paging from "@/entity/data/Paging";
+import Paging from "@/entity/data/Paging";
 
 @singleton()
 export default class HttpRepository {

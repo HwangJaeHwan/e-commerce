@@ -82,8 +82,14 @@ public class UserService {
     }
 
     public Map<String, String> findLoginIds(Set<String> uuids) {
+        log.info("in");
 
-        return userRepository.findUserByUserUUIDIn(uuids)
+        List<User> user = userRepository.findUserByUserUUIDIn(uuids);
+        log.info("size = {}", user.size());
+        log.info("info first: {}", user.getFirst());
+        log.info("info last: {}", user.getLast());
+
+        return user
                 .stream().collect(Collectors.toMap(User::getUserUUID, User::getLoginId));
 
     }

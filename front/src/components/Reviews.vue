@@ -1,23 +1,25 @@
 <script setup lang="ts">
-import Review from "@/components/Review.vue";
+
+
+import ReviewInfo from "@/components/ReviewInfo.vue";
+import type Review from "@/entity/review/Review";
+import type Paging from "@/entity/data/Paging";
+
+const props = defineProps<{
+  paging : Paging<Review>
+}>()
+
 </script>
 
 <template>
-  <div class="totalCount">리뷰 0개</div>
+  <div class="totalCount">리뷰: {{paging.totalElement}}</div>
 
 
   <ul class="reviews">
-    <li class="comment">
-      <Review />
+    <li v-for="review in paging.items" :key="review.reviewUUID"  class="comment">
+      <ReviewInfo :review="review"/>
     </li>
 
-    <li class="review">
-      <Review />
-    </li>
-
-    <li class="review">
-      <Review />
-    </li>
   </ul>
 </template>
 

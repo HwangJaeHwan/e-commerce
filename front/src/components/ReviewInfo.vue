@@ -1,17 +1,26 @@
 <script setup lang="ts">
+
+import type Review from "@/entity/review/Review";
+
+const props = defineProps<{
+  review: Review
+}>()
 </script>
 
 <template>
   <div class="comment">
     <div class="header">
       <div class="section">
-        <div class="author">밥돌이</div>
-        <div class="regDate">2023-05-01 23:59:59</div>
+        <div class="author">{{props.review.loginId}}</div>
+        <div class="regDate">{{props.review.getDisplaySimpleRegDate()}}</div>
       </div>
 
       <div class="delete">삭제</div>
     </div>
-    <div class="content">나 밥돌맨인데 개추했다.</div>
+    <img src="/images/logo.png" alt="logo" class="logo"/>
+    <img src="/images/logo.png" alt="logo" class="logo"/>
+    <img src="/images/logo.png" alt="logo" class="logo"/>
+    <div class="content">{{ props.review.content }}</div>
   </div>
 </template>
 
@@ -43,6 +52,7 @@
 
 .content {
   margin-top: 0.8rem;
+  margin-bottom: 0.8rem;
 }
 
 .delete {

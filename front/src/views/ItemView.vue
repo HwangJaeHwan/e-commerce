@@ -6,36 +6,55 @@ import type HttpError from "@/http/HttpError";
 import {ElMessage} from "element-plus";
 import Item from "@/entity/item/Item";
 import Reviews from "@/components/Reviews.vue";
+import ReviewRepository from "@/repository/ReviewRepository";
+import Paging from "@/entity/data/Paging";
+import Review from "@/entity/review/Review";
 const value = ref(3.7)
 
-// const props = defineProps<{
-//   itemId: number
-// }>()
-//
+const props = defineProps<{
+  itemId: number
+}>()
+
 // onMounted(() => (
 //     alert(props.itemId)
 // ))
-//
-// type Statetype = {
-//   item: Item
-// }
-//
-// const state = reactive<Statetype>({
-//   item: new Item()
-// })
-//
-// const ITEM_REPOSITORY = container.resolve(ItemRepository)
-//
-// function getItem() {
-//   ITEM_REPOSITORY.get(props.itemId)
-//       .then((item: Item) => {
-//         state.item = item
-//       })
-//       .catch((e:HttpError) => {
-//         ElMessage({ type: 'error', message: e.getMessage() })
-//       })
-// }
 
+type StateType = {
+  item: Item,
+  reviewList: Paging<Review>
+}
+
+const state = reactive<StateType>({
+  item: new Item(),
+  reviewList: new Paging<Review>(),
+})
+
+const ITEM_REPOSITORY = container.resolve(ItemRepository)
+
+function getItem() {
+  ITEM_REPOSITORY.get(props.itemId)
+      .then((item: Item) => {
+        state.item = item
+      })
+      .catch((e:HttpError) => {
+        ElMessage({ type: 'error', message: e.getMessage() })
+      })
+}
+
+const REVIEW_REPOSITORY = container.resolve(ReviewRepository)
+
+function getReviews() {
+  REVIEW_REPOSITORY.getList('item-uuid-1')
+      .then((reviewList) => {
+        console.log(">>>>",reviewList)
+        state.reviewList = reviewList
+        console.log(">zz>>",state.reviewList)
+      })
+}
+
+onMounted(() => {
+  getReviews()
+})
 
 </script>
 
@@ -81,7 +100,7 @@ const value = ref(3.7)
     <p>상품평</p>
   </div>
   <div>
-    <Reviews/>
+    <Reviews :paging="state.reviewList"/>
   </div>
 </template>
 
