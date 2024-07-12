@@ -5,6 +5,7 @@ import ItemRepository from "@/repository/ItemRepository";
 import {reactive} from "vue";
 import type Item from "@/entity/item/Item";
 import Paging from "@/entity/data/Paging";
+import ItemList from "@/components/ItemList.vue";
 
 const ITEM_REPOSITORY = container.resolve(ItemRepository)
 
@@ -19,9 +20,9 @@ const state = reactive({
 
 function getList() {
 ITEM_REPOSITORY.getList()
-    .then((postList => {
-      console.log(postList);
-      state.itemList = postList;
+    .then((itemList => {
+      console.log(itemList);
+      state.itemList = itemList;
     }))
 }
 
@@ -29,11 +30,28 @@ ITEM_REPOSITORY.getList()
 </script>
 
 <template>
-  <div>
-    <li v-for="item in state.itemList.items" :key="item.id">
+  <div class="tmp" style="height: 100% width= 100%">
+    <item-list/>
+    <item-list/>
+    <item-list/>
+    <item-list/>
 
-    </li>
+    <item-list/>
+    <item-list/>
+    <item-list/>
+    <item-list/>
+
 
   </div>
 
 </template>
+
+<style>
+
+.tmp {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+
+}
+
+</style>
