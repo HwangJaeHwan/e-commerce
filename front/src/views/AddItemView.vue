@@ -1,17 +1,20 @@
 <script setup lang="ts">
 
-import {reactive} from "vue";
+import {reactive, ref} from "vue";
 import ItemAdd from "@/entity/item/ItemAdd";
 import ItemRepository from "@/repository/ItemRepository";
 import {container} from "tsyringe";
 import {ElMessage} from "element-plus";
 import HttpError from "@/http/HttpError";
 import router from "@/router";
+import ImageRepository from "@/repository/ImageRepository";
+import ImageRequest from "@/entity/image/ImageRequest";
 
 const state = reactive({
-    itemAdd: new ItemAdd(),
-})
-
+  itemAdd: new ItemAdd(),
+  imageFiles: [] as File[],
+  imagePreviews: [] as string[],
+});
 
 const options = [
   {
@@ -41,18 +44,77 @@ const options = [
 ]
 
 const ITEM_REPOSITORY = container.resolve(ItemRepository)
+const IMAGE_REPOSITORY = container.resolve(ImageRepository)
+
+
+
+
+function handleImageChange(event: Event) {
+  const files = (event.target as HTMLInputElement).files;
+  if (files) {
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      state.imageFiles.push(file);
+
+      const reader = new FileReader();
+      reader.onload = e => {
+        state.imagePreviews.push((e.target as FileReader).result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+}
+
+async function uploadImages() {
+
+  const imageUrls: string[] = [];
+
+
+  for (const file of state.imageFiles) {
+    const formData = new FormData();
+
+    formData.append('images', file);
+
+    const jsonData = {
+      UUID: 'test-UUID',
+      userUUID: 'test-userUUID',
+      imageType: 'ITEM'
+    };
+
+    const jsonBlob = new Blob([JSON.stringify(jsonData)], { type: 'application/json' });
+    formData.append('info', jsonBlob);
+
+
+    IMAGE_REPOSITORY.upload(formData)
+        .then((response) =>{
+          alert(response.data)
+        })
+        .catch(() => {
+          ElMessage({ type: 'error', message: '이미지 업로드 실패' });
+          return false;
+        })
+
+  }
+  return true;
+}
+
+
+
 
 function write() {
-  ITEM_REPOSITORY.write(state.itemAdd)
-      .then(() => {
-        ElMessage({type: 'success', message: '상품을 등록했습니다.'})
-        router.replace('/')
-      })
-      .catch((e:HttpError)=>{
-        ElMessage({ type: 'error', message: e.getMessage() })
-      })
-
+  const imagesUploaded = uploadImages();
+  // if (imagesUploaded) {
+  //   ITEM_REPOSITORY.write(state.itemAdd)
+  //       .then(() => {
+  //         ElMessage({ type: 'success', message: '상품을 등록했습니다.' });
+  //         router.replace('/');
+  //       })
+  //       .catch((e: HttpError) => {
+  //         ElMessage({ type: 'error', message: e.getMessage() });
+  //       });
+  // }
 }
+
 
 
 </script>
@@ -97,6 +159,17 @@ function write() {
 
     </el-input>
   </div>
+
+  <div class="mt-5">
+    <input type="file" @change="handleImageChange" accept="image/*" multiple/>
+    <div v-if="state.imagePreviews.length > 0" class="mt-3">
+      <div v-for="(preview, index) in state.imagePreviews" :key="index" class="image-preview">
+        <img :src="preview" alt="이미지 미리보기" style="width: 100px; height: 100px;"/>
+      </div>
+    </div>
+  </div>
+
+
   <div class="mt-2">
     <el-button type="primary" @click="write()">상품 등록</el-button>
   </div>

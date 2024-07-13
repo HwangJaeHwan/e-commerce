@@ -4,21 +4,23 @@
 
 
 <template>
+
+  <router-link to="to">
   <div class="item-list">
 
-    <div class="img-size image">
-      <img src="/images/tmp.jpg" alt="logo" class="img"/>
+    <div class="img-size image mb-3">
+      <img src="/images/tmp2.jpg" alt="logo" class="img"/>
     </div>
 
     <div>
-      <div style="word-break: break-all" class="mb-2">
-        상품 이름zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz
+      <div style="word-break: break-all" class="mb-3">
+        상품 이름
       </div>
-      <div class="mb-2">
+      <div style="word-break: break-all" class="mb-3">
         상품 가격
       </div>
 
-      <div class="mb-2">
+      <div style="word-break: break-all" class="mb-3">
         평점
       </div>
 
@@ -28,6 +30,8 @@
 
 
   </div>
+
+  </router-link>
 
 
 </template>
@@ -40,15 +44,11 @@
 .item-list{
   display: flex;
   flex-direction: column;
-  width: 90%;
-  height: 500px;
+  height: 400px;
 }
 .img-size {
-  height: 100px;
+  height: 200px;
 }
 
-.item-simple-info{
-
-}
 
 </style>

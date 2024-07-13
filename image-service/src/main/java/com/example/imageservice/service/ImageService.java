@@ -13,6 +13,7 @@ import com.example.imageservice.repository.UrlRepository;
 import com.example.imageservice.request.ImageRequest;
 import com.example.imageservice.response.UrlResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,6 +22,7 @@ import java.io.IOException;
 import java.util.List;
 
 @Service
+@Slf4j
 @Transactional
 @RequiredArgsConstructor
 public class ImageService {
@@ -63,6 +65,7 @@ public class ImageService {
         Image image;
 
         if (request.getImageType().equals(ImageType.ITEM)) {
+            log.info("아이템 이미지!");
             image = new ItemImage(request.getUserUUID(), request.getUUID());
         } else {
             image = new ReviewImage(request.getUserUUID(), request.getUUID());

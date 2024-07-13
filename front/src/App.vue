@@ -7,17 +7,17 @@ import Content from "@/components/Content.vue";
 
 <template>
   <el-row>
-    <el-col :span="16" :offset="4">
+    <el-col :span="12" :offset="6">
 
       <Header />
     </el-col>
 
-    <el-col :span="16" :offset="4">
+    <el-col :span="12" :offset="6">
       <Menu />
     </el-col>
 
   </el-row>
-  <el-col :span="16" :offset="4">
+  <el-col :span="12" :offset="6">
    <Content/>
   </el-col>
 

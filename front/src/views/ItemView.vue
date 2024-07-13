@@ -135,7 +135,6 @@ onMounted(() => {
 
 .image {
   position: relative;
-  height: 100%;
 }
 
 @media screen and (max-width: 1000px) {

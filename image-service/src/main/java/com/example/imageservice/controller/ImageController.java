@@ -6,6 +6,7 @@ import com.example.imageservice.request.ImageRequest;
 import com.example.imageservice.response.UrlResponse;
 import com.example.imageservice.service.ImageService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.UrlResource;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,15 +17,20 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/image-service")
+@Slf4j
 @RequiredArgsConstructor
 public class ImageController {
 
     private final ImageService imageService;
     private final ImageStore imageStore;
 
-    @PostMapping("/")
+    @PostMapping("/upload")
     public List<UrlResponse> saveImages(@RequestPart("info") ImageRequest request, @RequestPart("images") List<MultipartFile> images) throws IOException {
-
+        log.info("in");
+        log.info("uuid = {}", request.getUUID());
+        log.info("user uuid = {}", request.getUserUUID());
+        log.info("type = {}", request.getImageType());
+        log.info("images = {}", images);
         return imageService.saveImages(request, images);
 
     }
