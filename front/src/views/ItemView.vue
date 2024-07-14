@@ -9,11 +9,13 @@ import Reviews from "@/components/Reviews.vue";
 import ReviewRepository from "@/repository/ReviewRepository";
 import Paging from "@/entity/data/Paging";
 import Review from "@/entity/review/Review";
+import ImageRepository from "@/repository/ImageRepository";
 const value = ref(3.7)
 
 const props = defineProps<{
   itemId: number
 }>()
+
 
 // onMounted(() => (
 //     alert(props.itemId)
@@ -21,15 +23,18 @@ const props = defineProps<{
 
 type StateType = {
   item: Item,
-  reviewList: Paging<Review>
+  reviewList: Paging<Review>,
+  imageUrl: string | null
 }
 
 const state = reactive<StateType>({
   item: new Item(),
   reviewList: new Paging<Review>(),
+  imageUrl: null
 })
 
 const ITEM_REPOSITORY = container.resolve(ItemRepository)
+const IMAGE_REPOSITORY = container.resolve(ImageRepository)
 
 function getItem() {
   ITEM_REPOSITORY.get(props.itemId)
@@ -52,9 +57,25 @@ function getReviews() {
       })
 }
 
+async function getImage() {
+  console.log("씨발")
+  IMAGE_REPOSITORY.get("9d43e3bd-610d-4987-a359-22b57d3ff461.PNG")
+      .then(response =>{
+        console.log(typeof response)
+        const blob = response.data
+        state.imageUrl = URL.createObjectURL(blob)
+      })
+      .catch((e) => {
+        console.log(e)
+      })
+
+}
+
 onMounted(() => {
   getReviews()
+  getImage()
 })
+
 
 </script>
 
@@ -62,7 +83,7 @@ onMounted(() => {
   <div class="item-box">
 
     <div class="w-40 image test2">
-      <img src="/images/logo.png" alt="logo" class="img"/>
+      <img :src='state.imageUrl' alt="logo" class="img"/>
     </div>
 
     <div class="w-60 test">

@@ -1,17 +1,27 @@
-import {singleton} from "tsyringe";
+import {inject, singleton} from "tsyringe";
 import axios from "axios";
+import Item from "@/entity/item/Item";
+import HttpRepository from "@/repository/HttpRepository";
 
 @singleton()
 export default class ImageRepository {
 
 
+    constructor(@inject(HttpRepository) private readonly httpRepository: HttpRepository) {
+    }
+
+//api/image-service/upload
     public upload(request: FormData) {
 
-        return axios.post('api/image-service/upload',request,{
-            headers: {
-                'Content-Type': 'multipart/form-data'
-            }
-        })
+       return this.httpRepository.post({
+           path:'api/image-service/upload',
+           body: request
+       })
+    }
+
+    public get(filename: string) {
+        return axios.get(`api/image-service/${filename}`,{ responseType: 'blob' })
+
     }
 
 

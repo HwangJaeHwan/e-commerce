@@ -13,6 +13,7 @@ import static lombok.AccessLevel.*;
 
 @Entity
 @Getter
+@Inheritance
 @NoArgsConstructor(access = PROTECTED)
 @DiscriminatorColumn(name = "type")
 public abstract class Image {

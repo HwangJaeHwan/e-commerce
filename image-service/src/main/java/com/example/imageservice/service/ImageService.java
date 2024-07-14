@@ -38,8 +38,8 @@ public class ImageService {
 
         imageStore.storeImages(image,images);
 
-
         imageRepository.save(image);
+
 
         return image.getUrls().stream().map(UrlResponse::new).toList();
 
@@ -64,11 +64,13 @@ public class ImageService {
     private Image typeCheck(ImageRequest request) {
         Image image;
 
+        log.info("request.getUUID() = {}",request.getUuid());
+        log.info("request.getUserUUID() = {}",request.getUserUUID());
         if (request.getImageType().equals(ImageType.ITEM)) {
             log.info("아이템 이미지!");
-            image = new ItemImage(request.getUserUUID(), request.getUUID());
+            image = new ItemImage(request.getUserUUID(), request.getUuid());
         } else {
-            image = new ReviewImage(request.getUserUUID(), request.getUUID());
+            image = new ReviewImage(request.getUserUUID(), request.getUuid());
         }
 
         return image;

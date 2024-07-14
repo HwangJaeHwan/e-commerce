@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @DiscriminatorValue("ITEM")
 public class ItemImage extends Image{
 
-    String itemUUID;
+    private String itemUUID;
 
     public ItemImage(String userUUID, String itemUUID) {
         super(userUUID);

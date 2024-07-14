@@ -27,7 +27,7 @@ public class ImageController {
     @PostMapping("/upload")
     public List<UrlResponse> saveImages(@RequestPart("info") ImageRequest request, @RequestPart("images") List<MultipartFile> images) throws IOException {
         log.info("in");
-        log.info("uuid = {}", request.getUUID());
+        log.info("uuid = {}", request.getUuid());
         log.info("user uuid = {}", request.getUserUUID());
         log.info("type = {}", request.getImageType());
         log.info("images = {}", images);
@@ -35,13 +35,15 @@ public class ImageController {
 
     }
 
-    @GetMapping("/{UUID}")
+    @GetMapping("/{UUID}/urls")
     public List<UrlResponse> getUrls(@PathVariable String UUID, @RequestParam ImageType imageType) {
         return imageService.getUrls(UUID, imageType);
     }
     @GetMapping("/{filename}")
     public UrlResource showImage(@PathVariable String filename) throws
             MalformedURLException {
+        log.info("show image");
+        log.info("filename = {}",filename);
 
         return new UrlResource("file:" + imageStore.getFullPath(filename));
     }

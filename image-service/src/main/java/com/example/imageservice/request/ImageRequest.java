@@ -6,7 +6,7 @@ import lombok.Getter;
 @Getter
 public class ImageRequest {
 
-    private String UUID;
+    private String uuid;
     private String userUUID;
     private ImageType imageType;
 

@@ -76,7 +76,7 @@ async function uploadImages() {
     formData.append('images', file);
 
     const jsonData = {
-      UUID: 'test-UUID',
+      uuid: 'test-UUID',
       userUUID: 'test-userUUID',
       imageType: 'ITEM'
     };
