@@ -10,7 +10,7 @@
       <el-menu-item  index="/login">뷰티</el-menu-item>
       <el-menu-item  index="/register">푸드</el-menu-item>
       <el-menu-item  index="/item">스포츠</el-menu-item>
-      <el-menu-item  index="/">건강</el-menu-item>
+      <el-menu-item  index="/review/write">건강</el-menu-item>
       <el-menu-item  index="/">기타</el-menu-item>
 
     </el-menu>

@@ -24,13 +24,13 @@ const props = defineProps<{
 type StateType = {
   item: Item,
   reviewList: Paging<Review>,
-  imageUrl: string | null
+  imageUrl: string[] | null
 }
 
 const state = reactive<StateType>({
   item: new Item(),
   reviewList: new Paging<Review>(),
-  imageUrl: null
+  imageUrl: []
 })
 
 const ITEM_REPOSITORY = container.resolve(ItemRepository)
@@ -57,17 +57,17 @@ function getReviews() {
       })
 }
 
-async function getImage() {
-  console.log("씨발")
+function getImage() {
+
   IMAGE_REPOSITORY.get("9d43e3bd-610d-4987-a359-22b57d3ff461.PNG")
       .then(response =>{
-        console.log(typeof response)
         const blob = response.data
-        state.imageUrl = URL.createObjectURL(blob)
+        state.imageUrl?.push(URL.createObjectURL(blob))
       })
       .catch((e) => {
         console.log(e)
       })
+
 
 }
 
@@ -83,7 +83,11 @@ onMounted(() => {
   <div class="item-box">
 
     <div class="w-40 image test2">
-      <img :src='state.imageUrl' alt="logo" class="img"/>
+      <el-carousel :interval="5000" arrow="always">
+        <el-carousel-item v-for="(url, index) in state.imageUrl" :key="index">
+          <img :src="url" alt="Image" class="img" />
+        </el-carousel-item>
+      </el-carousel>
     </div>
 
     <div class="w-60 test">

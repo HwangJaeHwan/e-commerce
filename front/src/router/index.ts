@@ -4,6 +4,8 @@ import AddItemView from "@/views/AddItemView.vue";
 import LoginView from "@/views/LoginView.vue";
 import RegisterUser from "@/views/RegisterUser.vue";
 import ItemView from "@/views/ItemView.vue";
+import WriteReview from "@/entity/review/WriteReview";
+import WriteReviewView from "@/views/WriteReviewView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -32,6 +34,13 @@ const router = createRouter({
       path: "/item",
       name: "item",
       component: ItemView,
+      props: true
+
+    },
+    {
+      path: "/review/write",
+      name: "writeReview",
+      component: WriteReviewView,
       props: true
 
     }

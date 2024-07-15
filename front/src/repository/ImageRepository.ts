@@ -10,11 +10,11 @@ export default class ImageRepository {
     constructor(@inject(HttpRepository) private readonly httpRepository: HttpRepository) {
     }
 
-//api/image-service/upload
+
     public upload(request: FormData) {
 
        return this.httpRepository.post({
-           path:'api/image-service/upload',
+           path:'/api/image-service/upload',
            body: request
        })
     }
