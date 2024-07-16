@@ -3,6 +3,8 @@ package com.example.imageservice.controller;
 import com.example.imageservice.domain.image.ImageType;
 import com.example.imageservice.image.ImageStore;
 import com.example.imageservice.request.ImageRequest;
+import com.example.imageservice.request.ItemRequest;
+import com.example.imageservice.response.ImageResponse;
 import com.example.imageservice.response.UrlResponse;
 import com.example.imageservice.service.ImageService;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -46,6 +49,14 @@ public class ImageController {
         log.info("filename = {}",filename);
 
         return new UrlResource("file:" + imageStore.getFullPath(filename));
+    }
+
+    @PostMapping("/images")
+    public List<ImageResponse> images(@RequestBody List<String> uuids) throws IOException {
+
+        return imageService.getImages(uuids);
+
+
     }
 
     @DeleteMapping("/{userUUID}/{filename}")

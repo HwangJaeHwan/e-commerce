@@ -65,36 +65,33 @@ function handleImageChange(event: Event) {
   }
 }
 
-async function uploadImages() {
+function uploadImages(){
 
-  const imageUrls: string[] = [];
+  const formData = new FormData()
+
+  const jsonData = {
+    uuid: 'test-UUID',
+    userUUID: 'test-userUUID',
+    imageType: 'ITEM'
+  };
+
+  const jsonBlob = new Blob([JSON.stringify(jsonData)], { type: 'application/json' });
+  formData.append('info', jsonBlob);
 
 
   for (const file of state.imageFiles) {
-    const formData = new FormData();
 
     formData.append('images', file);
 
-    const jsonData = {
-      uuid: 'test-UUID',
-      userUUID: 'test-userUUID',
-      imageType: 'ITEM'
-    };
-
-    const jsonBlob = new Blob([JSON.stringify(jsonData)], { type: 'application/json' });
-    formData.append('info', jsonBlob);
-
-
-    IMAGE_REPOSITORY.upload(formData)
-        .then((response) =>{
-          alert(response.data)
-        })
-        .catch(() => {
-          ElMessage({ type: 'error', message: '이미지 업로드 실패' });
-          return false;
-        })
-
   }
+
+  IMAGE_REPOSITORY.upload(formData)
+      .then()
+      .catch(() => {
+        ElMessage({ type: 'error', message: '이미지 업로드 실패' });
+        return false;
+      })
+
   return true;
 }
 
@@ -103,16 +100,16 @@ async function uploadImages() {
 
 function write() {
   const imagesUploaded = uploadImages();
-  // if (imagesUploaded) {
-  //   ITEM_REPOSITORY.write(state.itemAdd)
-  //       .then(() => {
-  //         ElMessage({ type: 'success', message: '상품을 등록했습니다.' });
-  //         router.replace('/');
-  //       })
-  //       .catch((e: HttpError) => {
-  //         ElMessage({ type: 'error', message: e.getMessage() });
-  //       });
-  // }
+  if (imagesUploaded) {
+    ITEM_REPOSITORY.write(state.itemAdd)
+        .then(() => {
+          ElMessage({ type: 'success', message: '상품을 등록했습니다.' });
+          router.replace('/');
+        })
+        .catch((e: HttpError) => {
+          ElMessage({ type: 'error', message: e.getMessage() });
+        });
+  }
 }
 
 

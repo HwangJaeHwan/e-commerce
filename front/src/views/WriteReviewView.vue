@@ -66,9 +66,7 @@ function uploadImages() {
   }
 
   IMAGE_REPOSITORY.upload(formData)
-      .then((response) =>{
-        alert(response.data)
-      })
+      .then()
       .catch(() => {
         ElMessage({ type: 'error', message: '이미지 업로드 실패' });
         return false;

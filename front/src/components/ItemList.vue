@@ -1,4 +1,13 @@
 <script setup lang="ts">
+
+import Review from "@/entity/review/Review";
+import type Item from "@/entity/item/Item";
+
+const props = defineProps<{
+  // item: Item,
+  map: Map<string,string>
+}>()
+
 </script>
 
 
@@ -9,7 +18,7 @@
   <div class="item-list">
 
     <div class="img-size image mb-3">
-      <img src="/images/tmp2.jpg" alt="logo" class="img"/>
+      <img :src="props.map.get('test-UUID-1')" alt="logo" class="img"/>
     </div>
 
     <div>

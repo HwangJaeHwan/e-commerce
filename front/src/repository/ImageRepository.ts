@@ -20,8 +20,15 @@ export default class ImageRepository {
     }
 
     public get(filename: string) {
-        return axios.get(`api/image-service/${filename}`,{ responseType: 'blob' })
+        return axios.get(`/api/image-service/${filename}`,{ responseType: 'blob' })
 
+    }
+
+    public getImages(request: string){
+        return axios.post('/api/image-service/images',request,{
+            headers: {
+                'Content-Type': 'application/json',
+            }})
     }
 
 
