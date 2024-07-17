@@ -21,7 +21,7 @@ public class KafkaConsumer {
 
 
 
-    @KafkaListener(topics = "item-add-topic")
+    @KafkaListener(topics = "item-add-topic",containerFactory = "stringJsonKafkaListenerContainerFactory")
     public void updateStock(String message) {
 
 
@@ -31,7 +31,7 @@ public class KafkaConsumer {
 
 
 
-    @KafkaListener(topics = "item-reduce-topic")
+    @KafkaListener(topics = "item-reduce-topic",containerFactory = "stringJsonKafkaListenerContainerFactory")
     public void reduceStock(String message) {
 
 

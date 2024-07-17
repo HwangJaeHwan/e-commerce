@@ -39,14 +39,14 @@ function getImages(){
         console.log("zasdasdasd>>>" + response)
         const imageResponse = response.data
         for (let json of response.data) {
-
-          const blob = new Blob([new Uint8Array(json.imageData)], { type: json.mimeType });
-          const url = URL.createObjectURL(blob);
+          base64ToImage(json.imageData,json.mimeType,json.itemUUID)
+          // const blob = new Blob([new Uint8Array(json.imageData)], { type: json.mimeType });
+          // const url = URL.createObjectURL(blob);
           console.log("response >>>" +json)
-          console.log("uuid >>>" +json.itemUUIds)
-          console.log("url >>> "+ url)
+          console.log("uuid >>>" +json.itemUUID)
+          // console.log("url >>> "+ url)
           console.log("mimeType>>>"+ json.mimeType)
-          state.imageMap.set(json.itemUUIds,url)
+          // state.imageMap.set(json.itemUUIds,url)
 
 
         }
@@ -54,6 +54,22 @@ function getImages(){
       })
 
 }
+
+
+function base64ToImage(base64String, mimeType, itemUUID) {
+
+  const byteCharacters = atob(base64String);
+  const byteNumbers = new Array(byteCharacters.length);
+  for (let i = 0; i < byteCharacters.length; i++) {
+    byteNumbers[i] = byteCharacters.charCodeAt(i);
+  }
+  const byteArray = new Uint8Array(byteNumbers);
+  const blob = new Blob([byteArray], { type: mimeType });
+  const url = URL.createObjectURL(blob)
+ state.imageMap.set(itemUUID,url)
+
+}
+
 
 onMounted(() =>{
   getList()

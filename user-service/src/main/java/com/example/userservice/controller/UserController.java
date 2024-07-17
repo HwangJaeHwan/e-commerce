@@ -3,6 +3,7 @@ package com.example.userservice.controller;
 import com.example.userservice.config.auth.UserSession;
 import com.example.userservice.config.jwt.JwtProvider;
 import com.example.userservice.domain.User;
+import com.example.userservice.request.CartRequest;
 import com.example.userservice.request.CreateUser;
 import com.example.userservice.request.LoginRequest;
 import com.example.userservice.request.PasswordChange;
@@ -62,8 +63,12 @@ public class UserController {
     @PatchMapping("/passwordChange")
     public void passwordChange(UserSession userSession, @RequestBody PasswordChange passwordChange) {
 
-        userService.changePassword(userSession.getId(),passwordChange);
+        userService.changePassword(userSession.getId(), passwordChange);
     }
 
+    @PostMapping("/cart/add")
+    public void cartAdd(UserSession userSession, @RequestBody CartRequest cartRequest) {
 
+        userService.addCart(cartRequest);
+    }
 }

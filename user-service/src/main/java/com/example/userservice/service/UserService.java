@@ -2,7 +2,9 @@ package com.example.userservice.service;
 
 import com.example.userservice.domain.User;
 import com.example.userservice.exception.*;
+import com.example.userservice.messagequeue.KafkaProducer;
 import com.example.userservice.repository.UserRepository;
+import com.example.userservice.request.CartRequest;
 import com.example.userservice.request.CreateUser;
 import com.example.userservice.request.LoginRequest;
 import com.example.userservice.request.PasswordChange;
@@ -28,6 +30,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final KafkaProducer kafkaProducer;
 
 
     public void createUser(CreateUser createUser) {
@@ -115,5 +118,12 @@ public class UserService {
 
     private boolean isLoginIdDuplicate(String loginId) {
         return userRepository.findByLoginId(loginId).isPresent();
+    }
+
+    public void addCart(CartRequest cartRequest) {
+
+        kafkaProducer.send("item-cart-topic", cartRequest);
+
+
     }
 }

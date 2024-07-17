@@ -57,12 +57,17 @@ function getReviews() {
       })
 }
 
-function getImage() {
+function getImages() {
 
-  IMAGE_REPOSITORY.get("9d43e3bd-610d-4987-a359-22b57d3ff461.PNG")
+  IMAGE_REPOSITORY.getItemImage("test-UUID")
       .then(response =>{
-        const blob = response.data
-        state.imageUrl?.push(URL.createObjectURL(blob))
+
+        for (let json of response.data) {
+
+          base64ToImage(json.imageData,json.mimeType,json.itemUUID)
+        }
+        // const blob = response.data
+        // state.imageUrl?.push(URL.createObjectURL(blob))
       })
       .catch((e) => {
         console.log(e)
@@ -71,9 +76,27 @@ function getImage() {
 
 }
 
+
+function base64ToImage(base64String, mimeType, itemUUID) {
+
+  const byteCharacters = atob(base64String);
+  const byteNumbers = new Array(byteCharacters.length);
+  for (let i = 0; i < byteCharacters.length; i++) {
+    byteNumbers[i] = byteCharacters.charCodeAt(i);
+  }
+  const byteArray = new Uint8Array(byteNumbers);
+  const blob = new Blob([byteArray], { type: mimeType });
+  const url = URL.createObjectURL(blob)
+
+  state.imageUrl?.push(url)
+
+}
+
+
+
 onMounted(() => {
   getReviews()
-  getImage()
+  getImages()
 })
 
 

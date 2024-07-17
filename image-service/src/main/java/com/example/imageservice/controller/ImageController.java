@@ -48,7 +48,7 @@ public class ImageController {
         log.info("show image");
         log.info("filename = {}",filename);
 
-        return new UrlResource("file:" + imageStore.getFullPath(filename));
+        return new UrlResource("file:/" + imageStore.getFullPath(filename));
     }
 
     @PostMapping("/images")
@@ -56,7 +56,13 @@ public class ImageController {
 
         return imageService.getImages(uuids);
 
+    }
 
+    @GetMapping("/images/{itemUUID}")
+    public List<ImageResponse> itemImages(@PathVariable String itemUUID) throws IOException {
+        log.info("/images/{}" + itemUUID);
+
+        return imageService.getItemImages(itemUUID);
     }
 
     @DeleteMapping("/{userUUID}/{filename}")

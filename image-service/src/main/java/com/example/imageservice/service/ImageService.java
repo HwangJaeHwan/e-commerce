@@ -119,4 +119,24 @@ public class ImageService {
 
         return responses;
     }
+
+    public List<ImageResponse> getItemImages(String itemUUID) throws IOException {
+        List<ImageResponse> responses = new ArrayList<>();
+
+        ItemImage image = imageRepository.getItemImage(itemUUID).orElseThrow(ImageNotFoundException::new);
+        List<ImageUrl> urls = image.getUrls();
+
+        for (ImageUrl url : urls) {
+            UrlResource urlResource = new UrlResource("file:/" + imageStore.getFullPath(url.getStoredName()));
+            String mimeType = Files.probeContentType(Paths.get(urlResource.getURI()));
+            byte[] imageData = StreamUtils.copyToByteArray(urlResource.getInputStream());
+            responses.add(new ImageResponse(itemUUID, imageData,mimeType));
+        }
+
+        log.info("length = {}", responses.size());
+
+        return responses;
+
+
+    }
 }

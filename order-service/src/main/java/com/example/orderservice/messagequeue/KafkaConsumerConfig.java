@@ -1,4 +1,4 @@
-package com.example.itemservice.messagequeue;
+package com.example.orderservice.messagequeue;
 
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -15,6 +15,7 @@ import java.util.HashMap;
 @EnableKafka
 @Configuration
 public class KafkaConsumerConfig {
+
 
     @Bean
     public ConsumerFactory<String, String> consumerFactory() {
@@ -35,4 +36,6 @@ public class KafkaConsumerConfig {
 
         return kafkaListenerContainerFactory;
     }
+
+
 }

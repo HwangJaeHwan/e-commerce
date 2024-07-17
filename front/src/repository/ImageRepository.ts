@@ -24,6 +24,11 @@ export default class ImageRepository {
 
     }
 
+    public getItemImage(itemUUID: string) {
+        return axios.get(`/api/image-service/images/${itemUUID}`)
+
+    }
+
     public getImages(request: string){
         return axios.post('/api/image-service/images',request,{
             headers: {

@@ -3,16 +3,18 @@ package com.example.imageservice.response;
 import lombok.Getter;
 import org.springframework.core.io.UrlResource;
 
+import java.util.Base64;
+
 @Getter
 public class ImageResponse {
 
-    private String itemUUIds;
-    private byte[] imageData;
+    private String itemUUID;
+    private String imageData;
     private String mimeType;
 
-    public ImageResponse(String itemUUIds, byte[] imageData,String mimeType) {
-        this.itemUUIds = itemUUIds;
-        this.imageData = imageData;
+    public ImageResponse(String itemUUID, byte[] imageData,String mimeType) {
+        this.itemUUID = itemUUID;
+        this.imageData = Base64.getEncoder().encodeToString(imageData);
         this.mimeType = mimeType;
     }
 }
