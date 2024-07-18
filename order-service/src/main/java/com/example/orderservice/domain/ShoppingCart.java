@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 import static lombok.AccessLevel.PROTECTED;
 
 @Entity
@@ -13,19 +15,12 @@ public class ShoppingCart {
 
     @Id
     @GeneratedValue
-    @Column(name = "cart_id")
+    @Column(name = "cart_item_id")
     private Long id;
 
     private String userUUID;
 
-    private String itemUUID;
-
-    private Integer quantity;
-
-
-    public ShoppingCart(String userUUID, String itemUUID, Integer quantity) {
+    public ShoppingCart(String userUUID) {
         this.userUUID = userUUID;
-        this.itemUUID = itemUUID;
-        this.quantity = quantity;
     }
 }

@@ -9,10 +9,8 @@ import com.example.userservice.request.LoginRequest;
 import com.example.userservice.request.PasswordChange;
 import com.example.userservice.response.UserInfoResponse;
 import com.example.userservice.service.UserService;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import jakarta.ws.rs.core.HttpHeaders;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -66,9 +64,10 @@ public class UserController {
         userService.changePassword(userSession.getId(), passwordChange);
     }
 
-    @PostMapping("/cart/add")
+    @PostMapping("/cart/message")
     public void cartAdd(UserSession userSession, @RequestBody CartRequest cartRequest) {
 
-        userService.addCart(cartRequest);
+        cartRequest.setUserUUID(userSession.getUuid());
+        userService.produceCartMessage(cartRequest);
     }
 }

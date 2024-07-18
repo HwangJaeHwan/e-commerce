@@ -15,7 +15,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.net.http.HttpRequest;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -120,10 +119,12 @@ public class UserService {
         return userRepository.findByLoginId(loginId).isPresent();
     }
 
-    public void addCart(CartRequest cartRequest) {
+    public void produceCartMessage(CartRequest cartRequest) {
 
         kafkaProducer.send("item-cart-topic", cartRequest);
 
 
     }
+
+
 }
