@@ -7,6 +7,7 @@ import com.example.userservice.request.CartRequest;
 import com.example.userservice.request.CreateUser;
 import com.example.userservice.request.LoginRequest;
 import com.example.userservice.request.PasswordChange;
+import com.example.userservice.response.Token;
 import com.example.userservice.response.UserInfoResponse;
 import com.example.userservice.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -37,13 +38,13 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public void login(@RequestBody @Valid LoginRequest loginRequest, HttpServletResponse response) {
+    public Token login(@RequestBody @Valid LoginRequest loginRequest, HttpServletResponse response) {
 
         User loginUser = userService.login(loginRequest);
         String token = jwtProvider.createToken(loginUser.getId(), loginUser.getUserUUID());
 
 
-        response.addHeader(AUTHORIZATION, "Bearer " + token);
+        return new Token("Bearer " + token);
     }
 
     @GetMapping("/info")
@@ -68,6 +69,6 @@ public class UserController {
     public void cartAdd(UserSession userSession, @RequestBody CartRequest cartRequest) {
 
         cartRequest.setUserUUID(userSession.getUuid());
-        userService.produceCartMessage(cartRequest);
+//        userService.produceCartMessage(cartRequest);
     }
 }

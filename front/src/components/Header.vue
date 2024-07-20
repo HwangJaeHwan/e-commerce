@@ -1,12 +1,60 @@
+<script setup lang="ts">
+import {container} from "tsyringe";
+import UserRepository from "@/repository/UserRepository";
+import UserProfile from "@/entity/user/UserProfile";
+import {onBeforeMount, reactive} from "vue";
+
+const USER_REPOSITORY = container.resolve(UserRepository)
+
+
+type StateType = {
+  profile: UserProfile | null
+}
+
+const state = reactive<StateType>({
+  profile: null
+})
+
+onBeforeMount(() => {
+  USER_REPOSITORY.getProfile()
+      .then((profile) => {
+        console.log(profile)
+        state.profile = profile
+      })
+})
+
+
+
+
+</script>
+
+
+
 <template>
+  <div class="login-info">
+    <el-link style="margin-right: 8px;" to="tmp" v-if="state.profile === null">
+      회원가입
+    </el-link>
+    <el-link style="margin-right: 8px;" to="tmp" v-else>
+      {{state.profile.loginId}}
+    </el-link>
+
+
+    <el-link to="tmp" v-if="state.profile === null">
+      로그인
+    </el-link>
+    <el-link to="tmp" v-else>
+      로그아웃
+    </el-link>
+
+
+  </div>
   <div class="header">
     <img src="/images/logo.png" alt="logo" class="logo"/>
     <div class="title">테스트 헤드</div>
   </div>
 </template>
 
-<script setup lang="ts">
-</script>
 
 <style scoped>
 .header {
@@ -26,5 +74,10 @@
   font-size: 2rem;
   font-weight: 300;
   margin-left: 5px;
+}
+
+.login-info{
+  display: flex;
+  justify-content: right;
 }
 </style>

@@ -1,7 +1,11 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+
+
+
+
+</script>
 
 <template>
-
 
 
     <el-menu class="menu" mode="horizontal" router>

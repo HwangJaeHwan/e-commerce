@@ -7,6 +7,7 @@ import type HttpError from '@/http/HttpError'
 import UserRepository from '@/repository/UserRepository'
 import {container} from "tsyringe";
 import {ElMessage} from "element-plus";
+import Token from "@/entity/data/Token";
 
 const state = reactive({
   login: new Login()
@@ -18,8 +19,11 @@ const USER_REPOSITORY = container.resolve(UserRepository)
 function doLogin() {
 
   USER_REPOSITORY.login(state.login)
-    .then(() => {
+    .then((token) => {
       ElMessage({type: 'success', message: '환영합니다.'})
+      console.log(token)
+      localStorage.setItem('token',token.token)
+      console.log(">>>>>>"+localStorage.getItem('token'))
       router.replace('/')
     })
     .catch((e: HttpError) => {

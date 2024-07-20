@@ -16,10 +16,14 @@ export default class AxiosHttpClient {
     private readonly client: AxiosInstance = axios.create({
         timeout: 3000,
         timeoutErrorMessage: '네트워크 상태가 좋지 않습니다.',
+        headers: {
+            'Authorization': localStorage.getItem("token")
+        }
     })
 
 
     public async request(config:HttpRequestConfig) {
+
         return this.client
             .request({
                 method: config.method,
@@ -33,7 +37,7 @@ export default class AxiosHttpClient {
 
             .catch(e => {
                 return Promise.reject(new HttpError(e))
-            })
+            });
     }
 
 
