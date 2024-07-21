@@ -7,6 +7,7 @@ import com.example.reviewservice.exception.UnauthorizedException;
 import com.example.reviewservice.repository.ReviewRepository;
 import com.example.reviewservice.request.ReviewRequest;
 import com.example.reviewservice.request.ReviewRevise;
+import com.example.reviewservice.response.ItemScoreResponse;
 import com.example.reviewservice.response.PageResponse;
 import com.example.reviewservice.response.ReviewResponse;
 import lombok.RequiredArgsConstructor;
@@ -81,7 +82,14 @@ public class ReviewService {
 
     }
 
-    public Double getScoreAverage(String itemUUID) {
+    public Double getAverageScore(String itemUUID) {
         return reviewRepository.averageScore(itemUUID);
+    }
+
+    public List<ItemScoreResponse> getAverageScores(List<String> itemUUIDs) {
+
+        return reviewRepository.averageScores(itemUUIDs);
+
+
     }
 }

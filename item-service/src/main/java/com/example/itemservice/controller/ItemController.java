@@ -1,8 +1,10 @@
 package com.example.itemservice.controller;
 
 import com.example.itemservice.domain.item.Category;
+import com.example.itemservice.request.CartItemInfo;
 import com.example.itemservice.request.ItemQuantity;
 import com.example.itemservice.request.ItemRequest;
+import com.example.itemservice.response.CartItemResponse;
 import com.example.itemservice.response.ItemDetailResponse;
 import com.example.itemservice.response.ItemResponse;
 import com.example.itemservice.response.PageResponse;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/item-service")
@@ -27,6 +30,13 @@ public class ItemController {
                               @RequestParam Category category) {
 
         return itemService.items(search, category, page);
+
+    }
+
+    @PostMapping("/items/info")
+    public List<CartItemResponse> itemsInfo(@RequestBody Map<String,Integer> infos) {
+
+        return itemService.getCartItems(infos);
 
     }
 

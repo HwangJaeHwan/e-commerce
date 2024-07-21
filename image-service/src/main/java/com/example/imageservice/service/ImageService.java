@@ -11,7 +11,6 @@ import com.example.imageservice.image.ImageStore;
 import com.example.imageservice.repository.ImageRepository;
 import com.example.imageservice.repository.UrlRepository;
 import com.example.imageservice.request.ImageRequest;
-import com.example.imageservice.request.ItemRequest;
 import com.example.imageservice.response.ImageResponse;
 import com.example.imageservice.response.UrlResponse;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +22,6 @@ import org.springframework.util.StreamUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -56,7 +54,7 @@ public class ImageService {
 
     public void deleteImage(String userUUID, String filename) {
 
-        ImageUrl url = urlRepository.findBystoredName(filename).orElseThrow(ImageNotFoundException::new);
+        ImageUrl url = urlRepository.findByStoredName(filename).orElseThrow(ImageNotFoundException::new);
 
         if (!url.getImage().getUserUUID().equals(userUUID)) {
             throw new UnauthorizedException();

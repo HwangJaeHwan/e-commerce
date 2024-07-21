@@ -16,7 +16,7 @@ type StateType = {
   imageMap: Map<string,string>
 }
 
-const state = reactive({
+const state = reactive<StateType>({
     itemList: new Paging<Item>(),
     imageMap: new Map<string,string>
 }
@@ -31,8 +31,7 @@ ITEM_REPOSITORY.getList()
 }
 
 function getImages(){
-  // const itemUUIDs = state.itemList.items.map(item => item.itemUUID)
-  const itemUUIDs = ['test-UUID-1','test-UUID-2']
+  const itemUUIDs = state.itemList.items.map(item => item.itemUUID)
   const jsonItemUUIDs = JSON.stringify(itemUUIDs);
   IMAGE_REPOSITORY.getImages(jsonItemUUIDs)
       .then((response) =>{
@@ -83,21 +82,10 @@ onMounted(() =>{
 <template>
   <div class="tmp" style="height: 100% width= 100%">
 <!--    <item-list :item ="state.itemList.items" :map ="state.imageMap"/>-->
-    <item-list :map ="state.imageMap"/>
-    <item-list :map ="state.imageMap"/>
-    <item-list :map ="state.imageMap"/>
-    <item-list :map ="state.imageMap"/>
-    <item-list :map ="state.imageMap"/>
-    <item-list :map ="state.imageMap"/>
-    <item-list :map ="state.imageMap"/>
-    <item-list :map ="state.imageMap"/>
-<!--    <item-list/>-->
-<!--    <item-list/>-->
+    <div v-for="(item,index) in state.itemList.items" :key="index">
+      <item-list :map ="state.imageMap" :item ="item"/>
+    </div>
 
-<!--    <item-list/>-->
-<!--    <item-list/>-->
-<!--    <item-list/>-->
-<!--    <item-list/>-->
 
 
   </div>

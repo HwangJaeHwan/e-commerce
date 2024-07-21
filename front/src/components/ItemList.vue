@@ -5,7 +5,8 @@ import type Item from "@/entity/item/Item";
 
 const props = defineProps<{
   // item: Item,
-  map: Map<string,string>
+  map: Map<string,string>,
+  item: Item
 }>()
 
 </script>
@@ -18,19 +19,19 @@ const props = defineProps<{
   <div class="item-list">
 
     <div class="img-size image mb-3">
-      <img :src="props.map.get('test-UUID-1')" alt="logo" class="img"/>
+      <img :src="props.map.get(props.item.itemUUID)" alt="logo" class="img"/>
     </div>
 
     <div>
       <div style="word-break: break-all" class="mb-3">
-        상품 이름
+        {{props.item.name}}
       </div>
       <div style="word-break: break-all" class="mb-3">
-        상품 가격
+        {{props.item.price }}
       </div>
 
       <div style="word-break: break-all" class="mb-3">
-        평점
+        {{props.item.score}}
       </div>
 
 

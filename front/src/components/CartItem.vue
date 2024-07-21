@@ -4,6 +4,10 @@ import {
   Delete,
 } from '@element-plus/icons-vue'
 
+function changeItemQuantity() {
+
+}
+
 </script>
 
 <template>

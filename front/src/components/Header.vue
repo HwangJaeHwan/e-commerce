@@ -32,20 +32,20 @@ onBeforeMount(() => {
 
 <template>
   <div class="login-info">
-    <el-link style="margin-right: 8px;" to="tmp" v-if="state.profile === null">
+    <router-link style="margin-right: 8px;" to="tmp" v-if="state.profile === null">
       회원가입
-    </el-link>
-    <el-link style="margin-right: 8px;" to="tmp" v-else>
+    </router-link>
+    <router-link style="margin-right: 8px;" to="tmp" v-else>
       {{state.profile.loginId}}
-    </el-link>
+    </router-link>
 
 
-    <el-link to="tmp" v-if="state.profile === null">
+    <router-link to="tmp" v-if="state.profile === null">
       로그인
-    </el-link>
-    <el-link to="tmp" v-else>
+    </router-link>
+    <router-link to="tmp" v-else>
       로그아웃
-    </el-link>
+    </router-link>
 
 
   </div>

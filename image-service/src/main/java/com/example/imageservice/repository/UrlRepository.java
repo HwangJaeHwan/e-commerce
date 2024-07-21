@@ -7,6 +7,6 @@ import java.util.Optional;
 
 public interface UrlRepository extends JpaRepository<ImageUrl, Long> {
 
-    Optional<ImageUrl> findBystoredName(String storedName);
+    Optional<ImageUrl> findByStoredName(String storedName);
 
 }

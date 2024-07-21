@@ -6,11 +6,10 @@ import com.example.itemservice.domain.item.Category;
 import com.example.itemservice.domain.item.Item;
 import com.example.itemservice.exception.ItemNotFoundException;
 import com.example.itemservice.repository.ItemRepository;
+import com.example.itemservice.request.CartItemInfo;
 import com.example.itemservice.request.ItemQuantity;
 import com.example.itemservice.request.ItemRequest;
-import com.example.itemservice.response.ItemDetailResponse;
-import com.example.itemservice.response.ItemResponse;
-import com.example.itemservice.response.PageResponse;
+import com.example.itemservice.response.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
@@ -19,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -33,12 +33,22 @@ public class ItemService {
     @Transactional(readOnly = true)
     public PageResponse items(String search, Category category, int page) {
 
+
         Page<Item> items = itemRepository.getPage(search, category, page);
+
+        List<String> itemUUIDs = items.getContent().stream().map(Item::getItemUUID).toList();
+
+        Map<String,Double> responses = reviewServiceClient.getAverageScores(itemUUIDs);
+
 
         return PageResponse.builder()
                 .isFirst(items.isFirst())
                 .isLast(items.isFirst())
-                .reviews(items.map(ItemResponse::new).toList())
+                .items(items.map(item -> {
+                    ItemResponse itemResponse = new ItemResponse(item);
+                    itemResponse.setScore(responses.get(item.getItemUUID()));
+                    return itemResponse;
+                }).toList())
                 .totalElement(items.getTotalElements())
                 .totalPage(items.getTotalPages())
                 .build();
@@ -49,7 +59,7 @@ public class ItemService {
     @Transactional(readOnly = true)
     public ItemDetailResponse getItem(Long itemId) {
 
-        Item item = itemRepository.findById(itemId).orElseThrow(() -> new RuntimeException("아이템 없음"));
+        Item item = itemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new);
         ItemDetailResponse response = new ItemDetailResponse(item);
         response.linkUrls(imageServiceClient.getURls(item.getItemUUID()));
         response.linkScore(reviewServiceClient.getAverageScore(item.getItemUUID()));
@@ -92,6 +102,16 @@ public class ItemService {
 
         return new BigDecimal(sum);
 
+    }
+
+    public List<CartItemResponse> getCartItems(Map<String,Integer> infos) {
+
+        return itemRepository.findItemInUUIDs(infos.keySet()).stream().map(item -> {
+            CartItemResponse cartItem = new CartItemResponse(item);
+            cartItem.setQuantity(infos.get(item.getItemUUID()));
+            cartItem.calItemPrice();
+            return cartItem;
+        }).toList();
     }
 
 

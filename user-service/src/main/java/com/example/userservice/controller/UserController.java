@@ -71,4 +71,10 @@ public class UserController {
         cartRequest.setUserUUID(userSession.getUuid());
 //        userService.produceCartMessage(cartRequest);
     }
+
+    @GetMapping("/cart/items")
+    public void cartItems(UserSession userSession) {
+//        orderServiceClient.getCartItems(userSession.getUuid());
+//        itemServiceClient.getItemInfo()
+    }
 }

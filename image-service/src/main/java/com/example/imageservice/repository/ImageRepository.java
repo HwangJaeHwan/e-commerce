@@ -9,9 +9,9 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.Optional;
 
 public interface ImageRepository extends JpaRepository<Image, Long> {
-    @Query("select i from ItemImage i where i.itemUUID = :UUID")
+    @Query("select i from ItemImage i join fetch i.urls where i.itemUUID = :UUID")
     Optional<ItemImage> getItemImage(String UUID);
 
-    @Query("select i from ReviewImage i where i.reviewUUID = :UUID")
+    @Query("select i from ReviewImage i join fetch i.urls where i.reviewUUID = :UUID")
     Optional<ReviewImage> getReviewImage(String UUID);
 }

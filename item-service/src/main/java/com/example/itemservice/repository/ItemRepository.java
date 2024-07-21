@@ -8,13 +8,14 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface ItemRepository extends JpaRepository<Item,Long>,ItemRepositoryCustom {
     Optional<Item> findByItemUUID(String UUID);
 
     List<Item> findAllByCategory(Category category);
 
-//    @Query("SELECT i FROM Item i WHERE  i.itemUUID IN :UUIDs")
-//    List<Item> findUUIDs(List<String> UUIDs);
+    @Query("SELECT i FROM Item i WHERE i.itemUUID IN :UUIDs")
+    List<Item> findItemInUUIDs(Set<String> UUIDs);
 
 }

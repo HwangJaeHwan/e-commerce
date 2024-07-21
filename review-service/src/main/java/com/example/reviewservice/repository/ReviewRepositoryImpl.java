@@ -1,6 +1,8 @@
 package com.example.reviewservice.repository;
 
 import com.example.reviewservice.domain.Review;
+import com.example.reviewservice.response.ItemScoreResponse;
+import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,22 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom{
                 .where(review.itemUUID.eq(itemUUID))
                 .fetchOne();
     }
+
+    @Override
+    public List<ItemScoreResponse> averageScores(List<String> itemUUIDs) {
+        return queryFactory
+                .select(Projections.constructor(ItemScoreResponse.class,
+                        review.itemUUID.as("itemUUID"),
+                        review.score.avg().as("score")
+                ))
+                .from(review)
+                .where(review.itemUUID.in(itemUUIDs))
+                .groupBy(review.itemUUID)
+                .fetch();
+
+    }
+
+
     @Override
     public Page<Review> getPage(int page, String itemUUID) {
 
