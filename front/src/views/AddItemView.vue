@@ -9,6 +9,7 @@ import HttpError from "@/http/HttpError";
 import router from "@/router";
 import ImageRepository from "@/repository/ImageRepository";
 import ImageRequest from "@/entity/image/ImageRequest";
+import { v4 as uuidv4 } from 'uuid';
 
 const state = reactive({
   itemAdd: new ItemAdd(),
@@ -69,9 +70,12 @@ function uploadImages(){
 
   const formData = new FormData()
 
+  const uuid = uuidv4()
+  state.itemAdd.itemUUID = uuid
+
   const jsonData = {
-    uuid: 'test-UUID',
-    userUUID: 'test-userUUID',
+    uuid: uuid,
+    userUUID: localStorage.getItem("token"),
     imageType: 'ITEM'
   };
 

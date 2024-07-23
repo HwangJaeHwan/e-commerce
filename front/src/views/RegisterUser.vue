@@ -3,6 +3,13 @@ import {reactive, ref} from "vue";
 
 import axios from 'axios';
 import Register from "@/entity/user/Register";
+import {container} from "tsyringe";
+import UserRepository from "@/repository/UserRepository";
+import router from "@/router";
+import HttpError from "@/http/HttpError";
+import {ElMessage} from "element-plus";
+
+const USER_REPOSITORY =container.resolve(UserRepository)
 
 const state = reactive({
       register: new Register()
@@ -10,7 +17,14 @@ const state = reactive({
 )
 
 function doRegister() {
-  axios.post('/api/user-service/users',state.register)
+
+  USER_REPOSITORY.register(state.register)
+      .then(()=>{
+        router.replace('/login')
+      })
+      .catch((e: HttpError) => {
+        ElMessage({ type: 'error', message: e.getMessage() })
+      })
 }
 </script>
 

@@ -1,6 +1,41 @@
 <script setup lang="ts">
-import CartItem from "@/components/CartItem.vue";
+import CartItem from "@/components/CartItem.vue"
+import {container} from "tsyringe";
+import UserRepository from "@/repository/UserRepository";
+import ShoppingCartItem from "@/entity/item/ShoppingCartItem";
+import {onMounted} from "vue";
+import {reactive} from "vue";
+
+const USER_REPOSITORY =container.resolve(UserRepository)
+
+
+type StateType = {
+  itemList: ShoppingCartItem[]
+}
+
+const state = reactive<StateType>({
+  itemList: []
+})
+function getCartItems() {
+
+  USER_REPOSITORY.getCartItems()
+      .then((itemList) => {
+          state.itemList = itemList
+        console.log(">>>" +state.itemList)
+      })
+
+}
+
+function removeItem(itemUUID: string) {
+  state.itemList = state.itemList.filter(item => item.itemUUID !== itemUUID)
+}
+
+onMounted(()=>{
+  getCartItems()
+})
+
 </script>
+
 
 
 <template>
@@ -11,18 +46,10 @@ import CartItem from "@/components/CartItem.vue";
   </div>
 <div class="zz">
 
-<CartItem/>
-  <CartItem/>
-  <CartItem/>
-  <CartItem/>
-  <CartItem/>
-  <CartItem/>
-  <CartItem/>
-  <CartItem/>
-  <CartItem/>
-  <CartItem/>
-  <CartItem/>
-  <CartItem/>
+  <div v-for="(item,index) in state.itemList" :key="index" @remove="removeItem">
+    <CartItem :item="item"/>
+  </div>
+
 
   <div class="tq" style="width: 50%">
     <div>

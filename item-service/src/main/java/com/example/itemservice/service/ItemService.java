@@ -2,6 +2,7 @@ package com.example.itemservice.service;
 
 import com.example.itemservice.client.ImageServiceClient;
 import com.example.itemservice.client.ReviewServiceClient;
+import com.example.itemservice.data.ImageType;
 import com.example.itemservice.domain.item.Category;
 import com.example.itemservice.domain.item.Item;
 import com.example.itemservice.exception.ItemNotFoundException;
@@ -11,6 +12,7 @@ import com.example.itemservice.request.ItemQuantity;
 import com.example.itemservice.request.ItemRequest;
 import com.example.itemservice.response.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @Service
+@Slf4j
 @Transactional
 @RequiredArgsConstructor
 public class ItemService {
@@ -60,9 +63,13 @@ public class ItemService {
     public ItemDetailResponse getItem(Long itemId) {
 
         Item item = itemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new);
+
+        log.info("item uuid ={}",item.getItemUUID());
         ItemDetailResponse response = new ItemDetailResponse(item);
-        response.linkUrls(imageServiceClient.getURls(item.getItemUUID()));
+        response.linkUrls(imageServiceClient.getURls(item.getItemUUID(), ImageType.ITEM));
         response.linkScore(reviewServiceClient.getAverageScore(item.getItemUUID()));
+
+        log.info("response = {}", response);
 
         return new ItemDetailResponse(item);
 
@@ -78,7 +85,7 @@ public class ItemService {
                         .price(itemRequest.getPrice())
                         .stock(itemRequest.getStock())
                         .category(itemRequest.getCategory())
-                        .itemUUID(UUID.randomUUID().toString())
+                        .itemUUID(itemRequest.getItemUUID())
                         .build()
         );
 

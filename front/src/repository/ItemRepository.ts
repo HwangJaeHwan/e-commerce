@@ -11,19 +11,19 @@ export default class ItemRepository {
 
     public write(request: ItemAdd) {
         return this.httpRepository.post({
-            path: "api/item-service/add",
+            path: "/api/item-service/add",
             body: request
         })
     }
 
     public get(itemId: number) {
-        return this.httpRepository.get({path: `api/item-service/${itemId}`},Item)
+        return this.httpRepository.get<Item>({path: `/api/item-service/${itemId}`},Item)
 
     }
 
     public getList() {
         return this.httpRepository.getList<Item>({
-                path: '/api/item-service?page=1'
+                path: '/api/item-service/items?page=1?search=ㅋ,category='
             },
             Item
         )

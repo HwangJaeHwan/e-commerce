@@ -11,6 +11,7 @@ import com.example.itemservice.response.PageResponse;
 import com.example.itemservice.service.ItemService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
+@Slf4j
 @RequestMapping("/item-service")
 @RequiredArgsConstructor
 public class ItemController {
@@ -25,7 +27,7 @@ public class ItemController {
     private final ItemService itemService;
 
 
-    @GetMapping("/")
+    @GetMapping("/items")
     public PageResponse items(@RequestParam String search, @RequestParam int page,
                               @RequestParam Category category) {
 
@@ -42,6 +44,7 @@ public class ItemController {
 
     @GetMapping("/{itemId}")
     public ItemDetailResponse getItem(@PathVariable Long itemId) {
+        log.info("getItem ={}", itemId);
 
         return itemService.getItem(itemId);
 

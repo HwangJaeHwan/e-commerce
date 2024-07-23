@@ -2,11 +2,13 @@ package com.example.itemservice.response;
 
 import com.example.itemservice.domain.item.Category;
 import com.example.itemservice.domain.item.Item;
+import lombok.Data;
 import lombok.Getter;
 
 import java.util.List;
 
 @Getter
+@Data
 public class ItemDetailResponse {
 
 

@@ -10,27 +10,26 @@ import ReviewRepository from "@/repository/ReviewRepository";
 import Paging from "@/entity/data/Paging";
 import Review from "@/entity/review/Review";
 import ImageRepository from "@/repository/ImageRepository";
-const value = ref(3.7)
 
 const props = defineProps<{
   itemId: number
 }>()
 
 
-// onMounted(() => (
-//     alert(props.itemId)
-// ))
+onMounted(() => (
+    alert(props.itemId)
+))
 
 type StateType = {
   item: Item,
   reviewList: Paging<Review>,
-  imageUrl: string[] | null
+  imageUrl: string[] | null,
 }
 
 const state = reactive<StateType>({
   item: new Item(),
   reviewList: new Paging<Review>(),
-  imageUrl: []
+  imageUrl: [],
 })
 
 const ITEM_REPOSITORY = container.resolve(ItemRepository)
@@ -38,8 +37,11 @@ const IMAGE_REPOSITORY = container.resolve(ImageRepository)
 
 function getItem() {
   ITEM_REPOSITORY.get(props.itemId)
-      .then((item: Item) => {
+      .then((item) => {
         state.item = item
+        console.log("시발>>>"+state.item.itemUUID)
+        getReviews()
+        getImages()
       })
       .catch((e:HttpError) => {
         ElMessage({ type: 'error', message: e.getMessage() })
@@ -49,7 +51,8 @@ function getItem() {
 const REVIEW_REPOSITORY = container.resolve(ReviewRepository)
 
 function getReviews() {
-  REVIEW_REPOSITORY.getList('item-uuid-1')
+  console.log("슈슉슈슉 >>>" + state.item.itemUUID)
+  REVIEW_REPOSITORY.getList(state.item.itemUUID)
       .then((reviewList) => {
         console.log(">>>>",reviewList)
         state.reviewList = reviewList
@@ -59,7 +62,7 @@ function getReviews() {
 
 function getImages() {
 
-  IMAGE_REPOSITORY.getItemImage("test-UUID")
+  IMAGE_REPOSITORY.getItemImage(state.item.itemUUID)
       .then(response =>{
 
         for (let json of response.data) {
@@ -95,8 +98,7 @@ function base64ToImage(base64String, mimeType, itemUUID) {
 
 
 onMounted(() => {
-  getReviews()
-  getImages()
+  getItem()
 })
 
 
@@ -115,10 +117,10 @@ onMounted(() => {
 
     <div class="w-60 test">
       <div>
-        <p style="word-break: break-all" class="mt-2">상품명asdasdasdasdasdasdasdasdasdasdasdasdasdasd</p>
-        <p class="mt-2">10000</p>
+        <p style="word-break: break-all" class="mt-2">{{ state.item.name }}</p>
+        <p class="mt-2">{{ state.item.price }}</p>
         <el-rate
-            v-model="value"
+            v-model="state.item.score"
             disabled
             show-score
             text-color="#ff9900"
@@ -148,7 +150,7 @@ onMounted(() => {
     <p>상품평</p>
   </div>
   <div>
-    <Reviews :paging="state.reviewList"/>
+    <Reviews :paging = "state.reviewList"/>
   </div>
 </template>
 

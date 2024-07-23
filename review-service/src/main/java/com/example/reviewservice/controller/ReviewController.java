@@ -22,9 +22,9 @@ public class ReviewController {
 
     private final ReviewService reviewService;
 
-    @PostMapping("/write")
-    public void writeReview(@RequestBody @Valid ReviewRequest request) {
-        reviewService.write(request);
+    @PostMapping("{itemUUID}/write")
+    public void writeReview(@PathVariable String itemUUID,@RequestBody @Valid ReviewRequest request) {
+        reviewService.write(request,itemUUID);
     }
 
     @GetMapping("/{itemUUID}")

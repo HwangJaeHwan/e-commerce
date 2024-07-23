@@ -8,9 +8,6 @@ import lombok.Getter;
 @Getter
 public class ReviewRequest {
 
-    @NotNull(message = "아이템 ID 값이 없습니다.")
-    private String itemUUID;
-
     @NotNull(message = "유저 ID 값이 없습니다.")
     private String userUUID;
 

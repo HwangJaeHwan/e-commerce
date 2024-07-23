@@ -28,7 +28,7 @@ public class ReviewService {
     private final UserServiceClient userServiceClient;
 
 
-    public void write(ReviewRequest request) {
+    public void write(ReviewRequest request, String itemUUID) {
 
         reviewRepository.save(
                 Review.builder()
@@ -36,7 +36,7 @@ public class ReviewService {
                         .score(request.getScore())
                         .userUUID(request.getUserUUID())
                         .reviewUUID(UUID.randomUUID().toString())
-                        .itemUUID(request.getItemUUID())
+                        .itemUUID(itemUUID)
                         .createTime(LocalDateTime.now())
                         .updateTime(LocalDateTime.now())
                         .build()

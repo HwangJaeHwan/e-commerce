@@ -30,7 +30,7 @@ public class UserController {
     private final UserService userService;
     private final JwtProvider jwtProvider;
 
-    @PostMapping("/users")
+    @PostMapping("/register")
     public void createUser(@RequestBody @Valid CreateUser createUser) {
 
         userService.createUser(createUser);
@@ -68,7 +68,6 @@ public class UserController {
     @PostMapping("/cart/message")
     public void cartAdd(UserSession userSession, @RequestBody CartRequest cartRequest) {
 
-        cartRequest.setUserUUID(userSession.getUuid());
 //        userService.produceCartMessage(cartRequest);
     }
 
