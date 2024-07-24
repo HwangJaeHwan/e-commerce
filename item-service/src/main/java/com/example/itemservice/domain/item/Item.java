@@ -26,18 +26,21 @@ public class Item {
 
     private int stock;
 
+    private String userUUID;
+
     @Enumerated(EnumType.STRING)
     private Category category;
 
     private String itemUUID;
     @Builder
-    public Item(String name, String itemDescription, Integer price, int stock, Category category, String itemUUID) {
+    public Item(String name, String itemDescription, Integer price, int stock, Category category, String itemUUID,String userUUID) {
         this.name = name;
         this.itemDescription = itemDescription;
         this.price = price;
         this.stock = stock;
         this.category = category;
         this.itemUUID = itemUUID;
+        this.userUUID = userUUID;
     }
 
 //    public void addQuantity(int quantity) {

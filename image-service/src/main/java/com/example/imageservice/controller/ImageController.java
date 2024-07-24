@@ -1,5 +1,6 @@
 package com.example.imageservice.controller;
 
+import com.example.imageservice.auth.UserInfo;
 import com.example.imageservice.domain.image.ImageType;
 import com.example.imageservice.image.ImageStore;
 import com.example.imageservice.request.ImageRequest;
@@ -28,13 +29,15 @@ public class ImageController {
     private final ImageStore imageStore;
 
     @PostMapping("/upload")
-    public List<UrlResponse> saveImages(@RequestPart("info") ImageRequest request, @RequestPart("images") List<MultipartFile> images) throws IOException {
+    public List<UrlResponse> saveImages(@RequestPart("info") ImageRequest request,
+                                        @RequestPart("images") List<MultipartFile> images,
+                                        UserInfo userInfo) throws IOException {
         log.info("in");
         log.info("uuid = {}", request.getUuid());
-        log.info("user uuid = {}", request.getUserUUID());
+        log.info("user uuid = {}", userInfo.getUuid());
         log.info("type = {}", request.getImageType());
         log.info("images = {}", images);
-        return imageService.saveImages(request, images);
+        return imageService.saveImages(request, images, userInfo);
 
     }
 

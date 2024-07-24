@@ -16,14 +16,14 @@ export default class ItemRepository {
         })
     }
 
-    public get(itemId: number) {
-        return this.httpRepository.get<Item>({path: `/api/item-service/${itemId}`},Item)
+    public get(itemUUID: string) {
+        return this.httpRepository.get<Item>({path: `/api/item-service/${itemUUID}`},Item)
 
     }
 
     public getList() {
         return this.httpRepository.getList<Item>({
-                path: '/api/item-service/items?page=1?search=ㅋ,category='
+                path: '/api/item-service/items?page=1&search=test&category=FOOD'
             },
             Item
         )

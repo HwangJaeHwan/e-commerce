@@ -1,11 +1,13 @@
 package com.example.itemservice.service;
 
+import com.example.itemservice.auth.UserInfo;
 import com.example.itemservice.client.ImageServiceClient;
 import com.example.itemservice.client.ReviewServiceClient;
 import com.example.itemservice.data.ImageType;
 import com.example.itemservice.domain.item.Category;
 import com.example.itemservice.domain.item.Item;
 import com.example.itemservice.exception.ItemNotFoundException;
+import com.example.itemservice.exception.UnauthorizedException;
 import com.example.itemservice.repository.ItemRepository;
 import com.example.itemservice.request.CartItemInfo;
 import com.example.itemservice.request.ItemQuantity;
@@ -41,8 +43,15 @@ public class ItemService {
 
         List<String> itemUUIDs = items.getContent().stream().map(Item::getItemUUID).toList();
 
+        log.info("uuids = {}", itemUUIDs);
+
         Map<String,Double> responses = reviewServiceClient.getAverageScores(itemUUIDs);
 
+        log.info("response = {}", responses);
+
+        for (String key : responses.keySet()) {
+            log.info("key ={}, value ={}", key, responses.get(key));
+        }
 
         return PageResponse.builder()
                 .isFirst(items.isFirst())
@@ -60,9 +69,9 @@ public class ItemService {
 
     }
     @Transactional(readOnly = true)
-    public ItemDetailResponse getItem(Long itemId) {
+    public ItemDetailResponse getItem(String itemUUID) {
 
-        Item item = itemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new);
+        Item item = itemRepository.findByItemUUID(itemUUID).orElseThrow(ItemNotFoundException::new);
 
         log.info("item uuid ={}",item.getItemUUID());
         ItemDetailResponse response = new ItemDetailResponse(item);
@@ -76,7 +85,7 @@ public class ItemService {
 
     }
 
-    public void addItem(ItemRequest itemRequest) {
+    public void addItem(ItemRequest itemRequest , UserInfo userInfo) {
 
         itemRepository.save(
                 Item.builder()
@@ -86,15 +95,20 @@ public class ItemService {
                         .stock(itemRequest.getStock())
                         .category(itemRequest.getCategory())
                         .itemUUID(itemRequest.getItemUUID())
+                        .userUUID(userInfo.getUuid())
                         .build()
         );
 
     }
 
 
-    public void deleteItem(String itemId) {
+    public void deleteItem(String itemUUID, UserInfo userInfo) {
 
-        Item item = itemRepository.findByItemUUID(itemId).orElseThrow(ItemNotFoundException::new);
+        Item item = itemRepository.findByItemUUID(itemUUID).orElseThrow(ItemNotFoundException::new);
+
+        if (item.getUserUUID().equals(userInfo.getUuid())) {
+            throw new UnauthorizedException();
+        }
 
         itemRepository.delete(item);
 

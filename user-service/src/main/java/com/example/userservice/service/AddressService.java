@@ -1,6 +1,6 @@
 package com.example.userservice.service;
 
-import com.example.userservice.config.auth.UserSession;
+import com.example.userservice.config.auth.UserInfo;
 import com.example.userservice.domain.Address;
 import com.example.userservice.domain.User;
 import com.example.userservice.exception.AddressNotFoundException;
@@ -27,14 +27,14 @@ public class AddressService {
     private final AddressRepository addressRepository;
 
 
-    public List<AddressResponse> addresses(UserSession session) {
+    public List<AddressResponse> addresses(UserInfo session) {
 
         User loginUser = findLoginUser(session);
 
         return addressRepository.findAllByUser(loginUser).stream().map(AddressResponse::new).toList();
     }
 
-    public void addAddress(UserSession session, AddressRequest addressRequest) {
+    public void addAddress(UserInfo session, AddressRequest addressRequest) {
         User loginUser = findLoginUser(session);
 
         addressRepository.save(
@@ -49,7 +49,7 @@ public class AddressService {
 
     }
 
-    public void removeAddress(UserSession session, Long addressId) {
+    public void removeAddress(UserInfo session, Long addressId) {
 
         User loginUser = findLoginUser(session);
 
@@ -63,7 +63,7 @@ public class AddressService {
 
     }
 
-    private User findLoginUser(UserSession session) {
+    private User findLoginUser(UserInfo session) {
         return userRepository.findById(session.getId()).orElseThrow(UserNotFoundException::new);
     }
 

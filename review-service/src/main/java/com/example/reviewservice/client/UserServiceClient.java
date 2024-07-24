@@ -14,4 +14,5 @@ public interface UserServiceClient {
     Map<String, String> findLoginIds(@RequestBody Set<String> uuids);
 
 
+
 }

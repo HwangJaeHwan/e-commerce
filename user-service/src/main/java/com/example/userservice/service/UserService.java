@@ -85,6 +85,11 @@ public class UserService {
 
     public Map<String, String> findLoginIds(Set<String> uuids) {
         log.info("in");
+        log.info("size = {}", uuids.size());
+
+        for (String uuid : uuids) {
+            log.info("uuid = {}", uuid);
+        }
 
         List<User> user = userRepository.findUserByUserUUIDIn(uuids);
         log.info("size = {}", user.size());

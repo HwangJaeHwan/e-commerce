@@ -4,10 +4,11 @@ import Review from "@/entity/review/Review";
 import type Item from "@/entity/item/Item";
 
 const props = defineProps<{
-  // item: Item,
   map: Map<string,string>,
   item: Item
 }>()
+
+const score = props.item.score
 
 </script>
 
@@ -15,7 +16,7 @@ const props = defineProps<{
 
 <template>
 
-  <router-link to="to">
+  <router-link :to="{ name: 'item', params: { itemUUID: item.itemUUID } }">
   <div class="item-list">
 
     <div class="img-size image mb-3">
@@ -30,8 +31,14 @@ const props = defineProps<{
         {{props.item.price }}
       </div>
 
-      <div style="word-break: break-all" class="mb-3">
-        {{props.item.score}}
+      <div v-if="props.item.score != null" style="word-break: break-all" class="mb-3">
+        <el-rate
+            v-model="score"
+            disabled
+            show-score
+            text-color="#ff9900"
+            score-template="({value})"
+        />
       </div>
 
 

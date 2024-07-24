@@ -8,8 +8,6 @@ import lombok.Getter;
 @Getter
 public class ReviewRequest {
 
-    @NotNull(message = "유저 ID 값이 없습니다.")
-    private String userUUID;
 
     @NotBlank(message = "리뷰 제목을 입력해주세요")
     private String title;
@@ -17,7 +15,11 @@ public class ReviewRequest {
     @NotBlank(message = "리뷰 내용을 입력해주세요")
     private String content;
 
+    @NotBlank(message = "리뷰 UUID가 존재하지 않습니다.")
+    private String reviewUUID;
+
     @Min(value = 0, message = "점수를 매겨주세요")
     private double score;
+
 
 }

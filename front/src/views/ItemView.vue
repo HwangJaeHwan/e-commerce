@@ -12,13 +12,9 @@ import Review from "@/entity/review/Review";
 import ImageRepository from "@/repository/ImageRepository";
 
 const props = defineProps<{
-  itemId: number
+  itemUUID: string
 }>()
 
-
-onMounted(() => (
-    alert(props.itemId)
-))
 
 type StateType = {
   item: Item,
@@ -36,7 +32,7 @@ const ITEM_REPOSITORY = container.resolve(ItemRepository)
 const IMAGE_REPOSITORY = container.resolve(ImageRepository)
 
 function getItem() {
-  ITEM_REPOSITORY.get(props.itemId)
+  ITEM_REPOSITORY.get(props.itemUUID)
       .then((item) => {
         state.item = item
         console.log("시발>>>"+state.item.itemUUID)
@@ -124,7 +120,7 @@ onMounted(() => {
             disabled
             show-score
             text-color="#ff9900"
-            score-template="{value} points"
+            score-template="{value}"
         />
 
       </div>
@@ -147,7 +143,8 @@ onMounted(() => {
   </div>
 
   <div>
-    <p>상품평</p>
+    <h2>상품평</h2>
+    <p>{{state.item.description}}</p>
   </div>
   <div>
     <Reviews :paging = "state.reviewList"/>

@@ -33,14 +33,14 @@ const router = createRouter({
       component: RegisterUser
     },
     {
-      path: "/item/:itemId",
+      path: "/item/:itemUUID",
       name: "item",
       component: ItemView,
       props: true
 
     },
     {
-      path: "/review/write",
+      path: "/review/write/:itemUUID",
       name: "writeReview",
       component: WriteReviewView,
       props: true

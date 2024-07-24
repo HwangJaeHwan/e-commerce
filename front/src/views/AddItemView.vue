@@ -70,12 +70,10 @@ function uploadImages(){
 
   const formData = new FormData()
 
-  const uuid = uuidv4()
-  state.itemAdd.itemUUID = uuid
+  state.itemAdd.itemUUID = uuidv4()
 
   const jsonData = {
-    uuid: uuid,
-    userUUID: localStorage.getItem("token"),
+    uuid: state.itemAdd.itemUUID,
     imageType: 'ITEM'
   };
 
@@ -108,7 +106,7 @@ function write() {
     ITEM_REPOSITORY.write(state.itemAdd)
         .then(() => {
           ElMessage({ type: 'success', message: '상품을 등록했습니다.' });
-          router.replace('/');
+          router.replace('/item/' + state.itemAdd.itemUUID);
         })
         .catch((e: HttpError) => {
           ElMessage({ type: 'error', message: e.getMessage() });

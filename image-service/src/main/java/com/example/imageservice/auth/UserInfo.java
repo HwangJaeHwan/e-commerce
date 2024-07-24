@@ -1,11 +1,11 @@
-package com.example.userservice.config.auth;
+package com.example.imageservice.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class UserSession {
+public class UserInfo {
 
     private Long id;
 

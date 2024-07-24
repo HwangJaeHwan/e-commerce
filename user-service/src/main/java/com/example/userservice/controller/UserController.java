@@ -1,6 +1,6 @@
 package com.example.userservice.controller;
 
-import com.example.userservice.config.auth.UserSession;
+import com.example.userservice.config.auth.UserInfo;
 import com.example.userservice.config.jwt.JwtProvider;
 import com.example.userservice.domain.User;
 import com.example.userservice.request.CartRequest;
@@ -17,8 +17,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 import java.util.Set;
-
-import static jakarta.ws.rs.core.HttpHeaders.*;
 
 
 @RestController
@@ -48,9 +46,9 @@ public class UserController {
     }
 
     @GetMapping("/info")
-    public UserInfoResponse info(UserSession userSession) {
+    public UserInfoResponse info(UserInfo userInfo) {
 
-        return userService.info(userSession.getId());
+        return userService.info(userInfo.getId());
     }
 
     @PostMapping("/loginId")
@@ -60,19 +58,19 @@ public class UserController {
     }
 
     @PatchMapping("/passwordChange")
-    public void passwordChange(UserSession userSession, @RequestBody PasswordChange passwordChange) {
+    public void passwordChange(UserInfo userInfo, @RequestBody PasswordChange passwordChange) {
 
-        userService.changePassword(userSession.getId(), passwordChange);
+        userService.changePassword(userInfo.getId(), passwordChange);
     }
 
     @PostMapping("/cart/message")
-    public void cartAdd(UserSession userSession, @RequestBody CartRequest cartRequest) {
+    public void cartAdd(UserInfo userInfo, @RequestBody CartRequest cartRequest) {
 
 //        userService.produceCartMessage(cartRequest);
     }
 
     @GetMapping("/cart/items")
-    public void cartItems(UserSession userSession) {
+    public void cartItems(UserInfo userInfo) {
 //        orderServiceClient.getCartItems(userSession.getUuid());
 //        itemServiceClient.getItemInfo()
     }

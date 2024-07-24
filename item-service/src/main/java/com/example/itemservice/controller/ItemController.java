@@ -1,12 +1,11 @@
 package com.example.itemservice.controller;
 
+import com.example.itemservice.auth.UserInfo;
 import com.example.itemservice.domain.item.Category;
-import com.example.itemservice.request.CartItemInfo;
 import com.example.itemservice.request.ItemQuantity;
 import com.example.itemservice.request.ItemRequest;
 import com.example.itemservice.response.CartItemResponse;
 import com.example.itemservice.response.ItemDetailResponse;
-import com.example.itemservice.response.ItemResponse;
 import com.example.itemservice.response.PageResponse;
 import com.example.itemservice.service.ItemService;
 import jakarta.validation.Valid;
@@ -36,24 +35,23 @@ public class ItemController {
     }
 
     @PostMapping("/items/info")
-    public List<CartItemResponse> itemsInfo(@RequestBody Map<String,Integer> infos) {
+    public List<CartItemResponse> cartItemsInfo(@RequestBody Map<String,Integer> infos) {
 
         return itemService.getCartItems(infos);
 
     }
 
-    @GetMapping("/{itemId}")
-    public ItemDetailResponse getItem(@PathVariable Long itemId) {
-        log.info("getItem ={}", itemId);
+    @GetMapping("/{itemUUID}")
+    public ItemDetailResponse getItem(@PathVariable String itemUUID) {
 
-        return itemService.getItem(itemId);
+        return itemService.getItem(itemUUID);
 
     }
 
     @PostMapping("/add")
-    public void addItem(@RequestBody @Valid ItemRequest itemRequest) {
+    public void addItem(@RequestBody @Valid ItemRequest itemRequest, UserInfo userInfo) {
 
-        itemService.addItem(itemRequest);
+        itemService.addItem(itemRequest, userInfo);
 
     }
 
@@ -64,9 +62,10 @@ public class ItemController {
 
     }
     @DeleteMapping("/{itemId}")
-    public void deleteItem(@PathVariable String itemId) {
+    public void deleteItem(@PathVariable String itemId,UserInfo userInfo) {
 
-        itemService.deleteItem(itemId);
+        itemService.deleteItem(itemId, userInfo);
+
     }
 
 //    @PatchMapping("/quantity/add")

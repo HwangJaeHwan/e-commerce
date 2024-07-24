@@ -1,5 +1,6 @@
 package com.example.reviewservice.service;
 
+import com.example.reviewservice.auth.UserInfo;
 import com.example.reviewservice.client.UserServiceClient;
 import com.example.reviewservice.domain.Review;
 import com.example.reviewservice.exception.ReviewNotFoundException;
@@ -28,14 +29,14 @@ public class ReviewService {
     private final UserServiceClient userServiceClient;
 
 
-    public void write(ReviewRequest request, String itemUUID) {
+    public void write(ReviewRequest request, String itemUUID, UserInfo userInfo) {
 
         reviewRepository.save(
                 Review.builder()
                         .content(request.getContent())
                         .score(request.getScore())
-                        .userUUID(request.getUserUUID())
-                        .reviewUUID(UUID.randomUUID().toString())
+                        .userUUID(userInfo.getUuid())
+                        .reviewUUID(request.getReviewUUID())
                         .itemUUID(itemUUID)
                         .createTime(LocalDateTime.now())
                         .updateTime(LocalDateTime.now())
@@ -50,9 +51,10 @@ public class ReviewService {
         Page<Review> reviewPage = reviewRepository.getPage(page, itemUUID);
 
         Set<String> uuids = reviewPage.getContent().stream().map(Review::getUserUUID).collect(Collectors.toSet());
+        log.info("uuids= {}", uuids);
         Map<String, String> loginIds = userServiceClient.findLoginIds(uuids);
 
-        log.info("uuids= {}", uuids);
+
         log.info("ids = {}", loginIds);
 
         Page<ReviewResponse> map = reviewRepository.getPage(page, itemUUID)
@@ -69,10 +71,10 @@ public class ReviewService {
 
     }
 
-    public void revise(Long reviewId, ReviewRevise revise) {
-        Review review = reviewRepository.findById(reviewId).orElseThrow(ReviewNotFoundException::new);
+    public void revise(String reviewUUID, ReviewRevise revise ,UserInfo userInfo) {
+        Review review = reviewRepository.findByReviewUUID(reviewUUID).orElseThrow(ReviewNotFoundException::new);
 
-        if (!review.getUserUUID().equals(revise.getUserUUID())) {
+        if (!review.getUserUUID().equals(userInfo.getUuid())) {
             throw new UnauthorizedException();
         }
 

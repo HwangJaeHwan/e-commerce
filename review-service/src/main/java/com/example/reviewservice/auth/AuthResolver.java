@@ -1,6 +1,6 @@
-package com.example.userservice.config.auth;
+package com.example.reviewservice.auth;
 
-import com.example.userservice.exception.UnauthorizedException;
+import com.example.reviewservice.exception.UnauthorizedException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

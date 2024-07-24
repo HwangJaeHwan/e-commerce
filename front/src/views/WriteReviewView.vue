@@ -8,10 +8,11 @@ import router from "@/router";
 import ImageRepository from "@/repository/ImageRepository";
 import ReviewRepository from "@/repository/ReviewRepository";
 import WriteReview from "@/entity/review/WriteReview";
+import {v4 as uuidv4} from "uuid";
 
 
 const props = defineProps<{
-  itemId: string
+  itemUUID: string
 }>()
 
 
@@ -48,9 +49,10 @@ function uploadImages() {
 
   const formData = new FormData();
 
+  state.writeReview.reviewUUID = uuidv4()
+
   const jsonData = {
-    uuid: 'test-UUID',
-    userUUID: 'test-userUUID',
+    uuid: state.writeReview.reviewUUID,
     imageType: 'REVIEW'
   };
 
@@ -80,16 +82,12 @@ function uploadImages() {
 
 
 function write() {
-  const imagesUploaded = uploadImages();
 
-  state.writeReview.itemUUID = 'testItem-UUID'
-  state.writeReview.userUUID = 'testUser=UUID'
-
-  if (imagesUploaded) {
-    REVIEW_REPOSITORY.write(state.writeReview)
+  if (uploadImages()) {
+    REVIEW_REPOSITORY.write(state.writeReview,props.itemUUID)
         .then(() => {
           ElMessage({ type: 'success', message: '리뷰를 등록했습니다.' });
-          router.replace('/');
+          router.replace('/item/'+props.itemUUID);
         })
         .catch((e: HttpError) => {
           ElMessage({ type: 'error', message: e.getMessage() });

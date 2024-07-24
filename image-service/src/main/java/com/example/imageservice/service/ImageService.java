@@ -1,5 +1,6 @@
 package com.example.imageservice.service;
 
+import com.example.imageservice.auth.UserInfo;
 import com.example.imageservice.domain.ImageUrl;
 import com.example.imageservice.domain.image.Image;
 import com.example.imageservice.domain.image.ImageType;
@@ -38,9 +39,10 @@ public class ImageService {
     private final ImageStore imageStore;
 
 
-    public List<UrlResponse> saveImages(ImageRequest request, List<MultipartFile> images) throws IOException {
+    public List<UrlResponse> saveImages(ImageRequest request, List<MultipartFile> images
+            ,UserInfo userInfo) throws IOException {
 
-        Image image = typeCheck(request);
+        Image image = typeCheck(request, userInfo);
 
         imageStore.storeImages(image,images);
 
@@ -67,16 +69,17 @@ public class ImageService {
 
     }
 
-    private Image typeCheck(ImageRequest request) {
+    private Image typeCheck(ImageRequest request, UserInfo userInfo) {
         Image image;
 
         log.info("request.getUUID() = {}",request.getUuid());
-        log.info("request.getUserUUID() = {}",request.getUserUUID());
+        log.info("userUUID = {}", userInfo.getUuid());
+
         if (request.getImageType().equals(ImageType.ITEM)) {
             log.info("아이템 이미지!");
-            image = new ItemImage(request.getUserUUID(), request.getUuid());
+            image = new ItemImage(userInfo.getUuid(), request.getUuid());
         } else {
-            image = new ReviewImage(request.getUserUUID(), request.getUuid());
+            image = new ReviewImage(userInfo.getUuid(), request.getUuid());
         }
 
         return image;

@@ -1,5 +1,6 @@
 package com.example.reviewservice.controller;
 
+import com.example.reviewservice.auth.UserInfo;
 import com.example.reviewservice.request.ReviewRequest;
 import com.example.reviewservice.request.ReviewRevise;
 import com.example.reviewservice.response.ItemScoreResponse;
@@ -22,9 +23,10 @@ public class ReviewController {
 
     private final ReviewService reviewService;
 
-    @PostMapping("{itemUUID}/write")
-    public void writeReview(@PathVariable String itemUUID,@RequestBody @Valid ReviewRequest request) {
-        reviewService.write(request,itemUUID);
+    @PostMapping("/write/{itemUUID}")
+    public void writeReview(@PathVariable String itemUUID, @RequestBody @Valid ReviewRequest request
+            , UserInfo userInfo) {
+        reviewService.write(request,itemUUID,userInfo);
     }
 
     @GetMapping("/{itemUUID}")
@@ -38,7 +40,7 @@ public class ReviewController {
         return reviewService.getAverageScore(itemUUID);
     }
 
-    @GetMapping("/scores")
+    @PostMapping("/scores")
     public Map<String,Double> getAverageScores(@RequestBody List<String> itemUUIDs) {
 
         return reviewService.getAverageScores(itemUUIDs)
@@ -50,9 +52,9 @@ public class ReviewController {
 
     }
 
-    @PatchMapping("/revise/{reviewId}")
-    public void reviseReview(@PathVariable Long reviewId, ReviewRevise revise) {
-        reviewService.revise(reviewId, revise);
+    @PatchMapping("/revise/{reviewUUID}")
+    public void reviseReview(@PathVariable String reviewUUID, ReviewRevise revise ,UserInfo userInfo) {
+        reviewService.revise(reviewUUID, revise, userInfo);
     }
 
 }

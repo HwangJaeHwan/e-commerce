@@ -25,8 +25,9 @@ const state = reactive<StateType>({
 function getList() {
 ITEM_REPOSITORY.getList()
     .then((itemList => {
-      console.log(itemList);
+      console.log("리스트>>"+ itemList);
       state.itemList = itemList;
+      getImages()
     }))
 }
 
@@ -72,15 +73,14 @@ function base64ToImage(base64String, mimeType, itemUUID) {
 
 onMounted(() =>{
   getList()
-  getImages()
 
 })
 
 
 </script>
-
+<!--style="height: 100% width= 100%"-->
 <template>
-  <div class="tmp" style="height: 100% width= 100%">
+  <div class="tmp">
 <!--    <item-list :item ="state.itemList.items" :map ="state.imageMap"/>-->
     <div v-for="(item,index) in state.itemList.items" :key="index">
       <item-list :map ="state.imageMap" :item ="item"/>

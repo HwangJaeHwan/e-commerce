@@ -19,14 +19,26 @@ spring:
         - id: user-service
           uri: lb://USER-SERVICE
           predicates:
-            - Path=/user-service/info
-            - Method=GET
-          filters:
-            - name: AuthFilter
+            - Path=/user-service/login, /user-service/register
         - id: user-service
           uri : lb://USER-SERVICE
           predicates:
             - Path=/user-service/**
+          filters:
+            - name: AuthFilter
+        - id: item-service
+          uri: lb://ITEM-SERVICE
+          predicates:
+            - Path=/item-service/add
+          filters:
+            - AuthFilter
+        - id: item-service
+          uri: lb://ITEM-SERVICE
+          predicates:
+            - Path=/item-service/**
+            - Method=DELETE
+          filters:
+            - AuthFilter
         - id: item-service
           uri: lb://ITEM-SERVICE
           predicates:
@@ -38,7 +50,19 @@ spring:
         - id: review-service
           uri: lb://REVIEW-SERVICE
           predicates:
+            - Path=/review-service/write/**, /review-service/revise/**
+          filters:
+            - name: AuthFilter
+        - id: review-service
+          uri: lb://REVIEW-SERVICE
+          predicates:
             - Path=/review-service/**
+        - id: image-service
+          uri: lb://IMAGE-SERVICE
+          predicates:
+            - Path=/image-service/upload
+          filters:
+            - name: AuthFilter
         - id: image-service
           uri: lb://IMAGE-SERVICE
           predicates:

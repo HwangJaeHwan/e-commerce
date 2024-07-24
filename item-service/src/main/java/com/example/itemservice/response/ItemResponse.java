@@ -21,6 +21,8 @@ public class ItemResponse {
 
     private Double score;
 
+    private String description;
+
 
     private Integer price;
 
@@ -33,6 +35,7 @@ public class ItemResponse {
         this.name = item.getName();
         this.itemUUID = item.getItemUUID();
         this.price = item.getPrice();
+        this.description = item.getItemDescription();
         this.category = item.getCategory();
     }
 
