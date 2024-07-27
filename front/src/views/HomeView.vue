@@ -36,18 +36,12 @@ function getImages(){
   const jsonItemUUIDs = JSON.stringify(itemUUIDs);
   IMAGE_REPOSITORY.getImages(jsonItemUUIDs)
       .then((response) =>{
-        console.log("zasdasdasd>>>" + response)
-        const imageResponse = response.data
+
         for (let json of response.data) {
           base64ToImage(json.imageData,json.mimeType,json.itemUUID)
-          // const blob = new Blob([new Uint8Array(json.imageData)], { type: json.mimeType });
-          // const url = URL.createObjectURL(blob);
           console.log("response >>>" +json)
           console.log("uuid >>>" +json.itemUUID)
-          // console.log("url >>> "+ url)
           console.log("mimeType>>>"+ json.mimeType)
-          // state.imageMap.set(json.itemUUIds,url)
-
 
         }
 

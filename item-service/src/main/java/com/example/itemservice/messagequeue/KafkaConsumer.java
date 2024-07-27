@@ -55,10 +55,10 @@ public class KafkaConsumer {
         }
 
         String uuid = (String) map.get("itemUUID");
-        Integer qty = (Integer) map.get("quantity");
+        String qty = (String) map.get("quantity");
         Item item = itemRepository.findByItemUUID(uuid).orElseThrow(ItemNotFoundException::new);
 
-        item.updateQuantity(qty, isAddition);
+        item.updateQuantity(Integer.parseInt(qty), isAddition);
 
 
     }

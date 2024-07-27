@@ -42,7 +42,7 @@ export default class UserRepository {
         return this.httpRepository.post({
             path: "/api/user-service/message",
             body: request
-        },ShoppingCartItem)
+        })
     }
 
 }

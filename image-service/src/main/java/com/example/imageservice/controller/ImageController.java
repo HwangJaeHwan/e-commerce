@@ -63,7 +63,7 @@ public class ImageController {
 
     @GetMapping("/images/{itemUUID}")
     public List<ImageResponse> itemImages(@PathVariable String itemUUID) throws IOException {
-        log.info("/images/{}" + itemUUID);
+        log.info("/images/{}" ,itemUUID);
 
         return imageService.getItemImages(itemUUID);
     }

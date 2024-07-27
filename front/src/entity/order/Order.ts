@@ -12,5 +12,5 @@ export default class Order {
     public street = ''
     public zipcode = ''
     public orderStatus = ''
-    public OrderItems : OrderItem[] = []
+    public orderItems : OrderItem[] = []
 }

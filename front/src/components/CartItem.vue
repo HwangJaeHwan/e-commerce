@@ -32,7 +32,6 @@ function changeItemQuantity() {
 function deleteItem(){
   const message = new CartMessage(state.item.itemUUID,0)
   USER_REPOSITORY.cartMessage(message)
-  emit('remove', state.item.itemUUID)
 }
 
 </script>
