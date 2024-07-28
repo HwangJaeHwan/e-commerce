@@ -35,7 +35,6 @@ function getItem() {
   ITEM_REPOSITORY.get(props.itemUUID)
       .then((item) => {
         state.item = item
-        console.log("시발>>>"+state.item.itemUUID)
         getReviews()
         getImages()
       })
@@ -61,12 +60,10 @@ function getImages() {
   IMAGE_REPOSITORY.getItemImage(state.item.itemUUID)
       .then(response =>{
 
-        for (let json of response.data) {
+        for (const imageInfo of response.imageInfos) {
+          base64ToImage(imageInfo.imageData, imageInfo.mimeType);
 
-          base64ToImage(json.imageData,json.mimeType,json.itemUUID)
         }
-        // const blob = response.data
-        // state.imageUrl?.push(URL.createObjectURL(blob))
       })
       .catch((e) => {
         console.log(e)
@@ -76,7 +73,7 @@ function getImages() {
 }
 
 
-function base64ToImage(base64String, mimeType, itemUUID) {
+function base64ToImage(base64String, mimeType) {
 
   const byteCharacters = atob(base64String);
   const byteNumbers = new Array(byteCharacters.length);

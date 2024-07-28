@@ -80,7 +80,7 @@ public class ItemService {
 
         log.info("response = {}", response);
 
-        return new ItemDetailResponse(item);
+        return response;
 
 
     }

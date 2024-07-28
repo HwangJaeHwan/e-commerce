@@ -11,7 +11,9 @@ import com.example.imageservice.exception.UnauthorizedException;
 import com.example.imageservice.image.ImageStore;
 import com.example.imageservice.repository.ImageRepository;
 import com.example.imageservice.repository.UrlRepository;
+import com.example.imageservice.request.ImageListRequest;
 import com.example.imageservice.request.ImageRequest;
+import com.example.imageservice.response.ImageInfo;
 import com.example.imageservice.response.ImageResponse;
 import com.example.imageservice.response.UrlResponse;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +28,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 @Service
@@ -100,13 +103,52 @@ public class ImageService {
 
     }
 
-    public List<ImageResponse> getImages(List<String> uuids) throws IOException {
+    public List<ImageResponse> getImages(ImageListRequest imageListRequest) throws IOException {
 
+
+        if (imageListRequest.getImageType().equals(ImageType.ITEM)) {
+            return getItemImageList(imageListRequest);
+        }
+
+
+        return getReviewImageList(imageListRequest);
+
+    }
+
+    private List<ImageResponse> getItemImageList(ImageListRequest imageListRequest) throws IOException {
         List<ImageResponse> responses = new ArrayList<>();
+        List<ItemImage> images = imageRepository.getItemsImage(imageListRequest.getUuids());
 
-        for (String itemUUiD : uuids) {
-            ItemImage image = imageRepository.getItemImage(itemUUiD).orElseThrow(ImageNotFoundException::new);
-            ImageUrl url = image.getUrls().getFirst();
+        for (ItemImage itemImage : images) {
+
+            responses.add(getImageResponse(itemImage.getItemUUID(), itemImage.getUrls()));
+
+        }
+
+        return responses;
+    }
+
+    private List<ImageResponse> getReviewImageList(ImageListRequest imageListRequest) throws IOException {
+        List<ImageResponse> responses = new ArrayList<>();
+        List<ReviewImage> images = imageRepository.getReviewsImage(imageListRequest.getUuids());
+
+        for (ReviewImage reviewImage : images) {
+
+            responses.add(getImageResponse(reviewImage.getReviewUUID(), reviewImage.getUrls()));
+
+        }
+
+        return responses;
+    }
+
+    private String ByteToString(byte[] imageData) {
+        return Base64.getEncoder().encodeToString(imageData);
+    }
+
+    private ImageResponse getImageResponse(String uuid, List<ImageUrl> urls) throws IOException {
+        ImageResponse response = new ImageResponse(uuid);
+
+        for (ImageUrl url : urls) {
 
             UrlResource urlResource = new UrlResource("file:/" + imageStore.getFullPath(url.getStoredName()));
             log.info("URL = {}", urlResource.getURI());
@@ -114,30 +156,27 @@ public class ImageService {
             byte[] imageData = StreamUtils.copyToByteArray(urlResource.getInputStream());
             log.info("mimeType = {}", mimeType);
 
-            responses.add(new ImageResponse(itemUUiD, imageData,mimeType));
+            response.getImageInfos().add(new ImageInfo(ByteToString(imageData), mimeType));
+
 
         }
 
-        return responses;
+        return response;
     }
 
-    public List<ImageResponse> getItemImages(String itemUUID) throws IOException {
+    public ImageResponse getItemImages(String itemUUID) throws IOException {
         List<ImageResponse> responses = new ArrayList<>();
 
         ItemImage image = imageRepository.getItemImage(itemUUID).orElseThrow(ImageNotFoundException::new);
         List<ImageUrl> urls = image.getUrls();
 
-        for (ImageUrl url : urls) {
-            UrlResource urlResource = new UrlResource("file:/" + imageStore.getFullPath(url.getStoredName()));
-            String mimeType = Files.probeContentType(Paths.get(urlResource.getURI()));
-            byte[] imageData = StreamUtils.copyToByteArray(urlResource.getInputStream());
-            responses.add(new ImageResponse(itemUUID, imageData,mimeType));
-        }
+        log.info("size = {}", urls.size());
 
-        log.info("length = {}", responses.size());
+        return getImageResponse(image.getItemUUID(), urls);
 
-        return responses;
+
 
 
     }
+
 }

@@ -2,6 +2,8 @@ import {inject, singleton} from "tsyringe";
 import axios from "axios";
 import Item from "@/entity/item/Item";
 import HttpRepository from "@/repository/HttpRepository";
+import ImageResponse from "@/entity/image/ImageResponse";
+import type ImageListRequest from "@/entity/image/ImageListRequest";
 
 @singleton()
 export default class ImageRepository {
@@ -25,15 +27,23 @@ export default class ImageRepository {
     }
 
     public getItemImage(itemUUID: string) {
-        return axios.get(`/api/image-service/images/${itemUUID}`)
+        // return axios.get(`/api/image-service/images/${itemUUID}`)
+        return this.httpRepository.get<ImageResponse>({
+            path:`/api/image-service/images/${itemUUID}`
+        },ImageResponse)
 
     }
 
-    public getImages(request: string){
-        return axios.post('/api/image-service/images',request,{
-            headers: {
-                'Content-Type': 'application/json',
-            }})
+    public getImages(request: ImageListRequest){
+        // return axios.post('/api/image-service/images',request,{
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //     }})
+
+        return this.httpRepository.post<ImageResponse>({
+            path:'api/image-service/images',
+            body: request,
+        },ImageResponse)
     }
 
 

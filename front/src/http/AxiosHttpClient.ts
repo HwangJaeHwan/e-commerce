@@ -8,6 +8,7 @@ export type HttpRequestConfig = {
     method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
     params?: any
     body?: any
+    headers?: { [key: string]: string }
 }
 
 @singleton()
@@ -30,6 +31,7 @@ export default class AxiosHttpClient {
                 url: config.path,
                 params: config.params,
                 data: config.body,
+                headers: config.headers,
             })
             .then((response:AxiosResponse) => {
                 return response.data

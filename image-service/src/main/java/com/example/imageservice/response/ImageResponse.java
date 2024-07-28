@@ -1,20 +1,18 @@
 package com.example.imageservice.response;
 
 import lombok.Getter;
-import org.springframework.core.io.UrlResource;
 
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
 
 @Getter
 public class ImageResponse {
 
-    private String itemUUID;
-    private String imageData;
-    private String mimeType;
+    private String uuid;
+    private List<ImageInfo> imageInfos = new ArrayList<>();
 
-    public ImageResponse(String itemUUID, byte[] imageData,String mimeType) {
-        this.itemUUID = itemUUID;
-        this.imageData = Base64.getEncoder().encodeToString(imageData);
-        this.mimeType = mimeType;
+    public ImageResponse(String uuid) {
+        this.uuid = uuid;
     }
 }

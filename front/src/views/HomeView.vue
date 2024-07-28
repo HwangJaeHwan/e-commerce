@@ -2,25 +2,30 @@
 
 import {container} from "tsyringe";
 import ItemRepository from "@/repository/ItemRepository";
-import {onMounted, reactive} from "vue";
+import {computed, onMounted, reactive, ref} from "vue";
 import type Item from "@/entity/item/Item";
 import Paging from "@/entity/data/Paging";
 import ItemList from "@/components/ItemList.vue";
 import ImageRepository from "@/repository/ImageRepository";
+import ImageResponse from "@/entity/image/ImageResponse";
+import ImageListRequest from "@/entity/image/ImageListRequest";
+import {hColgroup} from "element-plus/es/components/table/src/h-helper";
+
 
 const ITEM_REPOSITORY = container.resolve(ItemRepository)
 const IMAGE_REPOSITORY = container.resolve(ImageRepository)
 
 type StateType = {
   itemList: Paging<Item>,
-  imageMap: Map<string,string>
+  imageMap: Map<string,string[]>
 }
 
 const state = reactive<StateType>({
     itemList: new Paging<Item>(),
-    imageMap: new Map<string,string>
+    imageMap: new Map<string,string[]>
 }
 )
+
 
 function getList() {
 ITEM_REPOSITORY.getList()
@@ -32,25 +37,41 @@ ITEM_REPOSITORY.getList()
 }
 
 function getImages(){
-  const itemUUIDs = state.itemList.items.map(item => item.itemUUID)
-  const jsonItemUUIDs = JSON.stringify(itemUUIDs);
-  IMAGE_REPOSITORY.getImages(jsonItemUUIDs)
-      .then((response) =>{
+  const request = new ImageListRequest()
 
-        for (let json of response.data) {
-          base64ToImage(json.imageData,json.mimeType,json.itemUUID)
-          console.log("response >>>" +json)
-          console.log("uuid >>>" +json.itemUUID)
-          console.log("mimeType>>>"+ json.mimeType)
+  request.imageType = 'ITEM'
+  request.uuids = state.itemList.items.map(item => item.itemUUID)
+
+  console.log("request = " + JSON.stringify(request))
+
+  IMAGE_REPOSITORY.getImages(request)
+      .then((imageList) =>{
+
+        for (const image of imageList) {
+
+          for (const imageInfo of image.imageInfos) {
+
+            const url = base64ToImage(imageInfo.imageData, imageInfo.mimeType);
+            if (!state.imageMap.has(image.uuid)) {
+
+              state.imageMap.set(image.uuid, []);
+            }
+
+            state.imageMap.get(image.uuid)?.push(url);
+
+          }
+
 
         }
+        console.log("ㅡㅡ =" + JSON.stringify(state.imageMap.get(imageList[0].uuid)))
 
       })
+
 
 }
 
 
-function base64ToImage(base64String, mimeType, itemUUID) {
+function base64ToImage(base64String, mimeType) {
 
   const byteCharacters = atob(base64String);
   const byteNumbers = new Array(byteCharacters.length);
@@ -59,10 +80,12 @@ function base64ToImage(base64String, mimeType, itemUUID) {
   }
   const byteArray = new Uint8Array(byteNumbers);
   const blob = new Blob([byteArray], { type: mimeType });
-  const url = URL.createObjectURL(blob)
- state.imageMap.set(itemUUID,url)
+
+  return URL.createObjectURL(blob)
+
 
 }
+
 
 
 onMounted(() =>{
@@ -75,6 +98,7 @@ onMounted(() =>{
 <!--style="height: 100% width= 100%"-->
 <template>
   <div class="tmp">
+
 <!--    <item-list :item ="state.itemList.items" :map ="state.imageMap"/>-->
     <div v-for="(item,index) in state.itemList.items" :key="index">
       <item-list :map ="state.imageMap" :item ="item"/>

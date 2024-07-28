@@ -2,13 +2,26 @@
 
 import Review from "@/entity/review/Review";
 import type Item from "@/entity/item/Item";
+import {onMounted} from "vue";
 
 const props = defineProps<{
-  map: Map<string,string>,
+  map: Map<string,string[]>,
   item: Item
 }>()
 
 const score = props.item.score
+
+function getTest() {
+  console.log("크랙!")
+  console.log(JSON.stringify(props.map.get(props.item.itemUUID)))
+  console.log(JSON.stringify(props.item.itemUUID))
+
+}
+
+onMounted(() =>{
+  getTest()
+
+})
 
 </script>
 
@@ -20,7 +33,7 @@ const score = props.item.score
   <div class="item-list">
 
     <div class="img-size image mb-3">
-      <img :src="props.map.get(props.item.itemUUID)" alt="logo" class="img"/>
+      <img :src="props.map.get(props.item.itemUUID)?.[0] || '/images/dog.jpg'" alt="logo" class="img"/>
     </div>
 
     <div>

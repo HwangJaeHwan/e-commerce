@@ -3,6 +3,7 @@ package com.example.imageservice.controller;
 import com.example.imageservice.auth.UserInfo;
 import com.example.imageservice.domain.image.ImageType;
 import com.example.imageservice.image.ImageStore;
+import com.example.imageservice.request.ImageListRequest;
 import com.example.imageservice.request.ImageRequest;
 import com.example.imageservice.request.ItemRequest;
 import com.example.imageservice.response.ImageResponse;
@@ -55,14 +56,14 @@ public class ImageController {
     }
 
     @PostMapping("/images")
-    public List<ImageResponse> images(@RequestBody List<String> uuids) throws IOException {
+    public List<ImageResponse> images(@RequestBody ImageListRequest imageListRequest) throws IOException {
 
-        return imageService.getImages(uuids);
+        return imageService.getImages(imageListRequest);
 
     }
 
     @GetMapping("/images/{itemUUID}")
-    public List<ImageResponse> itemImages(@PathVariable String itemUUID) throws IOException {
+    public ImageResponse itemImages(@PathVariable String itemUUID) throws IOException {
         log.info("/images/{}" ,itemUUID);
 
         return imageService.getItemImages(itemUUID);
