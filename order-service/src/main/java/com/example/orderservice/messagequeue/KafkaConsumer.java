@@ -23,7 +23,7 @@ public class KafkaConsumer {
     private final ObjectMapper mapper;
 
 
-    @KafkaListener(topics = "cart-topic")
+    @KafkaListener(topics = "cart-topic",containerFactory = "stringJsonKafkaListenerContainerFactory")
     public void consume(String message) {
 
         HashMap<String, Object> map;

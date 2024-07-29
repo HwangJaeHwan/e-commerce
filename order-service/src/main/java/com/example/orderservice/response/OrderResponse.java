@@ -1,29 +1,38 @@
 package com.example.orderservice.response;
 
 import com.example.orderservice.domain.OrderItem;
+import com.example.orderservice.domain.OrderStatus;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
+@ToString
 public class OrderResponse {
 
-    private String userUUID;
     private String orderUUID;
     private LocalDateTime orderDate;
+    private String city;
+    private String street;
+    private String zipcode;
+    private OrderStatus orderStatus;
 
     private List<ItemResponse> items = new ArrayList<>();
 
     private int totalPrice;
     @Builder
-    public OrderResponse(String userUUID, String orderUUID, LocalDateTime orderDate, int totalPrice) {
-        this.userUUID = userUUID;
+    public OrderResponse(String orderUUID, LocalDateTime orderDate, String city, String street,
+                         String zipcode, OrderStatus orderStatus) {
         this.orderUUID = orderUUID;
         this.orderDate = orderDate;
-        this.totalPrice = totalPrice;
+        this.city = city;
+        this.street = street;
+        this.zipcode = zipcode;
+        this.orderStatus = orderStatus;
     }
 
     public void addItems(List<ItemResponse> items) {

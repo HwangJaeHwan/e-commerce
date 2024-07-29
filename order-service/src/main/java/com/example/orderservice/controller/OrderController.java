@@ -4,6 +4,7 @@ import com.example.orderservice.domain.CartItem;
 import com.example.orderservice.request.OrderRequest;
 import com.example.orderservice.response.CartItemResponse;
 import com.example.orderservice.response.OrderResponse;
+import com.example.orderservice.response.PageResponse;
 import com.example.orderservice.service.CartService;
 import com.example.orderservice.service.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -27,8 +28,9 @@ public class OrderController {
     }
 
     @GetMapping("/{userUUID}/orders")
-    public List<OrderResponse> orders(@PathVariable String userUUID) {
-        return orderService.getOrdersByUserUUID(userUUID);
+    public PageResponse orders(@PathVariable String userUUID, @RequestParam(defaultValue = "1") int page) {
+
+        return orderService.getOrdersByUserUUID(userUUID, page);
     }
 
     @PutMapping("/{userUUID}/{orderUUID}")

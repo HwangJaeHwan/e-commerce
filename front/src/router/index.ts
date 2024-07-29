@@ -7,6 +7,7 @@ import ItemView from "@/views/ItemView.vue";
 import WriteReview from "@/entity/review/WriteReview";
 import WriteReviewView from "@/views/WriteReviewView.vue";
 import ShoppingCartView from "@/views/ShoppingCartView.vue";
+import OrderListView from "@/views/OrderListView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -50,6 +51,11 @@ const router = createRouter({
       path: "/cart",
       name: "cart",
       component: ShoppingCartView,
+    },
+    {
+      path: "/orders",
+      name: "orders",
+      component: OrderListView,
     }
   ]
 })

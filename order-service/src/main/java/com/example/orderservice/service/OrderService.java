@@ -16,8 +16,11 @@ import com.example.orderservice.request.ItemRequest;
 import com.example.orderservice.request.OrderRequest;
 import com.example.orderservice.response.ItemResponse;
 import com.example.orderservice.response.OrderResponse;
+import com.example.orderservice.response.PageResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -70,28 +73,43 @@ public class OrderService {
                 , new OrderMessage(orderRequest.getItems().stream().map(ItemQuantity::new).toList()));
     }
 
-    public List<OrderResponse> getOrdersByUserUUID(String userUUID) {
+    public PageResponse getOrdersByUserUUID(String userUUID,int page) {
 
         List<OrderResponse> orderResponses = new ArrayList<>();
 
-        List<Order> orders = orderRepository.findAllByUserUUID(userUUID);
+        Page<Order> pageOrders = orderRepository.findAllByUserUUID(userUUID,PageRequest.of(page-1, 10));
+        List<Order> orders = pageOrders.getContent();
+
+        for (Order order : orders) {
+            log.info("order = {}", order);
+        }
         for (Order order : orders) {
 
             List<OrderItem> orderItems = order.getOrderItems();
 
             OrderResponse orderResponse = OrderResponse.builder()
                     .orderUUID(order.getOrderUUID())
-                    .userUUID(order.getUserUUID())
+                    .orderStatus(order.getOrderStatus())
+                    .zipcode(order.getZipcode())
+                    .city(order.getCity())
+                    .street(order.getStreet())
                     .orderDate(order.getOrderDate())
                     .build();
 
             orderResponse.addItems(orderItems.stream().map(ItemResponse::new).toList());
             orderResponse.calTotalPrice(orderItems);
 
+            orderResponses.add(orderResponse);
 
         }
 
-        return orderResponses;
+        return PageResponse.builder()
+                .isLast(pageOrders.isFirst())
+                .isLast(pageOrders.isLast())
+                .items(orderResponses)
+                .totalElement(pageOrders.getTotalElements())
+                .totalPage(pageOrders.getTotalPages())
+                .build();
 
     }
 

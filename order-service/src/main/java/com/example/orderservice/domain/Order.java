@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ import static lombok.AccessLevel.*;
 @Entity
 @Getter
 @Table(name = "Orders")
+@ToString
 @NoArgsConstructor(access = PROTECTED)
 public class Order {
 
@@ -37,8 +39,7 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
     @Builder
-    public Order(List<OrderItem> orderItems, String userUUID, String orderUUID, LocalDateTime orderDate, String city, String street, String zipcode, OrderStatus orderStatus) {
-        this.orderItems = orderItems;
+    public Order( String userUUID, String orderUUID, LocalDateTime orderDate, String city, String street, String zipcode, OrderStatus orderStatus) {
         this.userUUID = userUUID;
         this.orderUUID = orderUUID;
         this.orderDate = orderDate;

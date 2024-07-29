@@ -10,6 +10,8 @@ import ImageRepository from "@/repository/ImageRepository";
 import ImageResponse from "@/entity/image/ImageResponse";
 import ImageListRequest from "@/entity/image/ImageListRequest";
 import {hColgroup} from "element-plus/es/components/table/src/h-helper";
+import HttpError from "@/http/HttpError";
+import {ElMessage} from "element-plus";
 
 
 const ITEM_REPOSITORY = container.resolve(ItemRepository)
@@ -45,7 +47,7 @@ function getImages(){
   console.log("request = " + JSON.stringify(request))
 
   IMAGE_REPOSITORY.getImages(request)
-      .then((imageList) =>{
+      .then((imageList:ImageResponse[]) =>{
 
         for (const image of imageList) {
 
@@ -65,6 +67,9 @@ function getImages(){
         }
         console.log("ㅡㅡ =" + JSON.stringify(state.imageMap.get(imageList[0].uuid)))
 
+      })
+      .catch((e:HttpError) => {
+        ElMessage({ type: 'error', message: e.getMessage() })
       })
 
 

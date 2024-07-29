@@ -1,5 +1,5 @@
 import HttpRepository from "@/repository/HttpRepository";
-import type Order from "@/entity/order/Order";
+import Order from "@/entity/order/Order";
 import {inject, singleton} from "tsyringe";
 
 @singleton()
@@ -10,8 +10,8 @@ export default class OrderRepository {
 
 
     public getOrders() {
-        return this.httpRepository.get<Order>({
-            path: "/api/order-service/orders"
+        return this.httpRepository.getList<Order>({
+            path: "/api/order-service/0ec224e8-a0d8-4867-971c-918d944cf1d4/orders"
         },Order)
     }
 

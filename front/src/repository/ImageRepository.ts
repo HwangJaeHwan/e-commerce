@@ -35,15 +35,11 @@ export default class ImageRepository {
     }
 
     public getImages(request: ImageListRequest){
-        // return axios.post('/api/image-service/images',request,{
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //     }})
 
-        return this.httpRepository.post<ImageResponse>({
+        return this.httpRepository.post<Array<ImageResponse>>({
             path:'api/image-service/images',
             body: request,
-        },ImageResponse)
+        },Array<ImageResponse>)
     }
 
 
