@@ -2,7 +2,7 @@
 import {container} from "tsyringe";
 import UserRepository from "@/repository/UserRepository";
 import UserProfile from "@/entity/user/UserProfile";
-import {onBeforeMount, reactive} from "vue";
+import {onMounted, provide, reactive} from "vue";
 
 const USER_REPOSITORY = container.resolve(UserRepository)
 
@@ -15,15 +15,13 @@ const state = reactive<StateType>({
   profile: null
 })
 
-onBeforeMount(() => {
+onMounted(() => {
   USER_REPOSITORY.getProfile()
       .then((profile) => {
         console.log(profile)
         state.profile = profile
       })
 })
-
-
 
 
 </script>

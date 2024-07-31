@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import CartItem from "@/components/CartItem.vue"
-import {container} from "tsyringe";
+import {container, inject} from "tsyringe";
 import UserRepository from "@/repository/UserRepository";
 import ShoppingCartItem from "@/entity/item/ShoppingCartItem";
 import {onMounted} from "vue";
@@ -16,6 +16,9 @@ type StateType = {
 const state = reactive<StateType>({
   itemList: []
 })
+
+
+
 function getCartItems() {
 
   USER_REPOSITORY.getCartItems()
@@ -28,6 +31,31 @@ function getCartItems() {
 
 function removeItem(itemUUID: string) {
   state.itemList = state.itemList.filter(item => item.itemUUID !== itemUUID)
+}
+
+function requestPay() {
+  const IMP = window.IMP; // Iamport 객체
+  IMP.init('imp14316717'); // Iamport 가맹점 식별코드
+
+  const sum = state.itemList.reduce((total, cartItem) => total + cartItem.price, 0);
+
+  IMP.request_pay({
+    pg: 'html5_inicis', // 결제 모듈 종류
+    pay_method: 'card', // 결제 수단
+    merchant_uid: `mid_${new Date().getTime()}`, // 주문번호
+    name: '결제 테스트', // 결제창에서 보여질 상품명
+    amount: sum, // 금액
+  }, (rsp) => { // callback
+    if (rsp.success) {
+      // 결제 성공 시 로직
+      console.log('결제 성공', rsp);
+      alert('결제가 성공적으로 완료되었습니다.');
+    } else {
+      // 결제 실패 시 로직
+      console.log('결제 실패', rsp);
+      alert('결제에 실패하였습니다.');
+    }
+  });
 }
 
 onMounted(()=>{
@@ -55,7 +83,7 @@ onMounted(()=>{
     <div>
       <h2>20000원</h2>
 
-      <el-button style="width: 150px" type="primary">구매하기</el-button>
+      <el-button style="width: 150px" type="primary" @click="requestPay">구매하기</el-button>
 
     </div>
 

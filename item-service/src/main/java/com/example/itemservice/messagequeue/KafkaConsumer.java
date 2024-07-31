@@ -3,6 +3,8 @@ package com.example.itemservice.messagequeue;
 import com.example.itemservice.domain.item.Item;
 import com.example.itemservice.exception.ItemNotFoundException;
 import com.example.itemservice.repository.ItemRepository;
+import com.example.itemservice.request.ItemStock;
+import com.example.itemservice.request.ItemStockUpdate;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -45,20 +47,26 @@ public class KafkaConsumer {
 
         log.info("message = {}", message);
 
-        HashMap<Object, Object> map;
-
         try {
-            map = mapper.readValue(message, new TypeReference<>() {
-            });
+
+            ItemStockUpdate itemUpdate = mapper.readValue(message, ItemStockUpdate.class);
+
+
+            for (ItemStock itemStock : itemUpdate.getItems()) {
+
+                String uuid = itemStock.getItemUUID();
+                Integer qty = itemStock.getQuantity();
+
+
+
+                Item item = itemRepository.findByItemUUID(uuid)
+                        .orElseThrow(ItemNotFoundException::new);
+
+                item.updateQuantity(qty, isAddition);
+            }
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-
-        String uuid = (String) map.get("itemUUID");
-        String qty = (String) map.get("quantity");
-        Item item = itemRepository.findByItemUUID(uuid).orElseThrow(ItemNotFoundException::new);
-
-        item.updateQuantity(Integer.parseInt(qty), isAddition);
 
 
     }
