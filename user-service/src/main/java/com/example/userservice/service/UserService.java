@@ -1,5 +1,6 @@
 package com.example.userservice.service;
 
+import com.example.userservice.config.auth.UserInfo;
 import com.example.userservice.domain.User;
 import com.example.userservice.exception.*;
 import com.example.userservice.messagequeue.KafkaProducer;
@@ -29,7 +30,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-//    private final KafkaProducer kafkaProducer;
+    private final KafkaProducer kafkaProducer;
 
 
     public void createUser(CreateUser createUser) {
@@ -124,12 +125,16 @@ public class UserService {
         return userRepository.findByLoginId(loginId).isPresent();
     }
 
-//    public void produceCartMessage(CartRequest cartRequest) {
-//
-//        kafkaProducer.send("item-cart-topic", cartRequest);
-//
-//
-//    }
+    public void produceCartMessage(UserInfo userInfo,CartRequest cartRequest) {
+
+        log.info("userUUID = {}",userInfo.getUuid());
+
+        cartRequest.setUserUUID(userInfo.getUuid());
+
+        kafkaProducer.send("cart-topic", cartRequest);
+
+
+    }
 
 
 }

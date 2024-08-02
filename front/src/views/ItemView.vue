@@ -10,6 +10,10 @@ import ReviewRepository from "@/repository/ReviewRepository";
 import Paging from "@/entity/data/Paging";
 import Review from "@/entity/review/Review";
 import ImageRepository from "@/repository/ImageRepository";
+import UserRepository from "@/repository/UserRepository";
+import CartMessage from "@/entity/data/CartMessage";
+import ShoppingCartItem from "@/entity/item/ShoppingCartItem";
+import router from "@/router";
 
 const props = defineProps<{
   itemUUID: string
@@ -20,16 +24,19 @@ type StateType = {
   item: Item,
   reviewList: Paging<Review>,
   imageUrl: string[] | null,
+  quantity: number
 }
 
 const state = reactive<StateType>({
   item: new Item(),
   reviewList: new Paging<Review>(),
   imageUrl: [],
+  quantity: 1
 })
 
 const ITEM_REPOSITORY = container.resolve(ItemRepository)
 const IMAGE_REPOSITORY = container.resolve(ImageRepository)
+const USER_REPOSITORY = container.resolve(UserRepository)
 
 function getItem() {
   ITEM_REPOSITORY.get(props.itemUUID)
@@ -88,6 +95,31 @@ function base64ToImage(base64String, mimeType) {
 
 }
 
+function addCart(){
+  const request = new CartMessage(state.item.itemUUID,state.quantity)
+
+  USER_REPOSITORY.cartMessage(request)
+      .then(() => {
+        ElMessage({ type: 'success', message: '장바구니에 등록했습니다.' });
+      })
+      .catch(()=>{
+        ElMessage({ type: 'error', message: '장바구니에 등록하지못했습니다.' });
+      })
+}
+
+function toPayment(){
+  const param = new ShoppingCartItem()
+  param.itemPrice =state.item.price
+  param.name = state.item.name
+  param.itemUUID = state.item.itemUUID
+  param.quantity = state.quantity
+  param.price = state.quantity * state.item.price
+
+  const encodedParam = btoa(JSON.stringify(param))
+
+  router.push({ name: "PaymentForm", params: { items: encodedParam} })
+}
+
 
 
 onMounted(() => {
@@ -126,11 +158,11 @@ onMounted(() => {
 
         <div class="mt-2 box">
           <el-form-item class="ml">
-            <el-input type="number" style="width: 80px" value="1" >1</el-input>
+            <el-input v-model="state.quantity" type="number" style="width: 80px" ></el-input>
           </el-form-item>
 
-          <el-button type="primary" style="width: 40%">상품 주문</el-button>
-          <el-button type="primary" style="width: 40%">장바구니</el-button>
+          <el-button type="primary" style="width: 40%" @click="toPayment">상품 주문</el-button>
+          <el-button type="primary" style="width: 40%" @click="addCart">장바구니</el-button>
         </div>
 
       </div>

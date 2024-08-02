@@ -34,13 +34,13 @@ export default class UserRepository {
 
     public getCartItems() {
         return this.httpRepository.get<ShoppingCartItem>({
-            path: "/api/user-service/cart/items"
+            path: "/api/order-service/cart/items"
         },ShoppingCartItem)
     }
 
     public cartMessage(request: CartMessage) {
         return this.httpRepository.post({
-            path: "/api/user-service/message",
+            path: "/api/user-service/cart/message",
             body: request
         })
     }

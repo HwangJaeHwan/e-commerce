@@ -47,6 +47,8 @@ spring:
           uri: lb://ORDER-SERVICE
           predicates:
             - Path=/order-service/**
+          filters:
+            - name: AuthFilter
         - id: review-service
           uri: lb://REVIEW-SERVICE
           predicates:
@@ -67,6 +69,7 @@ spring:
           uri: lb://IMAGE-SERVICE
           predicates:
             - Path=/image-service/**
+
 
 
 

@@ -12,6 +12,9 @@ public class CartRequest {
 
     private String itemUUID;
     private Integer quantity;
+    private String userUUID;
 
-
+    public void setUserUUID(String userUUID) {
+        this.userUUID = userUUID;
+    }
 }

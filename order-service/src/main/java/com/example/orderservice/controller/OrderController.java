@@ -1,5 +1,6 @@
 package com.example.orderservice.controller;
 
+import com.example.orderservice.config.auth.UserInfo;
 import com.example.orderservice.domain.CartItem;
 import com.example.orderservice.request.OrderRequest;
 import com.example.orderservice.response.CartItemResponse;
@@ -27,22 +28,22 @@ public class OrderController {
 
     }
 
-    @GetMapping("/{userUUID}/orders")
-    public PageResponse orders(@PathVariable String userUUID, @RequestParam(defaultValue = "1") int page) {
+    @GetMapping("/orders")
+    public PageResponse orders(UserInfo userInfo, @RequestParam(defaultValue = "1") int page) {
 
-        return orderService.getOrdersByUserUUID(userUUID, page);
+        return orderService.getOrdersByUserUUID(userInfo.getUuid(), page);
     }
 
-    @PutMapping("/{userUUID}/{orderUUID}")
-    public void cancelOrder(@PathVariable String userUUID, @PathVariable String orderUUID) {
+    @PutMapping("/{orderUUID}")
+    public void cancelOrder(UserInfo userInfo, @PathVariable String orderUUID) {
 
-        orderService.cancel(userUUID, orderUUID);
+        orderService.cancel(userInfo.getUuid(), orderUUID);
 
     }
 
-    @GetMapping("/cart/{userUUID}")
-    public List<CartItemResponse> getCartItems(@PathVariable String userUUID) {
-        return cartService.getCartItems(userUUID);
+    @GetMapping("/cart/items")
+    public List<CartItemResponse> getCartItems(UserInfo userInfo) {
+        return cartService.getCartItems(userInfo.getUuid());
     }
 
 }

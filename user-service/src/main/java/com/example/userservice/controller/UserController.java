@@ -66,7 +66,7 @@ public class UserController {
     @PostMapping("/cart/message")
     public void cartAdd(UserInfo userInfo, @RequestBody CartRequest cartRequest) {
 
-//        userService.produceCartMessage(cartRequest);
+        userService.produceCartMessage(userInfo,cartRequest);
     }
 
     @GetMapping("/cart/items")

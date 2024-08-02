@@ -59,9 +59,10 @@ const router = createRouter({
       component: OrderListView,
     },
     {
-      path: "/tmp",
-      name: "payment",
+      path: "/payment/:items",
+      name: "PaymentForm",
       component: PaymentForm,
+      props: route => ({ items: route.params.items })
     }
 
   ]
