@@ -34,10 +34,11 @@ function doLogin() {
 
 
 </script>
-
-<template>
-  <el-row class="mt-5">
-    <el-col :span="10" :offset="7">
+<!--//:span="10" :offset="7"-->
+<template >
+  <div class="login-box">
+  <el-row style="width: 300px" class="mt-5">
+    <el-col>
       <el-form label-position="top">
         <el-form-item label="아이디">
           <el-input v-model="state.login.loginId"></el-input>
@@ -53,4 +54,13 @@ function doLogin() {
       </el-form>
     </el-col>
   </el-row>
+  </div>
 </template>
+
+<style>
+.login-box{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+</style>

@@ -15,7 +15,7 @@ const state = reactive<StateType>({
   profile: null
 })
 
-onMounted(() => {
+onMounted(async () => {
   USER_REPOSITORY.getProfile()
       .then((profile) => {
         console.log(profile)

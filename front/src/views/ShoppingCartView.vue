@@ -6,16 +6,24 @@ import ShoppingCartItem from "@/entity/item/ShoppingCartItem";
 import {onMounted} from "vue";
 import {reactive} from "vue";
 import router from "@/router";
+import ImageRepository from "@/repository/ImageRepository";
+import ImageListRequest from "@/entity/image/ImageListRequest";
+import ImageResponse from "@/entity/image/ImageResponse";
+import HttpError from "@/http/HttpError";
+import {ElMessage} from "element-plus";
 
 const USER_REPOSITORY =container.resolve(UserRepository)
+const IMAGE_REPOSITORY =container.resolve(ImageRepository)
 
 
 type StateType = {
-  itemList: ShoppingCartItem[]
+  itemList: ShoppingCartItem[],
+  imageMap: Map<string,string[]>
 }
 
 const state = reactive<StateType>({
-  itemList: []
+  itemList: [],
+  imageMap: new Map<string,string[]>
 })
 
 
@@ -28,9 +36,62 @@ function getCartItems() {
         for (const itemListElement of itemList) {
           console.log(JSON.stringify(itemListElement))
         }
+        getImages()
       })
 
 }
+
+function getImages() {
+  const request = new ImageListRequest()
+
+  request.imageType = 'ITEM'
+  request.uuids = state.itemList.map(item => item.itemUUID)
+  console.log(JSON.stringify(state.itemList))
+
+  console.log("request = " + JSON.stringify(request))
+
+  IMAGE_REPOSITORY.getImages(request)
+      .then((imageList: ImageResponse[]) => {
+
+        for (const image of imageList) {
+
+          for (const imageInfo of image.imageInfos) {
+
+            const url = base64ToImage(imageInfo.imageData, imageInfo.mimeType);
+            if (!state.imageMap.has(image.uuid)) {
+
+              state.imageMap.set(image.uuid, []);
+            }
+
+            state.imageMap.get(image.uuid)?.push(url);
+
+          }
+
+
+        }
+        console.log("ㅡㅡ =" + JSON.stringify(state.imageMap.get(imageList[0].uuid)))
+        console.log("zz =" + imageList[0].uuid)
+      })
+      .catch((e: HttpError) => {
+        ElMessage({type: 'error', message: e.getMessage()})
+      })
+}
+
+
+  function base64ToImage(base64String, mimeType) {
+
+    const byteCharacters = atob(base64String);
+    const byteNumbers = new Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+    const byteArray = new Uint8Array(byteNumbers);
+    const blob = new Blob([byteArray], { type: mimeType });
+
+    return URL.createObjectURL(blob)
+
+
+  }
 
 function removeItem(itemUUID: string) {
   state.itemList = state.itemList.filter(item => item.itemUUID !== itemUUID)
@@ -39,6 +100,10 @@ function removeItem(itemUUID: string) {
 function toPayment() {
   const encodedParam = btoa(JSON.stringify(state.itemList))
   router.push({ name: "PaymentForm", params: { items: encodedParam } });
+}
+
+function refreshPage() {
+  router.go(0)  // 현재 페이지 새로고침
 }
 
 
@@ -59,13 +124,13 @@ onMounted(()=>{
 <div class="zz">
 
   <div v-for="(item,index) in state.itemList" :key="index" @remove="removeItem">
-    <CartItem :item="item"/>
+    <CartItem :item="item" :url ="state.imageMap.get(item.itemUUID)?.[0] || '/images/dog.jpg'"/>
   </div>
 
 
-  <div class="tq" style="width: 50%">
+  <div class="tq" style="width: 700px">
     <div>
-      <h2>20000원</h2>
+      <h2>{{state.itemList.reduce((total, cartItem) => total + cartItem.price, 0)}}</h2>
 
       <el-button style="width: 150px" type="primary" @click="toPayment">구매하기</el-button>
 

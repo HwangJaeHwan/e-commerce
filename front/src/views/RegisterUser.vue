@@ -31,8 +31,9 @@ function doRegister() {
 
 
 <template>
-  <el-row class="mt-5">
-    <el-col :span="10" :offset="7">
+  <div class="register-box">
+  <el-row style="width: 300px" class="mt-5">
+    <el-col>
       <el-form label-position="top">
         <el-form-item label="아이디">
           <el-input v-model="state.register.loginId"></el-input>
@@ -51,9 +52,18 @@ function doRegister() {
         </el-form-item>
 
         <el-form-item>
-          <el-button type="primary" style="width: 100%" @click="doRegister()">로그인</el-button>
+          <el-button type="primary" style="width: 100%" @click="doRegister()">회원가입</el-button>
         </el-form-item>
       </el-form>
     </el-col>
   </el-row>
+  </div>
 </template>
+
+<style>
+.register-box{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+</style>

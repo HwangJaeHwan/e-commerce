@@ -37,11 +37,12 @@ const state = reactive<StateType>({
 const ITEM_REPOSITORY = container.resolve(ItemRepository)
 const IMAGE_REPOSITORY = container.resolve(ImageRepository)
 const USER_REPOSITORY = container.resolve(UserRepository)
-
+const REVIEW_REPOSITORY = container.resolve(ReviewRepository)
 function getItem() {
   ITEM_REPOSITORY.get(props.itemUUID)
       .then((item) => {
         state.item = item
+        console.log(JSON.stringify(item))
         getReviews()
         getImages()
       })
@@ -50,7 +51,6 @@ function getItem() {
       })
 }
 
-const REVIEW_REPOSITORY = container.resolve(ReviewRepository)
 
 function getReviews() {
   console.log("슈슉슈슉 >>>" + state.item.itemUUID)
@@ -173,7 +173,7 @@ onMounted(() => {
 
   <div>
     <h2>상품평</h2>
-    <p>{{state.item.description}}</p>
+    <p>{{state.item.itemDescription}}</p>
   </div>
   <div>
     <Reviews :paging = "state.reviewList"/>
@@ -213,11 +213,6 @@ onMounted(() => {
   position: relative;
 }
 
-@media screen and (max-width: 1000px) {
-  .img {
-    height: auto;
-  }
-}
 
 .box {
   display: flex;

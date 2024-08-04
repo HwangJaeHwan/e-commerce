@@ -9,10 +9,12 @@ import Item from "@/entity/item/Item";
 import ShoppingCartItem from "@/entity/item/ShoppingCartItem";
 import CartMessage from "@/entity/data/CartMessage";
 import {reactive} from "vue";
+import router from "@/router";
 
 const USER_REPOSITORY = container.resolve(UserRepository)
 
 const props = defineProps<{
+  url: string
  item: ShoppingCartItem
 }>()
 
@@ -20,35 +22,40 @@ const props = defineProps<{
 const state = reactive({
   item: {...props.item}
 })
+const emits = defineEmits(['remove'])
 
 function changeItemQuantity() {
 
   const message = new CartMessage(state.item.itemUUID,state.item.quantity)
   USER_REPOSITORY.cartMessage(message)
-
+  router.replace('/cart')
 
 }
 
 function deleteItem(){
   const message = new CartMessage(state.item.itemUUID,0)
-  USER_REPOSITORY.cartMessage(message)
+  // USER_REPOSITORY.cartMessage(message)
+  // emits('remove', props.item.itemUUID)
+  emits('refreshPage')
+  // router.replace('/cart')
 }
 
 </script>
 
 <template>
 
-  <div class="background" style="width: 50%">
+  <div class="background" style="width: 700px">
     <div class="el-image m-2" style="width: 30%">
-      <img src="/images/logo.png" alt="logo" class="img"/>
+      <img :src=props.url alt="logo" class="img"/>
     </div>
 
 
-    <div class="zzz" style="width: 70%">
+    <div class="zzz" style="width: 100%">
 
       <div class="mt-2 sss">
         <div style="word-break: break-all">
           {{state.item.name}}
+<!--          testasdzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz-->
         </div>
         <div>
           <el-button type="danger" :icon="Delete" circle @click="deleteItem"/>
@@ -57,7 +64,8 @@ function deleteItem(){
 
       <div class="mb-3">
           <h3>{{ state.item.itemPrice }}</h3>
-          <el-input-number v-model="state.item.quantity" :min="1" :max="10" @change="changeItemQuantity"/>
+<!--        <h3>3000</h3>-->
+          <el-input-number v-model="state.item.quantity" size="small" :min="1" :max="100" @change="changeItemQuantity"/>
 
       </div>
 
