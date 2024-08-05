@@ -9,6 +9,7 @@ import WriteReviewView from "@/views/WriteReviewView.vue";
 import ShoppingCartView from "@/views/ShoppingCartView.vue";
 import OrderListView from "@/views/OrderListView.vue";
 import PaymentForm from "@/views/PaymentForm.vue";
+import TestView from "@/views/TestView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -63,6 +64,12 @@ const router = createRouter({
       name: "PaymentForm",
       component: PaymentForm,
       props: route => ({ items: route.params.items })
+    },
+
+    {
+      path: "/test",
+      name: "test",
+      component: TestView,
     }
 
   ]

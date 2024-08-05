@@ -38,7 +38,7 @@ onMounted(async () => {
     </router-link>
 
 
-    <router-link to="tmp" v-if="state.profile === null">
+    <router-link to="test" v-if="state.profile === null">
       로그인
     </router-link>
     <router-link to="tmp" v-else>
