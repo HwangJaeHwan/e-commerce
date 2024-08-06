@@ -6,7 +6,8 @@ import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 
 @Getter
-public class AddressRequest {
+public class AddressRevise {
+
 
     @NotBlank(message = "이름을 입력해주세요")
     private String name;
@@ -23,6 +24,4 @@ public class AddressRequest {
     @NotBlank(message = "휴대폰 번호를 입력해주세요")
     @Pattern(regexp = "^\\+?[0-9. ()-]{7,25}$", message = "휴대폰 번호가 잘못되었습니다.")
     private String phoneNumber;
-
-
 }

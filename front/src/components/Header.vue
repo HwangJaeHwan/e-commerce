@@ -30,7 +30,7 @@ onMounted(async () => {
 
 <template>
   <div class="login-info">
-    <router-link style="margin-right: 8px;" to="tmp" v-if="state.profile === null">
+    <router-link style="margin-right: 8px;" to="test2" v-if="state.profile === null">
       회원가입
     </router-link>
     <router-link style="margin-right: 8px;" to="tmp" v-else>

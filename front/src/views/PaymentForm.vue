@@ -3,16 +3,58 @@
 import {useRoute} from "vue-router";
 import ShoppingCartItem from "@/entity/item/ShoppingCartItem";
 import {onMounted, reactive} from "vue";
+import AddressModal from "@/views/AddressModal.vue";
+import Address from "@/entity/address/Address";
+import AddressListModal from "@/views/AddressListModal.vue";
+import AddressRequest from "@/entity/address/AddressRequest";
 
 const route = useRoute();
 
+const sampleAddresses = [
+  new AddressRequest(),
+  new AddressRequest(),
+  // Add more sample addresses as needed
+]
+
+sampleAddresses[0].name = '홍길동'
+sampleAddresses[0].address = '서울시 강남구'
+sampleAddresses[0].detailAddress = '서울'
+sampleAddresses[0].zipcode = '12345'
+sampleAddresses[0].phoneNumber = '010-1234-5678'
+
+sampleAddresses[1].name = '이몽룡'
+sampleAddresses[1].address = '부산시 해운대구'
+sampleAddresses[1].detailAddress = '부산'
+sampleAddresses[1].zipcode = '54321'
+sampleAddresses[1].phoneNumber = '010-8765-4321'
+
+
 type StateType = {
   itemList: ShoppingCartItem[]
+  showModal :boolean,
+  showListModal: false,
+  addresses: Address[],
+  selectedAddress: Address
 }
 
 const state = reactive<StateType>({
-  itemList: []
+  itemList: [],
+  showModal : false,
+  showListModal: false,
+  addresses: sampleAddresses,
+  selectedAddress: null
 })
+
+
+
+function handleAddressSelect(address: Address) {
+  state.selectedAddress = address
+  state.showModal = false
+}
+
+function closeList(){
+  state.showModal = false
+}
 
 onMounted(() => {
   console.log("시;발")
@@ -84,6 +126,22 @@ function requestPay() {
 
   <div class="bottom-line-1px">
     <h3>주소지정보</h3>
+    <div >
+      <button @click="state.showModal = true">주소 입력</button>
+      <AddressModal v-if="state.showModal" @close="state.showModal = false" @submit="handleAddressSubmit" />
+    </div>
+
+    <div id="app">
+      <button @click="state.showModal = true">주소 리스트 보기</button>
+      <AddressListModal
+          v-if="state.showModal"
+          :addresses="state.addresses"
+          @close="state.showModal = false"
+          @select="handleAddressSelect"
+          @submit = "closeList"
+      />
+    </div>
+
   </div>
 
   <div class="payment-flex">

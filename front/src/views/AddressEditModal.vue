@@ -1,65 +1,62 @@
 <script setup lang="ts">
-import { reactive, defineEmits } from 'vue'
-import AddressRequest from "@/entity/address/AddressRequest";
-import {container} from "tsyringe";
+import { reactive, defineProps, defineEmits } from 'vue'
+import Address from "@/entity/address/Address";
+import { container } from "tsyringe";
 import AddressRepository from "@/repository/AddressRepository";
+import AddressRequest from "@/entity/address/AddressRequest";
 
+const props = defineProps<{ address: Address }>()
 const emit = defineEmits(['close', 'submit'])
 
 const ADDRESS_REPOSITORY = container.resolve(AddressRepository)
 
 type StateType = {
-  address: AddressRequest,
+  address: Address,
 }
 
 const state = reactive<StateType>({
-  address: new AddressRequest(),
+  address: { ...props.address },
 })
 
 function closeModal() {
   emit('close')
 }
 
-function submitAddress() {
-  // emit('submit', state.address)
-  ADDRESS_REPOSITORY.addAddress(state.address)
+function editAddress() {
+  const request = new AddressRequest()
+  request.address = state.address.address
+  request.detailAddress = state.address.detailAddress
+  request.name = state.address.name
+  request.phoneNumber = state.address.phoneNumber
+  request.zipcode = state.address.zipcode
+  ADDRESS_REPOSITORY.editAddress(state.address.id, request)
+  emit('submit')
   closeModal()
 }
 
-
-
+function deleteAddress() {
+  ADDRESS_REPOSITORY.deleteAddress(state.address.id)
+  emit('submit')
+  closeModal()
+}
 
 function sample4_execDaumPostcode() {
   new daum.Postcode({
     oncomplete: function(data) {
-      // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
       console.log(JSON.stringify(data))
 
       state.address.zipcode = data.zonecode
       state.address.address = data.roadAddress
-
-
-
-
     }
-  }).open();
+  }).open()
 }
-
-
-
-
-
-
 </script>
-
-
-
 
 <template>
   <div class="modal-overlay" @click.self="closeModal">
     <div class="modal-content">
       <button class="close-button" @click="closeModal">X</button>
-      <h2>주소 입력</h2>
+      <h2>주소 수정</h2>
       <el-form :model="state.address" label-width="100px">
         <el-form-item label="이름">
           <el-input v-model="state.address.name"></el-input>
@@ -85,13 +82,12 @@ function sample4_execDaumPostcode() {
         </el-form-item>
       </el-form>
       <div class="modal-footer">
-        <el-button @click="closeModal">취소</el-button>
-        <el-button type="primary" @click="submitAddress">확인</el-button>
+        <el-button class="full-width" type="primary" @click="editAddress">수정</el-button>
+        <el-button class="full-width" type="danger" @click="deleteAddress">삭제</el-button>
       </div>
     </div>
   </div>
 </template>
-
 
 <style scoped>
 .modal-overlay {
@@ -126,7 +122,11 @@ function sample4_execDaumPostcode() {
 
 .modal-footer {
   display: flex;
-  justify-content: flex-end;
+  gap: 10px;
   margin-top: 20px;
+}
+
+.full-width {
+  width: 100%;
 }
 </style>

@@ -1,13 +1,13 @@
-import type HttpRepository from "@/repository/HttpRepository";
+import HttpRepository from "@/repository/HttpRepository";
 import {inject, singleton} from "tsyringe";
-import type Address from "@/entity/address/Address";
-import type AddressRequest from "@/entity/address/AddressRequest";
+import Address from "@/entity/address/Address";
+import AddressRequest from "@/entity/address/AddressRequest";
 
 
 @singleton()
 export default class AddressRepository {
 
-    constructor(@inject(HttpRepository) private readonly httpRepository : HttpRepository) {
+    constructor(@inject(HttpRepository) private readonly httpRepository: HttpRepository) {
     }
 
 
@@ -20,6 +20,13 @@ export default class AddressRepository {
     public addAddress(request: AddressRequest) {
         return this.httpRepository.post({
             path: '/api/user-service/address/add',
+            body: request
+        })
+    }
+
+    public editAddress(id:number, request: AddressRequest){
+        return this.httpRepository.post({
+            path: `/api/user-service/address/edit/${id}`,
             body: request
         })
     }

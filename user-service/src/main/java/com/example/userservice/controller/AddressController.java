@@ -2,6 +2,7 @@ package com.example.userservice.controller;
 
 import com.example.userservice.config.auth.UserInfo;
 import com.example.userservice.request.AddressRequest;
+import com.example.userservice.request.AddressRevise;
 import com.example.userservice.response.AddressResponse;
 import com.example.userservice.service.AddressService;
 import com.example.userservice.service.UserService;
@@ -26,16 +27,21 @@ public class AddressController {
     }
 
     @PostMapping("/address/add")
-    public void addAddress(UserInfo session, @RequestBody @Valid AddressRequest addressRequest) {
+    public void addAddress(UserInfo info, @RequestBody @Valid AddressRequest addressRequest) {
 
-        addressService.addAddress(session, addressRequest);
+        addressService.addAddress(info, addressRequest);
 
     }
 
-    @DeleteMapping("/address/delete/{id}")
-    public void deleteAddress(UserInfo session, @PathVariable Long id) {
+    @PatchMapping("/address/revise/{id}")
+    public void reviseAddress(UserInfo info, @PathVariable Long id, @RequestBody @Valid AddressRevise addressRevise) {
+        addressService.reviseAddress(info, id, addressRevise);
+    }
 
-        addressService.removeAddress(session, id);
+    @DeleteMapping("/address/delete/{id}")
+    public void deleteAddress(UserInfo info, @PathVariable Long id) {
+
+        addressService.removeAddress(info, id);
 
     }
 }

@@ -1,8 +1,8 @@
 export default class Address{
     public id = 0
     public name = ''
-    public street = ''
-    public city = ''
+    public address = ''
+    public detailAddress = ''
     public zipcode = ''
     public phoneNumber = ''
 

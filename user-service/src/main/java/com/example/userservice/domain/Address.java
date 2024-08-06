@@ -1,5 +1,6 @@
 package com.example.userservice.domain;
 
+import com.example.userservice.request.AddressRevise;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,9 +21,9 @@ public class Address {
 
     private String name;
 
-    private String street;
+    private String address;
 
-    private String city;
+    private String detailAddress;
 
     private String zipcode;
 
@@ -31,12 +32,21 @@ public class Address {
     @ManyToOne(fetch = LAZY)
     private User user;
     @Builder
-    public Address(String name, String street, String city, String zipcode, String phoneNumber, User user) {
+    public Address(String name, String address, String detailAddress, String zipcode, String phoneNumber, User user) {
         this.name = name;
-        this.street = street;
-        this.city = city;
+        this.address = address;
+        this.detailAddress = detailAddress;
         this.zipcode = zipcode;
         this.phoneNumber = phoneNumber;
         this.user = user;
+    }
+
+    public void revise(AddressRevise addressRevise) {
+
+        this.name = addressRevise.getName();
+        this.address = addressRevise.getAddress();
+        this.detailAddress = addressRevise.getDetailAddress();
+        this.zipcode = addressRevise.getZipcode();
+        this.phoneNumber = addressRevise.getPhoneNumber();
     }
 }
