@@ -3,7 +3,7 @@ import CartItem from "@/components/CartItem.vue"
 import {container, inject} from "tsyringe";
 import UserRepository from "@/repository/UserRepository";
 import ShoppingCartItem from "@/entity/item/ShoppingCartItem";
-import {onMounted} from "vue";
+import {computed, onMounted} from "vue";
 import {reactive} from "vue";
 import router from "@/router";
 import ImageRepository from "@/repository/ImageRepository";
@@ -40,6 +40,10 @@ function getCartItems() {
       })
 
 }
+
+const totalPrice = computed(() => {
+  return state.itemList.reduce((total, cartItem) => total + cartItem.price * cartItem.quantity, 0);
+});
 
 function getImages() {
   const request = new ImageListRequest()
@@ -94,7 +98,17 @@ function getImages() {
   }
 
 function removeItem(itemUUID: string) {
+  console.log("list = ", state.itemList)
   state.itemList = state.itemList.filter(item => item.itemUUID !== itemUUID)
+}
+
+function updateItem(updatedItem: ShoppingCartItem) {
+  const index = state.itemList.findIndex(item => item.itemUUID === updatedItem.itemUUID);
+  console.log("인덱스 = ",index)
+  console.log("item = ",updatedItem)
+  if (index !== -1) {
+    state.itemList[index] = updatedItem;
+  }
 }
 
 function toPayment() {
@@ -123,14 +137,14 @@ onMounted(()=>{
   </div>
 <div class="zz">
 
-  <div v-for="(item,index) in state.itemList" :key="index" @remove="removeItem">
-    <CartItem :item="item" :url ="state.imageMap.get(item.itemUUID)?.[0] || '/images/dog.jpg'"/>
+  <div v-for="(item,index) in state.itemList" :key="index">
+    <CartItem :item="item" :url ="state.imageMap.get(item.itemUUID)?.[0] || '/images/dog.jpg'" @remove="removeItem" @update="updateItem"/>
   </div>
 
 
   <div class="tq" style="width: 700px">
     <div>
-      <h2>{{state.itemList.reduce((total, cartItem) => total + cartItem.price, 0)}}</h2>
+      <h2>{{totalPrice}}</h2>
 
       <el-button style="width: 150px" type="primary" @click="toPayment">구매하기</el-button>
 

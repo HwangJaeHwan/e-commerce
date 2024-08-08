@@ -22,21 +22,21 @@ function closeModal() {
   emit('close')
 }
 
-function editAddress() {
+async function editAddress() {
   const request = new AddressRequest()
   request.address = state.address.address
   request.detailAddress = state.address.detailAddress
   request.name = state.address.name
   request.phoneNumber = state.address.phoneNumber
   request.zipcode = state.address.zipcode
-  ADDRESS_REPOSITORY.editAddress(state.address.id, request)
-  emit('submit')
+  await ADDRESS_REPOSITORY.editAddress(state.address.id, request)
+  emit('submit', state.address)
   closeModal()
 }
 
-function deleteAddress() {
-  ADDRESS_REPOSITORY.deleteAddress(state.address.id)
-  emit('submit')
+async function deleteAddress() {
+  await ADDRESS_REPOSITORY.deleteAddress(state.address.id)
+  emit('submit', null)
   closeModal()
 }
 
@@ -44,7 +44,6 @@ function sample4_execDaumPostcode() {
   new daum.Postcode({
     oncomplete: function(data) {
       console.log(JSON.stringify(data))
-
       state.address.zipcode = data.zonecode
       state.address.address = data.roadAddress
     }

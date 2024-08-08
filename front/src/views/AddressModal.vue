@@ -85,8 +85,8 @@ function sample4_execDaumPostcode() {
         </el-form-item>
       </el-form>
       <div class="modal-footer">
-        <el-button @click="closeModal">취소</el-button>
         <el-button type="primary" @click="submitAddress">확인</el-button>
+        <el-button @click="closeModal">취소</el-button>
       </div>
     </div>
   </div>

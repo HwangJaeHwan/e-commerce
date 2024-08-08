@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 public class ItemResponse {
-
+    private String name;
     private String itemUUID;
     private int quantity;
     private int price;

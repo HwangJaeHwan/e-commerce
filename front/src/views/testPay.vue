@@ -1,20 +1,51 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router';
 import ShoppingCartItem from '@/entity/item/ShoppingCartItem';
-import {computed, onMounted, reactive} from 'vue';
+import { onMounted, reactive } from 'vue';
 import AddressModal from '@/views/AddressModal.vue';
 import Address from '@/entity/address/Address';
 import AddressListModal from '@/views/AddressListModal.vue';
-import {useProfileStore} from "@/entity/user/Profile";
+import AddressRequest from '@/entity/address/AddressRequest';
 
 const route = useRoute();
 
-const user  = useProfileStore()
+const sampleAddresses = [
+  new AddressRequest(),
+  new AddressRequest(),
+  new AddressRequest(),
+  new AddressRequest(),
+  // Add more sample addresses as needed
+];
+
+sampleAddresses[0].name = '홍길동';
+sampleAddresses[0].address = '서울시 강남구';
+sampleAddresses[0].detailAddress = '서울';
+sampleAddresses[0].zipcode = '12345';
+sampleAddresses[0].phoneNumber = '010-1234-5678';
+
+sampleAddresses[1].name = '이몽룡';
+sampleAddresses[1].address = '부산시 해운대구';
+sampleAddresses[1].detailAddress = '부산';
+sampleAddresses[1].zipcode = '54321';
+sampleAddresses[1].phoneNumber = '010-8765-4321';
+
+sampleAddresses[2].name = '이몽룡';
+sampleAddresses[2].address = '부산시 해운대구';
+sampleAddresses[2].detailAddress = '부산';
+sampleAddresses[2].zipcode = '54321';
+sampleAddresses[2].phoneNumber = '010-8765-4321';
+
+sampleAddresses[3].name = '이몽룡';
+sampleAddresses[3].address = '부산시 해운대구';
+sampleAddresses[3].detailAddress = '부산';
+sampleAddresses[3].zipcode = '54321';
+sampleAddresses[3].phoneNumber = '010-8765-4321';
 
 type StateType = {
   itemList: ShoppingCartItem[];
   showModal: boolean;
   showListModal: boolean;
+  addresses: Address[];
   selectedAddress: Address | null;
 };
 
@@ -22,12 +53,9 @@ const state = reactive<StateType>({
   itemList: [],
   showModal: false,
   showListModal: false,
+  addresses: sampleAddresses,
   selectedAddress: null,
 });
-
-const totalPrice = computed(() => {
-  return state.itemList.reduce((total, item) => total + item.price * item.quantity, 0);
-})
 
 function handleAddressSelect(address: Address) {
   state.selectedAddress = address;
@@ -39,15 +67,13 @@ function closeList() {
 }
 
 onMounted(() => {
+  console.log('시;발');
+  console.log(route.params.items as string);
+  console.log('ㅋㅋ');
   const encodedItems = route.params.items as string;
-  if (encodedItems) {
-    try {
-      const parsedItems = JSON.parse(atob(encodedItems));
-      state.itemList = Array.isArray(parsedItems) ? parsedItems : [parsedItems];
-      console.log('Received items:', state.itemList);
-    } catch (error) {
-      console.error('Failed to parse items:', error);
-    }
+  if (route.params.items) {
+    state.itemList = JSON.parse(atob(encodedItems)) as ShoppingCartItem[];
+    console.log('Received items:', state.itemList);
   }
 });
 
@@ -55,7 +81,7 @@ function requestPay() {
   const IMP = window.IMP; // Iamport 객체
   IMP.init('imp14316717'); // Iamport 가맹점 식별코드
 
-  const sum = state.itemList.reduce((total, cartItem) => total + cartItem.price * cartItem.quantity, 0);
+  const sum = state.itemList.reduce((total, cartItem) => total + cartItem.price, 0);
 
   IMP.request_pay(
       {
@@ -88,96 +114,84 @@ function requestPay() {
     </header>
 
     <section class="buyer-info">
-      <h3>구매자 정보</h3>
+      <h3>구매자정보</h3>
       <div class="info-row">
         <div class="info-title">아이디</div>
-        <div class="info-content">{{user.profile?.loginId}}</div>
+        <div class="info-content">zxcv0069</div>
       </div>
       <div class="info-row">
         <div class="info-title">이메일</div>
-        <div class="info-content">{{user.profile?.email}}</div>
+        <div class="info-content">test@naver.com</div>
       </div>
     </section>
 
     <section class="address-info">
-      <h3>주소지 정보</h3>
+      <h3>주소지정보</h3>
       <div class="button-group">
-        <button class="btn" @click="state.showModal = true">주소 입력</button>
-        <button class="btn" @click="state.showListModal = true">주소 리스트 보기</button>
+        <button @click="state.showModal = true">주소 입력</button>
+        <button @click="state.showListModal = true">주소 리스트 보기</button>
       </div>
       <AddressModal v-if="state.showModal" @close="state.showModal = false"/>
       <AddressListModal
           v-if="state.showListModal"
+          :addresses="state.addresses"
           @close="state.showListModal = false"
           @select="handleAddressSelect"
           @submit="closeList"
       />
       <div class="info-row">
         <div class="info-title">이름</div>
-        <div class="info-content">{{state.selectedAddress?.name}}</div>
+        <div class="info-content">백민석</div>
       </div>
       <div class="info-row">
-        <div class="info-title">배송 주소</div>
-        <div class="info-content">{{state.selectedAddress?.address}}, {{state.selectedAddress?.detailAddress}}</div>
+        <div class="info-title">배송주소</div>
+        <div class="info-content">사랑시 고백구 행복동</div>
       </div>
       <div class="info-row">
         <div class="info-title">연락처</div>
-        <div class="info-content">{{state.selectedAddress?.phoneNumber}}</div>
+        <div class="info-content">010-1234-5678</div>
       </div>
     </section>
 
     <section class="product-info">
-      <h3>상품 정보</h3>
-      <div class="product-item" v-for="(item, index) in state.itemList" :key="index">
-        <div class="product-card">
-          <div class="product-details">
-            <h4>{{ item.name }}</h4>
-            <p>수량: {{ item.quantity }}개</p>
-            <p>가격: {{ item.price }}원</p>
-          </div>
-        </div>
-      </div>
+      <h3>상품정보</h3>
+      <div class="product-item">성주 꿀 참외 산지직송 당도선별 가정용, 10kg(중과)</div>
+      <div class="product-item">성주 꿀 참외 산지직송 당도선별 가정용, 10kg(중과)</div>
     </section>
 
     <section class="total-amount">
-      <h3>총 결제 금액</h3>
-      <h2>{{totalPrice}}원</h2>
+      <h3>총결제금액</h3>
+      <h2>30000 원</h2>
     </section>
 
     <div class="payment-button">
-      <button class="btn-primary" @click="requestPay">결제하기</button>
+      <button @click="requestPay">결제하기</button>
     </div>
   </div>
 </template>
 
-<style scoped>
+<style>
 .container {
   max-width: 800px;
   margin: 0 auto;
   padding: 20px;
   font-family: Arial, sans-serif;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 header {
-  border-bottom: 2px solid #ddd;
+  border-bottom: 2px solid black;
   padding-bottom: 10px;
   margin-bottom: 20px;
-  text-align: center;
-  color: #333;
 }
 
 .buyer-info, .address-info, .product-info, .total-amount {
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid #60ff83;
   margin-bottom: 20px;
   padding-bottom: 10px;
 }
 
 h3 {
-  margin-bottom: 30px;
-  color: #333;
+  margin-bottom: 10px;
 }
 
 .info-row {
@@ -189,12 +203,10 @@ h3 {
 .info-title {
   font-weight: bold;
   width: 100px;
-  color: #555;
 }
 
 .info-content {
   flex: 1;
-  color: #777;
 }
 
 .button-group {
@@ -204,52 +216,23 @@ h3 {
 }
 
 .product-item {
-  margin-bottom: 15px;
+  padding: 10px 0;
 }
-
-.product-card {
-  padding: 15px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  background-color: #fff;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.product-details {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
 
 .payment-button {
   text-align: center;
   margin-top: 20px;
 }
 
-.btn {
-  padding: 10px 20px;
-  background-color: #f4f4f4;
-  color: #333;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.btn:hover {
-  background-color: #e9e9e9;
-}
-
-.btn-primary {
+.payment-button button {
   padding: 10px 20px;
   background-color: #4CAF50;
   color: white;
   border: none;
-  border-radius: 4px;
   cursor: pointer;
 }
 
-.btn-primary:hover {
+.payment-button button:hover {
   background-color: #45a049;
 }
 </style>

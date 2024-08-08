@@ -1,81 +1,80 @@
 <script setup lang="ts">
-import {container} from "tsyringe";
-import UserRepository from "@/repository/UserRepository";
-import UserProfile from "@/entity/user/UserProfile";
-import {onMounted, provide, reactive} from "vue";
+import { onMounted } from 'vue';
+import { useProfileStore } from "@/entity/user/Profile";
 
-const USER_REPOSITORY = container.resolve(UserRepository)
-
-
-type StateType = {
-  profile: UserProfile | null
-}
-
-const state = reactive<StateType>({
-  profile: null
-})
+const profileStore = useProfileStore();
 
 onMounted(async () => {
-  USER_REPOSITORY.getProfile()
-      .then((profile) => {
-        console.log(profile)
-        state.profile = profile
-      })
-})
+  await profileStore.fetchProfile();
+});
 
-
+function handleLogout() {
+  profileStore.setProfile(null); // 로그아웃 시 프로필 초기화
+}
 </script>
 
-
-
 <template>
-  <div class="login-info">
-    <router-link style="margin-right: 8px;" to="test2" v-if="state.profile === null">
-      회원가입
-    </router-link>
-    <router-link style="margin-right: 8px;" to="tmp" v-else>
-      {{state.profile.loginId}}
-    </router-link>
-
-
-    <router-link to="test" v-if="state.profile === null">
-      로그인
-    </router-link>
-    <router-link to="tmp" v-else>
-      로그아웃
-    </router-link>
-
-
-  </div>
-  <div class="header">
-    <img src="/images/logo.png" alt="logo" class="logo"/>
-    <div class="title">테스트 헤드</div>
+  <div class="header-container">
+    <div class="header">
+      <img src="/images/logo.png" alt="logo" class="logo" />
+      <div class="title">테스트 헤드</div>
+      <div class="login-info">
+        <router-link class="link" to="test2" v-if="!profileStore.profile">
+          회원가입
+        </router-link>
+        <router-link class="link" to="tmp" v-else>
+          {{ profileStore.profile?.loginId }}
+        </router-link>
+        <router-link class="link" to="test" v-if="!profileStore.profile">
+          로그인
+        </router-link>
+        <router-link class="link" to="tmp" v-else @click="handleLogout">
+          로그아웃
+        </router-link>
+      </div>
+    </div>
   </div>
 </template>
 
-
 <style scoped>
+.header-container {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+  padding: 1rem 2rem;
+}
+
 .header {
-  height: 120px;
-  margin: 1rem 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
 }
 
 .logo {
-  width: 104px;
+  width: 120px;
   object-fit: cover;
 }
 
 .title {
-  font-size: 2rem;
-  font-weight: 300;
-  margin-left: 5px;
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: #343a40;
+  margin-left: 10px;
 }
 
-.login-info{
+.login-info {
   display: flex;
-  justify-content: right;
+  gap: 1rem;
+}
+
+.link {
+  color: #007bff;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.link:hover {
+  text-decoration: underline;
 }
 </style>

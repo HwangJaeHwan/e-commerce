@@ -33,7 +33,7 @@ public class AddressController {
 
     }
 
-    @PatchMapping("/address/revise/{id}")
+    @PatchMapping("/address/edit/{id}")
     public void reviseAddress(UserInfo info, @PathVariable Long id, @RequestBody @Valid AddressRevise addressRevise) {
         addressService.reviseAddress(info, id, addressRevise);
     }

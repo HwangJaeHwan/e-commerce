@@ -102,7 +102,7 @@ onMounted(() =>{
 </script>
 <!--style="height: 100% width= 100%"-->
 <template>
-  <div class="tmp">
+  <div class="home-grid">
 
 <!--    <item-list :item ="state.itemList.items" :map ="state.imageMap"/>-->
     <div v-for="(item,index) in state.itemList.items" :key="index">
@@ -117,7 +117,7 @@ onMounted(() =>{
 
 <style>
 
-.tmp {
+.home-grid {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
 

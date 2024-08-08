@@ -12,7 +12,7 @@ export default class AddressRepository {
 
 
     public getAddresses() {
-        return this.httpRepository.get<Address>({
+        return this.httpRepository.get<Array<Address>>({
             path: '/api/user-service/addresses',
         },Address)
     }
@@ -25,7 +25,7 @@ export default class AddressRepository {
     }
 
     public editAddress(id:number, request: AddressRequest){
-        return this.httpRepository.post({
+        return this.httpRepository.patch({
             path: `/api/user-service/address/edit/${id}`,
             body: request
         })

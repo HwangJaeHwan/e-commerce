@@ -11,7 +11,7 @@ export default class OrderRepository {
 
     public getOrders() {
         return this.httpRepository.getList<Order>({
-            path: "/api/order-service/0ec224e8-a0d8-4867-971c-918d944cf1d4/orders"
+            path: "/api/order-service/orders"
         },Order)
     }
 

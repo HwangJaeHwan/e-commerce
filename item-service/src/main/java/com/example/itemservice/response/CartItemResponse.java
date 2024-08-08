@@ -16,7 +16,7 @@ public class CartItemResponse {
     public CartItemResponse(Item item) {
         this.name = item.getName();
         this.itemUUID = item.getItemUUID();
-        this.price = item.getPrice();
+        this.itemPrice = item.getPrice();
     }
 
 
@@ -25,6 +25,6 @@ public class CartItemResponse {
     }
 
     public void calItemPrice() {
-        this.itemPrice = price * quantity;
+        this.price = itemPrice * quantity;
     }
 }

@@ -1,52 +1,37 @@
 <script setup lang="ts">
-
-
-import {onMounted, reactive, UnwrapRef} from "vue";
+import { onMounted, reactive } from "vue";
 import type Order from "@/entity/order/Order";
-import {container} from "tsyringe";
+import { container } from "tsyringe";
 import OrderRepository from "@/repository/OrderRepository";
-import HttpError from "@/http/HttpError";
-import {ElMessage} from "element-plus";
-import Paging from "@/entity/data/Paging";
 import ImageListRequest from "@/entity/image/ImageListRequest";
 import ImageResponse from "@/entity/image/ImageResponse";
 import ImageRepository from "@/repository/ImageRepository";
 import OrderItem from "@/components/OrderItem.vue";
+import Paging from "@/entity/data/Paging";
 
-const ORDER_REPOSITORY =container.resolve(OrderRepository)
+const ORDER_REPOSITORY = container.resolve(OrderRepository)
 const IMAGE_REPOSITORY = container.resolve(ImageRepository)
 
 type StateType = {
   orderList: Paging<Order>,
-  imageMap: Map<string,string[]>
+  imageMap: Map<string, string[]>
 }
 
 const state = reactive<StateType>({
   orderList: new Paging<Order>(),
-  imageMap: new Map<string, string[]>
+  imageMap: new Map<string, string[]>()
 })
-
 
 function getOrders() {
   ORDER_REPOSITORY.getOrders()
-      .then((orders)=>{
-        console.log(">>>order = {}",orders)
+      .then((orders) => {
         state.orderList = orders
         getImages()
       })
-      // .catch((e: HttpError) => {
-      //   console.log("시발")
-      //   ElMessage({ type: 'error', message: e.getMessage() })
-      // })
-
-
 }
 
-
-function getImages(){
-
+function getImages() {
   const request = new ImageListRequest()
-
   request.imageType = 'ITEM'
   state.orderList.items.forEach(order => {
     order.items.forEach(orderItem => {
@@ -54,35 +39,21 @@ function getImages(){
     })
   })
 
-  console.log("request = "+JSON.stringify(request))
-
   IMAGE_REPOSITORY.getImages(request)
-      .then((imageList:ImageResponse[]) =>{
-
+      .then((imageList: ImageResponse[]) => {
         for (const image of imageList) {
-
           for (const imageInfo of image.imageInfos) {
-
             const url = base64ToImage(imageInfo.imageData, imageInfo.mimeType);
             if (!state.imageMap.has(image.uuid)) {
-
               state.imageMap.set(image.uuid, []);
             }
-
             state.imageMap.get(image.uuid)?.push(url);
-
           }
-
-
         }
-        console.log("ㅡㅡ =" + JSON.stringify(state.imageMap.get(imageList[0].uuid)))
-
       })
-
 }
 
 function base64ToImage(base64String, mimeType) {
-
   const byteCharacters = atob(base64String);
   const byteNumbers = new Array(byteCharacters.length);
   for (let i = 0; i < byteCharacters.length; i++) {
@@ -92,62 +63,71 @@ function base64ToImage(base64String, mimeType) {
   const blob = new Blob([byteArray], { type: mimeType });
 
   return URL.createObjectURL(blob)
-
-
 }
 
-
-
-onMounted(()=>{
+onMounted(() => {
   getOrders()
 })
-
 </script>
 
-
-
 <template>
-
-
-  <div class="d-flex align-items-center justify-content-center mb-5">
-    <h1>주문목록</h1>
-  </div>
-  <div class="zz">
-
-    <div v-for="(order,index) in state.orderList.items" :key="index" >
-      <OrderItem :map="state.imageMap" :order= "order"/>
+  <div class="order-list-container">
+    <div class="order-list-header">
+      <h1>주문목록</h1>
     </div>
-
-
-    <div class="tq" style="width: 50%">
-      <div>
-        <h2>20000원</h2>
-
-        <el-button style="width: 150px" type="primary">구매하기</el-button>
-
+    <div class="order-list-content">
+      <div v-for="(order, index) in state.orderList.items" :key="index" class="order-item-wrapper">
+        <OrderItem :map="state.imageMap" :order="order" />
       </div>
-
+      <div class="order-summary">
+        <div>
+          <h2>20000원</h2>
+          <el-button style="width: 150px" type="primary">구매하기</el-button>
+        </div>
+      </div>
     </div>
   </div>
-
-
-
 </template>
 
-
-
-<style>
-.zz{
+<style scoped>
+.order-list-container {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
+  margin-bottom: 50px;
 }
 
-.tq{
+.order-list-header {
   display: flex;
-  justify-content: right;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
 }
 
+.order-list-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
 
+.order-item-wrapper {
+  width: 80%;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.order-summary {
+  width: 50%;
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.order-summary div {
+  text-align: right;
+}
 </style>

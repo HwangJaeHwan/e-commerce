@@ -37,7 +37,7 @@ export default class ImageRepository {
     public getImages(request: ImageListRequest){
 
         return this.httpRepository.post<Array<ImageResponse>>({
-            path:'api/image-service/images',
+            path:'/api/image-service/images',
             body: request,
         },Array<ImageResponse>)
     }
