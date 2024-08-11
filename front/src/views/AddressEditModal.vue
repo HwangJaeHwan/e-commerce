@@ -43,12 +43,27 @@ async function deleteAddress() {
 function sample4_execDaumPostcode() {
   new daum.Postcode({
     oncomplete: function(data) {
-      console.log(JSON.stringify(data))
       state.address.zipcode = data.zonecode
       state.address.address = data.roadAddress
     }
   }).open()
 }
+
+// 전화번호 입력 시 자동으로 "-" 추가
+function formatPhoneNumber() {
+  let phoneNumber = state.address.phoneNumber.replace(/[^0-9]/g, ''); // 숫자 이외의 문자 제거
+
+  if (phoneNumber.length < 4) {
+    state.address.phoneNumber = phoneNumber;
+  } else if (phoneNumber.length < 7) {
+    state.address.phoneNumber = phoneNumber.slice(0, 3) + '-' + phoneNumber.slice(3);
+  } else if (phoneNumber.length < 11) {
+    state.address.phoneNumber = phoneNumber.slice(0, 3) + '-' + phoneNumber.slice(3, 6) + '-' + phoneNumber.slice(6);
+  } else {
+    state.address.phoneNumber = phoneNumber.slice(0, 3) + '-' + phoneNumber.slice(3, 7) + '-' + phoneNumber.slice(7, 11);
+  }
+}
+
 </script>
 
 <template>
@@ -77,7 +92,7 @@ function sample4_execDaumPostcode() {
           <el-input v-model="state.address.detailAddress"></el-input>
         </el-form-item>
         <el-form-item label="전화번호">
-          <el-input v-model="state.address.phoneNumber"></el-input>
+          <el-input v-model="state.address.phoneNumber" @input="formatPhoneNumber"></el-input>
         </el-form-item>
       </el-form>
       <div class="modal-footer">

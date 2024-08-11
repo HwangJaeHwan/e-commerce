@@ -1,87 +1,99 @@
 <script setup lang="ts">
-import { reactive } from 'vue';
+import {onMounted, reactive} from 'vue';
+import Order from "@/entity/order/Order";
+import {container} from "tsyringe";
+import OrderRepository from "@/repository/OrderRepository";
+import ImageListRequest from "@/entity/image/ImageListRequest";
+import ImageResponse from "@/entity/image/ImageResponse";
+import HttpError from "@/http/HttpError";
+import {ElMessage} from "element-plus";
+import ImageRepository from "@/repository/ImageRepository";
 
-type Product = {
-  name: string;
-  price: number;
-  quantity: number;
-  image: string;
+const props = defineProps<{
+  orderId: number
+}>();
+
+const ORDER_REPOSITORY = container.resolve(OrderRepository);
+const IMAGE_REPOSITORY = container.resolve(ImageRepository);
+
+type StateType = {
+  order: Order,
+  imageMap: Map<string, string[]>
 };
 
-type Order = {
-  orderNumber: string;
-  orderDate: string;
-  deliveryStatus: string;
-  products: Product[];
-  recipient: {
-    name: string;
-    phone: string;
-    address: string;
-    request: string;
-  };
-  payment: {
-    method: string;
-    totalPrice: number;
-    discount: number;
-    deliveryFee: number;
-    finalAmount: number;
-  };
-};
+const state = reactive<StateType>({
+  order: new Order(),
+  imageMap: new Map<string, string[]>(),
+});
 
-const state = reactive<Order>({
-  orderNumber: '3100056407154',
-  orderDate: '2024. 7. 3',
-  deliveryStatus: '배송완료 - 7/3(수) 도착',
-  products: [
-    {
-      name: '성주 당도선별 미니참외, 1.5kg(6입~9입), 1봉',
-      price: 6206,
-      quantity: 1,
-      image: '/images/mini_chamoe.jpg',
-    },
-    {
-      name: '샐러드미인 사과푸딩, 1kg, 1개',
-      price: 5315,
-      quantity: 1,
-      image: '/images/apple_pudding.jpg',
-    },
-    {
-      name: '공곰 냉동 블루베리, 1kg, 1개',
-      price: 7949,
-      quantity: 1,
-      image: '/images/frozen_blueberry.jpg',
-    },
-  ],
-  recipient: {
-    name: '황재환',
-    phone: '010-2606-5527',
-    address: '서울특별시 관악구 신림동 1433-22 다솜 401호',
-    request: '문 앞',
-  },
-  payment: {
-    method: '국민카드 / 일시불',
-    totalPrice: 24470,
-    discount: 5000,
-    deliveryFee: 0,
-    finalAmount: 19470,
-  },
+function getOrder() {
+  ORDER_REPOSITORY.getOrder(props.orderId)
+      .then((order) => {
+        state.order = order;
+        getImages();
+      });
+}
+
+function getImages() {
+  const request = new ImageListRequest();
+  request.imageType = 'ITEM';
+  request.uuids = state.order.items.map(item => item.itemUUID);
+
+  IMAGE_REPOSITORY.getImages(request)
+      .then((imageList: ImageResponse[]) => {
+        for (const image of imageList) {
+          for (const imageInfo of image.imageInfos) {
+            const url = base64ToImage(imageInfo.imageData, imageInfo.mimeType);
+            if (!state.imageMap.has(image.uuid)) {
+              state.imageMap.set(image.uuid, []);
+            }
+            state.imageMap.get(image.uuid)?.push(url);
+          }
+        }
+      })
+      .catch((e: HttpError) => {
+        ElMessage({ type: 'error', message: e.getMessage() });
+      });
+}
+
+function base64ToImage(base64String: string, mimeType: string) {
+  const byteCharacters = atob(base64String);
+  const byteNumbers = new Array(byteCharacters.length);
+  for (let i = 0; i < byteCharacters.length; i++) {
+    byteNumbers[i] = byteCharacters.charCodeAt(i);
+  }
+  const byteArray = new Uint8Array(byteNumbers);
+  const blob = new Blob([byteArray], { type: mimeType });
+
+  return URL.createObjectURL(blob);
+}
+
+onMounted(() => {
+  getOrder();
 });
 </script>
 
 <template>
   <div class="container">
-    <header>
-      <h1>주문 상세</h1>
-      <p>{{ state.orderDate }} 주문 · 주문번호 {{ state.orderNumber }}</p>
+    <header class="header">
+      <h1>주문 정보</h1>
+      <div class="order-details">
+        <div class="order-date">
+          <strong>주문 시간:</strong> {{ state.order.getDisplaySimpleRegDate() }}
+        </div>
+        <div class="order-id">
+          <strong>주문 번호:</strong> {{ state.order.orderId }}
+        </div>
+      </div>
     </header>
 
     <section class="order-info">
-      <h2>{{ state.deliveryStatus }}</h2>
-      <div v-for="(product, index) in state.products" :key="index" class="product-item">
-        <img :src="product.image" alt="product.name" class="product-image" />
+      <h2>{{ state.order.orderStatus }}</h2>
+      <div v-for="(item, index) in state.order.items" :key="index" class="product-item">
+        <img :src="state.imageMap.get(item.itemUUID)?.[0] || '/images/dog.jpg'" alt="product.name" class="product-image" />
         <div class="product-details">
-          <h3>{{ product.name }}</h3>
-          <p>{{ product.price.toLocaleString() }} 원 · {{ product.quantity }}개</p>
+          <h3>{{ item.name }}</h3>
+          <p>{{ item.price.toLocaleString() }} 원 · {{ item.quantity }}개</p>
         </div>
         <div class="product-actions">
           <button class="btn">장바구니 담기</button>
@@ -94,21 +106,9 @@ const state = reactive<Order>({
 
     <section class="recipient-info">
       <h2>받는사람 정보</h2>
-      <p>받는사람: {{ state.recipient.name }}</p>
-      <p>연락처: {{ state.recipient.phone }}</p>
-      <p>받는주소: {{ state.recipient.address }}</p>
-      <p>배송요청사항: {{ state.recipient.request }}</p>
-    </section>
-
-    <section class="payment-info">
-      <h2>결제 정보</h2>
-      <p>결제수단: {{ state.payment.method }}</p>
-      <div class="payment-details">
-        <p>총 상품가격: {{ state.payment.totalPrice.toLocaleString() }} 원</p>
-        <p>할인금액: {{ state.payment.discount.toLocaleString() }} 원</p>
-        <p>배송비: {{ state.payment.deliveryFee.toLocaleString() }} 원</p>
-        <p>총 결제금액: {{ state.payment.finalAmount.toLocaleString() }} 원</p>
-      </div>
+      <p>받는사람: {{ state.order.name }}</p>
+      <p>연락처: {{ state.order.phoneNumber }}</p>
+      <p>받는주소: {{ state.order.address }}</p>
     </section>
   </div>
 </template>
@@ -121,10 +121,20 @@ const state = reactive<Order>({
   font-family: Arial, sans-serif;
 }
 
-header {
+.header {
   border-bottom: 2px solid #4CAF50;
   padding-bottom: 10px;
   margin-bottom: 20px;
+}
+
+.order-details {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.order-date, .order-id {
+  font-size: 14px;
 }
 
 .order-info {
@@ -133,19 +143,21 @@ header {
 
 .product-item {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   padding: 10px;
   border-bottom: 1px solid #ddd;
 }
 
 .product-image {
-  width: 100px;
-  height: 100px;
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
   margin-right: 20px;
 }
 
 .product-details {
   flex: 1;
+  text-align: left;
 }
 
 .product-actions {

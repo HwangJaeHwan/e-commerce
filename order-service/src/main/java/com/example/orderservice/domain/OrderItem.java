@@ -22,6 +22,8 @@ public class OrderItem {
     @ManyToOne(fetch = LAZY)
     private Order order;
 
+    private String name;
+
     private String itemUUID;
 
     private int quantity;
@@ -29,7 +31,8 @@ public class OrderItem {
     private int price;
 
     @Builder
-    public OrderItem(String itemUUID, int quantity, int price) {
+    public OrderItem(String name, String itemUUID, int quantity, int price) {
+        this.name = name;
         this.itemUUID = itemUUID;
         this.quantity = quantity;
         this.price = price;

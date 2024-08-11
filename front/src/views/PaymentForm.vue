@@ -6,10 +6,19 @@ import AddressModal from '@/views/AddressModal.vue';
 import Address from '@/entity/address/Address';
 import AddressListModal from '@/views/AddressListModal.vue';
 import {useProfileStore} from "@/entity/user/Profile";
+import {container} from "tsyringe";
+import OrderRepository from "@/repository/OrderRepository";
+import OrderRequest from "@/entity/order/OrderRequest";
+import OrderItem from "@/entity/order/OrderItem";
+import router from "@/router";
+import HttpError from "@/http/HttpError";
+import {ElMessage} from "element-plus";
 
 const route = useRoute();
 
 const user  = useProfileStore()
+const ORDER_REPOSITORY =container.resolve(OrderRepository)
+
 
 type StateType = {
   itemList: ShoppingCartItem[];
@@ -26,8 +35,45 @@ const state = reactive<StateType>({
 });
 
 const totalPrice = computed(() => {
-  return state.itemList.reduce((total, item) => total + item.price * item.quantity, 0);
+  return state.itemList.reduce((total, item) => total + item.itemPrice * item.quantity, 0);
 })
+
+function createOrder(){
+
+  console.log("저둥저둥")
+
+  console.log("info >>" , JSON.stringify(state.itemList))
+
+  if (!state.selectedAddress) {
+    console.log("여기여기")
+    ElMessage({ type: 'error', message: '주소를 선택해주세요.' })
+    throw new Error('주소가 선택되지 않았습니다.');
+  }
+
+  console.log("여기여기ㅋㅋㅋ")
+  const request = new OrderRequest()
+
+  request.userUUID = user?.profile?.userUUID
+  request.name = state.selectedAddress?.name
+  request.address = state.selectedAddress?.address
+  request.detailAddress = state.selectedAddress?.detailAddress
+  request.phoneNumber = state.selectedAddress?.phoneNumber
+  request.zipcode = state.selectedAddress?.zipcode
+
+  for (const item of state.itemList) {
+    request.addItem(new OrderItem(item))
+  }
+
+  ORDER_REPOSITORY.createOrder(request)
+      .then((id) =>{
+        console.log("아이디다 : " + id)
+        router.push({ name: "OrderInfo", params: { orderId: id } })
+      })
+      .catch((e:HttpError) => {
+        ElMessage({ type: 'error', message: e.getMessage() })
+      })
+
+}
 
 function handleAddressSelect(address: Address) {
   state.selectedAddress = address;
@@ -52,32 +98,34 @@ onMounted(() => {
 });
 
 function requestPay() {
-  const IMP = window.IMP; // Iamport 객체
-  IMP.init('imp14316717'); // Iamport 가맹점 식별코드
+  // const IMP = window.IMP; // Iamport 객체
+  // IMP.init('imp14316717'); // Iamport 가맹점 식별코드
+  //
+  // const sum = state.itemList.reduce((total, cartItem) => total + cartItem.price * cartItem.quantity, 0);
 
-  const sum = state.itemList.reduce((total, cartItem) => total + cartItem.price * cartItem.quantity, 0);
+  createOrder()
 
-  IMP.request_pay(
-      {
-        pg: 'html5_inicis', // 결제 모듈 종류
-        pay_method: 'card', // 결제 수단
-        merchant_uid: `mid_${new Date().getTime()}`, // 주문번호
-        name: '결제 테스트', // 결제창에서 보여질 상품명
-        amount: sum, // 금액
-      },
-      (rsp) => {
-        // callback
-        if (rsp.success) {
-          // 결제 성공 시 로직
-          console.log('결제 성공', rsp);
-          alert('결제가 성공적으로 완료되었습니다.');
-        } else {
-          // 결제 실패 시 로직
-          console.log('결제 실패', rsp);
-          alert('결제에 실패하였습니다.');
-        }
-      }
-  );
+  // IMP.request_pay(
+  //     {
+  //       pg: 'html5_inicis', // 결제 모듈 종류
+  //       pay_method: 'card', // 결제 수단
+  //       merchant_uid: `mid_${new Date().getTime()}`, // 주문번호
+  //       name: '결제 테스트', // 결제창에서 보여질 상품명
+  //       amount: sum, // 금액
+  //     },
+  //     (rsp) => {
+  //       // callback
+  //       if (rsp.success) {
+  //         // 결제 성공 시 로직
+  //         console.log('결제 성공', rsp);
+  //         alert('결제가 성공적으로 완료되었습니다.');
+  //       } else {
+  //         // 결제 실패 시 로직
+  //         console.log('결제 실패', rsp);
+  //         alert('결제에 실패하였습니다.');
+  //       }
+  //     }
+  // );
 }
 </script>
 

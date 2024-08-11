@@ -12,6 +12,7 @@ public class ItemResponse {
 
 
     public ItemResponse(OrderItem orderItem) {
+        this.name = orderItem.getName();
         this.itemUUID = orderItem.getItemUUID();
         this.quantity = orderItem.getQuantity();
         this.price = orderItem.getPrice();

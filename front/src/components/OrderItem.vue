@@ -1,12 +1,10 @@
 <script setup lang="ts">
-
 import type Order from "@/entity/order/Order";
 
 const props = defineProps<{
   map: Map<string, string[]>,
   order: Order
-}>()
-
+}>();
 </script>
 
 <template>
@@ -28,6 +26,11 @@ const props = defineProps<{
         </div>
       </div>
     </div>
+
+    <!-- 주문 상세 정보로 이동하는 버튼 -->
+    <router-link :to="{ name: 'orderInfo', params: { orderUUID: props.order.orderUUID } }">
+      <el-button type="primary" class="order-info-button">주문 상세보기</el-button>
+    </router-link>
   </div>
 </template>
 
@@ -86,5 +89,10 @@ const props = defineProps<{
 
 .mb-2 {
   margin-bottom: 10px;
+}
+
+.order-info-button {
+  align-self: flex-end;
+  margin-top: 20px;
 }
 </style>

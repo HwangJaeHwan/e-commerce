@@ -42,7 +42,7 @@ function getCartItems() {
 }
 
 const totalPrice = computed(() => {
-  return state.itemList.reduce((total, cartItem) => total + cartItem.price * cartItem.quantity, 0);
+  return state.itemList.reduce((total, cartItem) => total + cartItem.itemPrice * cartItem.quantity, 0);
 });
 
 function getImages() {

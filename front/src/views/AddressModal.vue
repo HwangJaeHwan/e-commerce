@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { reactive, defineEmits } from 'vue'
+import { reactive, defineEmits } from 'vue';
 import AddressRequest from "@/entity/address/AddressRequest";
-import {container} from "tsyringe";
+import { container } from "tsyringe";
 import AddressRepository from "@/repository/AddressRepository";
 
-const emit = defineEmits(['close', 'submit'])
+const emit = defineEmits(['close', 'submit']);
 
-const ADDRESS_REPOSITORY = container.resolve(AddressRepository)
+const ADDRESS_REPOSITORY = container.resolve(AddressRepository);
 
 type StateType = {
   address: AddressRequest,
@@ -14,46 +14,42 @@ type StateType = {
 
 const state = reactive<StateType>({
   address: new AddressRequest(),
-})
+});
 
 function closeModal() {
-  emit('close')
+  emit('close');
 }
 
 function submitAddress() {
-  // emit('submit', state.address)
-  ADDRESS_REPOSITORY.addAddress(state.address)
-  closeModal()
+  ADDRESS_REPOSITORY.addAddress(state.address);
+  closeModal();
 }
-
-
-
 
 function sample4_execDaumPostcode() {
   new daum.Postcode({
     oncomplete: function(data) {
-      // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
-      console.log(JSON.stringify(data))
-
-      state.address.zipcode = data.zonecode
-      state.address.address = data.roadAddress
-
-
-
-
+      state.address.zipcode = data.zonecode;
+      state.address.address = data.roadAddress;
     }
   }).open();
 }
 
+// 전화번호 입력 시 자동으로 "-" 추가
+function formatPhoneNumber() {
+  let phoneNumber = state.address.phoneNumber.replace(/[^0-9]/g, ''); // 숫자 이외의 문자 제거
 
-
-
-
+  if (phoneNumber.length < 4) {
+    state.address.phoneNumber = phoneNumber;
+  } else if (phoneNumber.length < 7) {
+    state.address.phoneNumber = phoneNumber.slice(0, 3) + '-' + phoneNumber.slice(3);
+  } else if (phoneNumber.length < 11) {
+    state.address.phoneNumber = phoneNumber.slice(0, 3) + '-' + phoneNumber.slice(3, 6) + '-' + phoneNumber.slice(6);
+  } else {
+    state.address.phoneNumber = phoneNumber.slice(0, 3) + '-' + phoneNumber.slice(3, 7) + '-' + phoneNumber.slice(7, 11);
+  }
+}
 
 </script>
-
-
-
 
 <template>
   <div class="modal-overlay" @click.self="closeModal">
@@ -81,7 +77,7 @@ function sample4_execDaumPostcode() {
           <el-input v-model="state.address.detailAddress"></el-input>
         </el-form-item>
         <el-form-item label="전화번호">
-          <el-input v-model="state.address.phoneNumber"></el-input>
+          <el-input v-model="state.address.phoneNumber" @input="formatPhoneNumber"></el-input>
         </el-form-item>
       </el-form>
       <div class="modal-footer">
@@ -91,7 +87,6 @@ function sample4_execDaumPostcode() {
     </div>
   </div>
 </template>
-
 
 <style scoped>
 .modal-overlay {

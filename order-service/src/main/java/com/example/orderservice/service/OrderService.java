@@ -1,6 +1,7 @@
 package com.example.orderservice.service;
 
 import com.example.orderservice.client.ItemServiceClient;
+import com.example.orderservice.config.auth.UserInfo;
 import com.example.orderservice.domain.Order;
 import com.example.orderservice.domain.OrderItem;
 import com.example.orderservice.domain.OrderStatus;
@@ -42,7 +43,7 @@ public class OrderService {
     private final KafkaProducer kafkaProducer;
 
 
-    public void createOrder(OrderRequest orderRequest) {
+    public Long createOrder(OrderRequest orderRequest) {
 
 
         Order order = Order.builder()
@@ -50,14 +51,17 @@ public class OrderService {
                 .userUUID(orderRequest.getUserUUID())
                 .orderUUID(UUID.randomUUID().toString())
                 .orderDate(LocalDateTime.now())
-                .city(orderRequest.getCity())
-                .street(orderRequest.getStreet())
+                .name(orderRequest.getName())
+                .address(orderRequest.getAddress())
+                .detailAddress(orderRequest.getDetailAddress())
                 .zipcode(orderRequest.getZipcode())
+                .phoneNumber(orderRequest.getPhoneNumber())
                 .build();
 
         for (ItemRequest item : orderRequest.getItems()) {
             order.addItem(
                     OrderItem.builder()
+                            .name(item.getName())
                             .itemUUID(item.getItemUUID())
                             .quantity(item.getQuantity())
                             .price(item.getPrice())
@@ -66,11 +70,30 @@ public class OrderService {
         }
 
 
-
-        orderRepository.save(order);
+        Order save = orderRepository.save(order);
 
         kafkaProducer.send("item-reduce-topic"
                 , new OrderMessage(orderRequest.getItems().stream().map(ItemQuantity::new).toList()));
+
+        return save.getId();
+    }
+
+    public OrderResponse getOrder(UserInfo userInfo, Long orderId) {
+
+        Order order = orderRepository.findById(orderId).orElseThrow(OrderNotFoundException::new);
+
+        if (!order.getUserUUID().equals(userInfo.getUuid())) {
+            throw new UnauthorizedException();
+        }
+
+        OrderResponse response = new OrderResponse(order);
+
+        response.addItems(order.getOrderItems().stream().map(ItemResponse::new).toList());
+        response.calTotalPrice(order.getOrderItems());
+
+        return response;
+
+
     }
 
     public PageResponse getOrdersByUserUUID(String userUUID,int page) {
@@ -88,11 +111,12 @@ public class OrderService {
             List<OrderItem> orderItems = order.getOrderItems();
 
             OrderResponse orderResponse = OrderResponse.builder()
+                    .orderId(order.getId())
                     .orderUUID(order.getOrderUUID())
                     .orderStatus(order.getOrderStatus())
                     .zipcode(order.getZipcode())
-                    .city(order.getCity())
-                    .street(order.getStreet())
+                    .address(order.getAddress())
+                    .detailAddress(order.getDetailAddress())
                     .orderDate(order.getOrderDate())
                     .build();
 
@@ -132,6 +156,5 @@ public class OrderService {
                 new OrderMessage(deleteOrder.getOrderItems().stream().map(ItemQuantity::new).toList()));
 
     }
-
 
 }

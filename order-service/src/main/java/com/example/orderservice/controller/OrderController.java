@@ -22,9 +22,9 @@ public class OrderController {
     private final CartService cartService;
 
     @PostMapping("/orders")
-    public void createOrder(@RequestBody OrderRequest orderRequest) {
+    public Long createOrder(@RequestBody OrderRequest orderRequest) {
 
-        orderService.createOrder(orderRequest);
+        return orderService.createOrder(orderRequest);
 
     }
 
@@ -32,6 +32,12 @@ public class OrderController {
     public PageResponse orders(UserInfo userInfo, @RequestParam(defaultValue = "1") int page) {
 
         return orderService.getOrdersByUserUUID(userInfo.getUuid(), page);
+    }
+
+    @GetMapping("/orders/{orderId}")
+    public OrderResponse orders(UserInfo userInfo, @PathVariable Long orderId) {
+
+        return orderService.getOrder(userInfo, orderId);
     }
 
     @PutMapping("/{orderUUID}")

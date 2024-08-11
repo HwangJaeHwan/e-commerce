@@ -31,24 +31,32 @@ public class Order {
     private String userUUID;
     private String orderUUID;
     private LocalDateTime orderDate;
+    private String name;
 
-    private String city;
-    private String street;
+    private String address;
+    private String detailAddress;
     private String zipcode;
+    private String phoneNumber;
+
 
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
+
     @Builder
-    public Order( String userUUID, String orderUUID, LocalDateTime orderDate, String city, String street, String zipcode, OrderStatus orderStatus) {
+    public Order(String userUUID, String orderUUID, LocalDateTime orderDate,
+                 String address, String detailAddress, String zipcode, String name,
+                 String phoneNumber, OrderStatus orderStatus) {
+
         this.userUUID = userUUID;
         this.orderUUID = orderUUID;
         this.orderDate = orderDate;
-        this.city = city;
-        this.street = street;
+        this.name = name;
+        this.address = address;
+        this.detailAddress = detailAddress;
         this.zipcode = zipcode;
+        this.phoneNumber = phoneNumber;
         this.orderStatus = orderStatus;
     }
-
 
     public void addItem(OrderItem orderItem) {
         orderItems.add(orderItem);

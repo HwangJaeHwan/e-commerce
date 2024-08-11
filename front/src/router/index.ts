@@ -78,7 +78,13 @@ const router = createRouter({
       path: "/test2",
       name: "test2",
       component: TestView2,
-    }
+    },
+    {
+      path: '/order/:orderId',
+      name: 'OrderInfo',
+      component: OrderInfo,
+      props: route => ({ orderId: Number(route.params.orderId) })
+    },
 
   ]
 })
