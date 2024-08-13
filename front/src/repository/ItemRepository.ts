@@ -21,9 +21,9 @@ export default class ItemRepository {
 
     }
 
-    public getList() {
+    public getList(params: string) {
         return this.httpRepository.getList<Item>({
-                path: '/api/item-service/items?page=1&search=test&category=FOOD'
+                path: '/api/item-service/items?'+params
             },
             Item
         )

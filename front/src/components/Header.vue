@@ -1,8 +1,22 @@
 <script setup lang="ts">
-import { onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useProfileStore } from "@/entity/user/Profile";
+import { useRouter } from 'vue-router';
 
 const profileStore = useProfileStore();
+const router = useRouter();
+
+const searchQuery = ref('');
+const selectedCategory = ref('');
+
+const options = [
+  { category: 'FASHION', label: '패션' },
+  { category: 'BEAUTY', label: '뷰티' },
+  { category: 'FOOD', label: '푸드' },
+  { category: 'SPORTS', label: '스포츠' },
+  { category: 'HEALTH', label: '건강' },
+  { category: 'ETC', label: '기타' },
+];
 
 onMounted(async () => {
   await profileStore.fetchProfile();
@@ -11,13 +25,42 @@ onMounted(async () => {
 function handleLogout() {
   profileStore.setProfile(null); // 로그아웃 시 프로필 초기화
 }
+
+function handleSearch() {
+  router.push({
+    path: '/items',
+    query: {
+      category: selectedCategory.value,
+      search: searchQuery.value
+    }
+  });
+}
 </script>
 
 <template>
   <div class="header-container">
     <div class="header">
-      <img src="/images/logo.png" alt="logo" class="logo" />
-      <div class="title">테스트 헤드</div>
+      <div class="logo-title">
+        <img src="/images/logo.png" alt="logo" class="logo" />
+        <div class="title">테스트 헤드</div>
+      </div>
+
+      <div class="search-container">
+        <select v-model="selectedCategory" class="category-select">
+          <option value="" disabled>카테고리 선택</option>
+          <option v-for="option in options" :key="option.category" :value="option.category">
+            {{ option.label }}
+          </option>
+        </select>
+        <input
+            v-model="searchQuery"
+            type="text"
+            class="search-input"
+            placeholder="검색어를 입력하세요"
+        />
+        <button @click="handleSearch" class="search-button">검색</button>
+      </div>
+
       <div class="login-info">
         <router-link class="link" to="test2" v-if="!profileStore.profile">
           회원가입
@@ -51,6 +94,11 @@ function handleLogout() {
   align-items: center;
 }
 
+.logo-title {
+  display: flex;
+  align-items: center;
+}
+
 .logo {
   width: 120px;
   object-fit: cover;
@@ -61,6 +109,38 @@ function handleLogout() {
   font-weight: 500;
   color: #343a40;
   margin-left: 10px;
+}
+
+.search-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.category-select {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.search-input {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 200px;
+}
+
+.search-button {
+  padding: 0.5rem 1rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.search-button:hover {
+  background-color: #0056b3;
 }
 
 .login-info {

@@ -36,15 +36,15 @@ public class ItemRepositoryImpl implements ItemRepositoryCustom{
 
         List<Item> content = queryFactory.selectFrom(item)
                 .where(builder)
-                .limit(10)
-                .offset((long) (page - 1) * 10)
+                .limit(16)
+                .offset((long) (page - 1) * 16)
                 .fetch();
 
         JPAQuery<Long> countQuery = queryFactory.select(item.count())
                 .from(item)
                 .where(builder);
 
-        return PageableExecutionUtils.getPage(content, PageRequest.of(page-1, 10), countQuery::fetchOne);
+        return PageableExecutionUtils.getPage(content, PageRequest.of(page-1, 16), countQuery::fetchOne);
 
 
     }

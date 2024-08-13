@@ -3,12 +3,12 @@
 
 <template>
   <el-menu class="menu" mode="horizontal" router>
-    <el-menu-item class="el-menu-item" index="/add?Category=Fashion">패션</el-menu-item>
-    <el-menu-item index="/login">뷰티</el-menu-item>
-    <el-menu-item index="/register">푸드</el-menu-item>
-    <el-menu-item index="/item">스포츠</el-menu-item>
-    <el-menu-item index="/review/write">건강</el-menu-item>
-    <el-menu-item index="/cart">기타</el-menu-item>
+    <el-menu-item class="el-menu-item" index="/items?category=FASHION">패션</el-menu-item>
+    <el-menu-item index="/items?category=BEAUTY">뷰티</el-menu-item>
+    <el-menu-item index="/items?category=FOOD">푸드</el-menu-item>
+    <el-menu-item index="/items?category=SPORT">스포츠</el-menu-item>
+    <el-menu-item index="/items?category=HEALTH">건강</el-menu-item>
+    <el-menu-item index="/items?category=ETC">기타</el-menu-item>
   </el-menu>
 </template>
 

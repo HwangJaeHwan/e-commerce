@@ -4,6 +4,7 @@ import com.example.itemservice.auth.UserInfo;
 import com.example.itemservice.domain.item.Category;
 import com.example.itemservice.request.ItemQuantity;
 import com.example.itemservice.request.ItemRequest;
+import com.example.itemservice.request.SearchRequest;
 import com.example.itemservice.response.CartItemResponse;
 import com.example.itemservice.response.ItemDetailResponse;
 import com.example.itemservice.response.PageResponse;
@@ -27,10 +28,9 @@ public class ItemController {
 
 
     @GetMapping("/items")
-    public PageResponse items(@RequestParam String search, @RequestParam int page,
-                              @RequestParam Category category) {
+    public PageResponse items(SearchRequest search, @RequestParam(defaultValue = "1") int page) {
 
-        return itemService.items(search, category, page);
+        return itemService.items(search.getSearch(), search.getCategory(), page);
 
     }
 
