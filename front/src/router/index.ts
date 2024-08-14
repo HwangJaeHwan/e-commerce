@@ -13,6 +13,7 @@ import TestView from "@/views/TestView.vue";
 import TestView2 from "@/views/TestView2.vue";
 import testPay from "@/views/testPay.vue";
 import OrderInfo from "@/views/OrderInfo.vue";
+import Mypage from "@/views/Mypage.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -70,9 +71,9 @@ const router = createRouter({
     },
 
     {
-      path: "/test",
-      name: "test",
-      component: OrderInfo,
+      path: "/mypage",
+      name: "mypage",
+      component: Mypage,
     },
     {
       path: "/test2",

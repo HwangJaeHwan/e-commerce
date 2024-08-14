@@ -139,19 +139,20 @@ onMounted(() =>{
 
 })
 
-watch(route.query, () => {
+watch([() => route.query.search, () => route.query.category, () => route.query.page], () => {
+  console.log("Query parameters changed:", route.query);
   getList();
-})
+});
 
 
 </script>
 <!--style="height: 100% width= 100%"-->
 <template>
-  <div class="home-grid">
-
-<!--    <item-list :item ="state.itemList.items" :map ="state.imageMap"/>-->
-    <div v-for="(item,index) in state.itemList.items" :key="index">
-      <item-list :map ="state.imageMap" :item ="item"/>
+  <div class="home-grid-container">
+    <div class="home-grid">
+      <div v-for="(item,index) in state.itemList.items" :key="index">
+        <item-list :map="state.imageMap" :item="item"/>
+      </div>
     </div>
 
     <el-pagination
@@ -163,19 +164,30 @@ watch(route.query, () => {
         :total="state.itemList.totalElement"
         @current-change="handlePageChange"
     />
-
-
-
   </div>
-
 </template>
 
-<style>
+<style scoped>
+.home-grid-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
 
 .home-grid {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
-
+  gap: 20px;
+  width: 100%;
+  max-width: 1200px; /* 원하는 최대 너비로 설정 */
+  margin-bottom: 20px; /* 상품 리스트와 페이지네이션 사이에 여백 추가 */
 }
 
+.pagination {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-top: 20px;
+}
 </style>

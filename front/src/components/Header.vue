@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watchEffect } from 'vue';
 import { useProfileStore } from "@/entity/user/Profile";
 import { useRouter } from 'vue-router';
 
@@ -35,6 +35,11 @@ function handleSearch() {
     }
   });
 }
+
+// watchEffect를 사용하여 프로필 상태가 변경될 때마다 뷰를 강제로 업데이트
+watchEffect(() => {
+  console.log("Profile updated:", profileStore.profile);
+});
 </script>
 
 <template>
@@ -62,13 +67,13 @@ function handleSearch() {
       </div>
 
       <div class="login-info">
-        <router-link class="link" to="test2" v-if="!profileStore.profile">
+        <router-link class="link" to="register" v-if="!profileStore.profile">
           회원가입
         </router-link>
-        <router-link class="link" to="tmp" v-else>
+        <router-link class="link" to="mypage" v-else>
           {{ profileStore.profile?.loginId }}
         </router-link>
-        <router-link class="link" to="test" v-if="!profileStore.profile">
+        <router-link class="link" to="mypage" v-if="!profileStore.profile">
           로그인
         </router-link>
         <router-link class="link" to="tmp" v-else @click="handleLogout">
