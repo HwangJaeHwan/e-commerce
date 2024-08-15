@@ -76,9 +76,9 @@ const router = createRouter({
       component: Mypage,
     },
     {
-      path: "/test2",
-      name: "test2",
-      component: TestView2,
+      path: "/test",
+      name: "test",
+      component: TestView,
     },
     {
       path: '/order/:orderId',
