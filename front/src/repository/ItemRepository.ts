@@ -2,6 +2,7 @@ import HttpRepository from "@/repository/HttpRepository";
 import {inject, singleton} from "tsyringe";
 import type ItemAdd from "@/entity/item/ItemAdd";
 import Item from "@/entity/item/Item";
+import ItemUpdate from "@/entity/item/ItemUpdate";
 
 @singleton()
 export default class ItemRepository {
@@ -27,6 +28,13 @@ export default class ItemRepository {
             },
             Item
         )
+    }
+
+    public update(request: ItemUpdate) {
+        return this.httpRepository.patch({
+            path: `/api/item-service/update/${request.itemUUID}`,
+            body: request
+        })
     }
 
 }

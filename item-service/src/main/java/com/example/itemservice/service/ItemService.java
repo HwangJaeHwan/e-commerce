@@ -12,6 +12,7 @@ import com.example.itemservice.repository.ItemRepository;
 import com.example.itemservice.request.CartItemInfo;
 import com.example.itemservice.request.ItemQuantity;
 import com.example.itemservice.request.ItemRequest;
+import com.example.itemservice.request.ItemUpdate;
 import com.example.itemservice.response.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -133,6 +134,18 @@ public class ItemService {
             cartItem.calItemPrice();
             return cartItem;
         }).toList();
+    }
+
+    public void update(String itemUUID, ItemUpdate itemUpdate, UserInfo userInfo) {
+
+        Item item = itemRepository.findByItemUUID(itemUUID).orElseThrow(ItemNotFoundException::new);
+
+        if (!item.getUserUUID().equals(userInfo.getUuid())) {
+            throw new UnauthorizedException();
+        }
+
+        item.update(itemUpdate);
+
     }
 
 

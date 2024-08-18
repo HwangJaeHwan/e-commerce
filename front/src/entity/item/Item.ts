@@ -10,6 +10,8 @@ export default class Item {
 
     public price = 0
 
+    public stock = 0
+
     public itemDescription = ''
 
     public category = ''

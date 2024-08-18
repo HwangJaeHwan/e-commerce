@@ -1,9 +1,9 @@
 package com.example.itemservice.controller;
 
 import com.example.itemservice.auth.UserInfo;
-import com.example.itemservice.domain.item.Category;
 import com.example.itemservice.request.ItemQuantity;
 import com.example.itemservice.request.ItemRequest;
+import com.example.itemservice.request.ItemUpdate;
 import com.example.itemservice.request.SearchRequest;
 import com.example.itemservice.response.CartItemResponse;
 import com.example.itemservice.response.ItemDetailResponse;
@@ -66,6 +66,11 @@ public class ItemController {
 
         itemService.deleteItem(itemId, userInfo);
 
+    }
+
+    @PatchMapping("/update/{itemUUID}")
+    public void updateItem(@PathVariable String itemUUID, @RequestBody ItemUpdate itemUpdate, UserInfo userInfo) {
+        itemService.update(itemUUID, itemUpdate, userInfo);
     }
 
 //    @PatchMapping("/quantity/add")

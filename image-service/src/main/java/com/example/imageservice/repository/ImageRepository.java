@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ImageRepository extends JpaRepository<Image, Long> {
+
+
     @Query("select i from ItemImage i join fetch i.urls where i.itemUUID = :UUID")
     Optional<ItemImage> getItemImage(@Param("UUID") String UUID);
 

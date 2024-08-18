@@ -1,5 +1,7 @@
 package com.example.itemservice.domain.item;
 
+import com.example.itemservice.exception.InsufficientStockException;
+import com.example.itemservice.request.ItemUpdate;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -62,7 +64,7 @@ public class Item {
         }
 
         if (stock < quantity) {
-            throw new RuntimeException("수량 부족");
+            throw new InsufficientStockException();
         }
 
         this.stock -= quantity;
@@ -70,5 +72,12 @@ public class Item {
     }
 
 
+    public void update(ItemUpdate itemUpdate) {
 
+        this.name = itemUpdate.getName();
+        this.itemDescription = itemUpdate.getItemDescription();
+        this.price = itemUpdate.getPrice();
+        this.stock = itemUpdate.getStock();
+        this.category = itemUpdate.getCategory();
+    }
 }

@@ -24,6 +24,8 @@ public class ItemDetailResponse {
 
     private String itemUUID;
 
+    private Integer stock;
+
     private List<UrlResponse> urls;
 
     private Double score;
@@ -34,6 +36,7 @@ public class ItemDetailResponse {
         this.name = item.getName();
         this.itemDescription = item.getItemDescription();
         this.price = item.getPrice();
+        this.stock = item.getStock();
         this.category = item.getCategory();
         this.itemUUID = item.getItemUUID();
     }

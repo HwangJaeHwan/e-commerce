@@ -4,14 +4,11 @@ import AddItemView from "@/views/AddItemView.vue";
 import LoginView from "@/views/LoginView.vue";
 import RegisterUser from "@/views/RegisterUser.vue";
 import ItemView from "@/views/ItemView.vue";
-import WriteReview from "@/entity/review/WriteReview";
 import WriteReviewView from "@/views/WriteReviewView.vue";
 import ShoppingCartView from "@/views/ShoppingCartView.vue";
 import OrderListView from "@/views/OrderListView.vue";
 import PaymentForm from "@/views/PaymentForm.vue";
 import TestView from "@/views/TestView.vue";
-import TestView2 from "@/views/TestView2.vue";
-import testPay from "@/views/testPay.vue";
 import OrderInfo from "@/views/OrderInfo.vue";
 import Mypage from "@/views/Mypage.vue";
 
@@ -76,9 +73,10 @@ const router = createRouter({
       component: Mypage,
     },
     {
-      path: "/test",
+      path: "/test/:itemUUID",
       name: "test",
       component: TestView,
+      props: true
     },
     {
       path: '/order/:orderId',

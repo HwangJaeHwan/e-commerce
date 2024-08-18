@@ -21,6 +21,8 @@ export default class ImageRepository {
        })
     }
 
+
+
     public get(filename: string) {
         return axios.get(`/api/image-service/${filename}`,{ responseType: 'blob' })
 
@@ -40,6 +42,14 @@ export default class ImageRepository {
             path:'/api/image-service/images',
             body: request,
         },Array<ImageResponse>)
+    }
+
+    public update(request: FormData, itemUUID: string) {
+
+        return this.httpRepository.post({
+            path:`/api/image-service/update/${itemUUID}`,
+            body: request
+        })
     }
 
 

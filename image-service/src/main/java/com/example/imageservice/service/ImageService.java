@@ -13,6 +13,7 @@ import com.example.imageservice.repository.ImageRepository;
 import com.example.imageservice.repository.UrlRepository;
 import com.example.imageservice.request.ImageListRequest;
 import com.example.imageservice.request.ImageRequest;
+import com.example.imageservice.request.ImageUpdateRequest;
 import com.example.imageservice.response.ImageInfo;
 import com.example.imageservice.response.ImageResponse;
 import com.example.imageservice.response.UrlResponse;
@@ -30,6 +31,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @Slf4j
@@ -57,7 +59,7 @@ public class ImageService {
 
     }
 
-    public void deleteImage(String userUUID, String filename) {
+    public void deleteUrl(String userUUID, String filename) {
 
         ImageUrl url = urlRepository.findByStoredName(filename).orElseThrow(ImageNotFoundException::new);
 
@@ -141,6 +143,61 @@ public class ImageService {
         return responses;
     }
 
+    public ImageResponse getItemImages(String itemUUID) throws IOException {
+        List<ImageResponse> responses = new ArrayList<>();
+
+        ItemImage image = imageRepository.getItemImage(itemUUID).orElseThrow(ImageNotFoundException::new);
+        List<ImageUrl> urls = image.getUrls();
+
+        log.info("size = {}", urls.size());
+
+        return getImageResponse(image.getItemUUID(), urls);
+
+
+
+
+    }
+
+    public void updateImage(UserInfo userInfo, String uuid, ImageUpdateRequest request, List<MultipartFile>images) throws IOException {
+
+        Image image;
+
+
+        if (request.getImageType() == ImageType.ITEM) {
+            image = imageRepository.getItemImage(uuid).orElseThrow(ImageNotFoundException::new);
+        } else {
+            image = imageRepository.getReviewImage(uuid).orElseThrow(ImageNotFoundException::new);
+        }
+
+        log.info("find image user uuid = {}", image.getUserUUID());
+        log.info("userInfo uuid = {}", userInfo.getUuid());
+        log.info("ids.size() = {}", request.getIds().size());
+
+        if (!userInfo.getUuid().equals(image.getUserUUID())) {
+            throw new UnauthorizedException();
+        }
+
+        if (!request.getIds().isEmpty()) {
+
+            for (Long id : request.getIds()) {
+                deleteUrl(id);
+            }
+
+        }
+
+        imageStore.storeImages(image, images);
+
+
+    }
+
+    private void deleteUrl(Long id) {
+
+        ImageUrl url = urlRepository.findById(id).orElseThrow(ImageNotFoundException::new);
+        imageStore.deleteImage(url.getStoredName());
+        urlRepository.delete(url);
+
+    }
+
     private String ByteToString(byte[] imageData) {
         return Base64.getEncoder().encodeToString(imageData);
     }
@@ -156,27 +213,12 @@ public class ImageService {
             byte[] imageData = StreamUtils.copyToByteArray(urlResource.getInputStream());
             log.info("mimeType = {}", mimeType);
 
-            response.getImageInfos().add(new ImageInfo(ByteToString(imageData), mimeType));
+            response.getImageInfos().add(new ImageInfo(url.getId(),ByteToString(imageData), mimeType));
 
 
         }
 
         return response;
-    }
-
-    public ImageResponse getItemImages(String itemUUID) throws IOException {
-        List<ImageResponse> responses = new ArrayList<>();
-
-        ItemImage image = imageRepository.getItemImage(itemUUID).orElseThrow(ImageNotFoundException::new);
-        List<ImageUrl> urls = image.getUrls();
-
-        log.info("size = {}", urls.size());
-
-        return getImageResponse(image.getItemUUID(), urls);
-
-
-
-
     }
 
 }

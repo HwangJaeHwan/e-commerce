@@ -1,5 +1,6 @@
+import type Item from "@/entity/item/Item";
 
-export default class ItemAdd {
+export default class ItemUpdate {
 
     public name = ''
     public itemUUID =''

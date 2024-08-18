@@ -2,6 +2,7 @@ package com.example.imageservice.image;
 
 import com.example.imageservice.domain.ImageUrl;
 import com.example.imageservice.domain.image.Image;
+import com.example.imageservice.exception.ImageNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -41,16 +42,11 @@ public class ImageStore {
             file.delete();
         }
 
-        throw new RuntimeException("파일 존재 x");
+        throw new ImageNotFoundException();
     }
 
 
     private ImageUrl storeImage(MultipartFile multipartFile) throws IOException {
-
-        if (multipartFile.isEmpty()) {
-            return null;
-        }
-
 
         String originalFilename = multipartFile.getOriginalFilename();
         String storeFileName = createStoreFileName(originalFilename);

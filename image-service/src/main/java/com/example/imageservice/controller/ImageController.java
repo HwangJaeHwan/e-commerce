@@ -5,7 +5,7 @@ import com.example.imageservice.domain.image.ImageType;
 import com.example.imageservice.image.ImageStore;
 import com.example.imageservice.request.ImageListRequest;
 import com.example.imageservice.request.ImageRequest;
-import com.example.imageservice.request.ItemRequest;
+import com.example.imageservice.request.ImageUpdateRequest;
 import com.example.imageservice.response.ImageResponse;
 import com.example.imageservice.response.UrlResponse;
 import com.example.imageservice.service.ImageService;
@@ -17,7 +17,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -69,10 +68,18 @@ public class ImageController {
         return imageService.getItemImages(itemUUID);
     }
 
+    @PostMapping("/update/{UUID}")
+    public void updateImage(@PathVariable String UUID, @RequestPart("info") ImageUpdateRequest imageUpdateRequest
+            ,@RequestPart(value = "images", required = false) List<MultipartFile> images,UserInfo userInfo) throws IOException {
+        log.info("update uuid = {}", UUID);
+
+        imageService.updateImage(userInfo, UUID, imageUpdateRequest , images);
+    }
+
     @DeleteMapping("/{userUUID}/{filename}")
     public void deleteImage(@PathVariable String userUUID,@PathVariable String filename) {
 
-        imageService.deleteImage(userUUID,filename);
+        imageService.deleteUrl(userUUID,filename);
 
     }
 }
