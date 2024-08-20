@@ -90,10 +90,6 @@ async function write() {
     <h1 class="title">리뷰 등록</h1>
 
     <div class="form-group">
-      <el-input v-model="state.writeReview.title" placeholder="리뷰 제목을 입력해주세요."/>
-    </div>
-
-    <div class="form-group">
       <el-input
           v-model="state.writeReview.content"
           rows="30"

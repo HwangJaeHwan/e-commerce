@@ -26,12 +26,12 @@ import org.springframework.util.StreamUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
-import java.util.Set;
 
 @Service
 @Slf4j
@@ -143,15 +143,19 @@ public class ImageService {
         return responses;
     }
 
-    public ImageResponse getItemImages(String itemUUID) throws IOException {
+    public ImageResponse getImages(String UUID, ImageType imageType) throws IOException {
         List<ImageResponse> responses = new ArrayList<>();
 
-        ItemImage image = imageRepository.getItemImage(itemUUID).orElseThrow(ImageNotFoundException::new);
-        List<ImageUrl> urls = image.getUrls();
+        if (imageType.equals(ImageType.ITEM)) {
+            ItemImage image = imageRepository.getItemImage(UUID).orElseThrow(ImageNotFoundException::new);
 
-        log.info("size = {}", urls.size());
+            return getImageResponse(image.getItemUUID(), image.getUrls());
+        }
 
-        return getImageResponse(image.getItemUUID(), urls);
+        ReviewImage image = imageRepository.getReviewImage(UUID).orElseThrow(ImageNotFoundException::new);
+
+        return getImageResponse(image.getReviewUUID(), image.getUrls());
+
 
 
 
@@ -192,9 +196,12 @@ public class ImageService {
 
     private void deleteUrl(Long id) {
 
+        log.info("delete id = {}", id);
         ImageUrl url = urlRepository.findById(id).orElseThrow(ImageNotFoundException::new);
         imageStore.deleteImage(url.getStoredName());
+        log.info("delete 전");
         urlRepository.delete(url);
+        log.info("delete 후");
 
     }
 
@@ -210,11 +217,15 @@ public class ImageService {
             UrlResource urlResource = new UrlResource("file:/" + imageStore.getFullPath(url.getStoredName()));
             log.info("URL = {}", urlResource.getURI());
             String mimeType = Files.probeContentType(Paths.get(urlResource.getURI()));
-            byte[] imageData = StreamUtils.copyToByteArray(urlResource.getInputStream());
-            log.info("mimeType = {}", mimeType);
 
-            response.getImageInfos().add(new ImageInfo(url.getId(),ByteToString(imageData), mimeType));
+            try (InputStream inputStream = urlResource.getInputStream()) {
+                byte[] imageData = StreamUtils.copyToByteArray(inputStream);
+                log.info("mimeType = {}", mimeType);
 
+                response.getImageInfos().add(new ImageInfo(url.getId(),ByteToString(imageData), mimeType));
+            } catch (IOException e) {
+                log.info("시발 어떻게 하라고");
+            }
 
         }
 

@@ -2,6 +2,7 @@ package com.example.imageservice.image;
 
 import com.example.imageservice.domain.ImageUrl;
 import com.example.imageservice.domain.image.Image;
+import com.example.imageservice.exception.ImageDeleteFailedException;
 import com.example.imageservice.exception.ImageNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,10 +40,12 @@ public class ImageStore {
         File file = new File(getFullPath(filename));
 
         if (file.exists()) {
-            file.delete();
+            if (!file.delete()) {
+                throw new ImageDeleteFailedException();
+            }
+        } else {
+            throw new ImageNotFoundException();
         }
-
-        throw new ImageNotFoundException();
     }
 
 

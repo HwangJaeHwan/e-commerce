@@ -2,7 +2,7 @@ package com.example.reviewservice.controller;
 
 import com.example.reviewservice.auth.UserInfo;
 import com.example.reviewservice.request.ReviewRequest;
-import com.example.reviewservice.request.ReviewRevise;
+import com.example.reviewservice.request.ReviewUpdate;
 import com.example.reviewservice.response.ItemScoreResponse;
 import com.example.reviewservice.response.PageResponse;
 import com.example.reviewservice.service.ReviewService;
@@ -53,8 +53,8 @@ public class ReviewController {
     }
 
     @PatchMapping("/revise/{reviewUUID}")
-    public void reviseReview(@PathVariable String reviewUUID, ReviewRevise revise ,UserInfo userInfo) {
-        reviewService.revise(reviewUUID, revise, userInfo);
+    public void updateReview(@PathVariable String reviewUUID, ReviewUpdate revise , UserInfo userInfo) {
+        reviewService.update(reviewUUID, revise, userInfo);
     }
 
 }

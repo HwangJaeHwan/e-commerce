@@ -11,6 +11,7 @@ import PaymentForm from "@/views/PaymentForm.vue";
 import TestView from "@/views/TestView.vue";
 import OrderInfo from "@/views/OrderInfo.vue";
 import Mypage from "@/views/Mypage.vue";
+import TestView2 from "@/views/TestView2.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -84,6 +85,12 @@ const router = createRouter({
       component: OrderInfo,
       props: route => ({ orderId: Number(route.params.orderId) })
     },
+    {
+      path: "/test2/:reviewUUID",
+      name: "test2",
+      component: TestView2,
+      props: true
+    }
 
   ]
 })

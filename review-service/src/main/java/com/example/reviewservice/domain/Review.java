@@ -1,7 +1,6 @@
 package com.example.reviewservice.domain;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -41,11 +40,11 @@ public class Review {
         this.updateTime = updateTime;
     }
 
-    public void reviseContent(String revise) {
+    public void updateContent(String revise) {
         this.content = revise;
     }
 
-    public void reviseScore(double revise) {
+    public void updateScore(double revise) {
         this.score = revise;
     }
 

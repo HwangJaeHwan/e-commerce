@@ -7,8 +7,6 @@ import HttpError from "@/http/HttpError";
 import router from "@/router";
 import ImageRepository from "@/repository/ImageRepository";
 import { useRoute } from "vue-router";
-import Item from "@/entity/item/Item";
-import ImageResponse from "@/entity/image/ImageResponse";
 import ItemUpdate from "@/entity/item/ItemUpdate";
 import ImageUrl from "@/entity/image/ImageUrl";
 import type ImageInfo from "@/entity/image/ImageInfo";
@@ -113,7 +111,8 @@ function handleImageChange(event: Event) {
 function handleRemoveExistingImage(index: number) {
   const removedImage = state.imageUrl.splice(index, 1)[0];
   if (removedImage) {
-    state.deleteIds.push(removedImage.id); // 삭제할 이미지의 ID를 deleteIds에 추가
+    URL.revokeObjectURL(removedImage.url); // 이미지 URL 해제
+    state.deleteIds.push(removedImage.id); // 삭제할 이미지 ID 추가
   }
 }
 
@@ -157,9 +156,9 @@ function uploadImages() {
 
   return IMAGE_REPOSITORY.update(formData,props.itemUUID)
       .then(() => true)
-      .catch(() => {
-        ElMessage({ type: "error", message: "이미지 업로드 실패" });
-        return false;
+      .catch((e: HttpError) => {
+        ElMessage({ type: 'error', message: e.getMessage() })
+        return false
       });
 }
 </script>

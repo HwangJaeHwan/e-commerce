@@ -31,7 +31,16 @@ export default class ImageRepository {
     public getItemImage(itemUUID: string) {
         // return axios.get(`/api/image-service/images/${itemUUID}`)
         return this.httpRepository.get<ImageResponse>({
-            path:`/api/image-service/images/${itemUUID}`
+            path:`/api/image-service/images/item/${itemUUID}`
+        },ImageResponse)
+
+    }
+
+
+    public getReviewImage(reviewUUID: string) {
+        // return axios.get(`/api/image-service/images/${itemUUID}`)
+        return this.httpRepository.get<ImageResponse>({
+            path:`/api/image-service/images/review/${reviewUUID}`
         },ImageResponse)
 
     }

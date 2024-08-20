@@ -61,11 +61,17 @@ public class ImageController {
 
     }
 
-    @GetMapping("/images/{itemUUID}")
+    @GetMapping("/images/item/{itemUUID}")
     public ImageResponse itemImages(@PathVariable String itemUUID) throws IOException {
         log.info("/images/{}" ,itemUUID);
 
-        return imageService.getItemImages(itemUUID);
+        return imageService.getImages(itemUUID,ImageType.ITEM);
+    }
+
+    @GetMapping("/images/review/{reviewUUID}")
+    public ImageResponse reviewImages(@PathVariable String reviewUUID) throws IOException {
+
+        return imageService.getImages(reviewUUID,ImageType.REVIEW);
     }
 
     @PostMapping("/update/{UUID}")

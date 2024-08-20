@@ -1,10 +1,20 @@
 <script setup lang="ts">
+import { ref } from 'vue';
 import type Review from "@/entity/review/Review";
+import { ElDialog } from "element-plus";
 
 const props = defineProps<{
   review: Review,
   imageMap: Map<string, string[]>
 }>()
+
+const dialogVisible = ref(false);
+const selectedImageUrl = ref('');
+
+function openImageDialog(url: string) {
+  selectedImageUrl.value = url;
+  dialogVisible.value = true;
+}
 </script>
 
 <template>
@@ -21,11 +31,15 @@ const props = defineProps<{
     </div>
     <div class="images">
       <div v-for="(url, index) in props.imageMap.get(props.review.reviewUUID)" :key="index" class="image-container">
-        <img :src="url" alt="review image" class="image">
+        <img :src="url" alt="review image" class="image" @click="openImageDialog(url)">
       </div>
     </div>
     <div class="content">{{ props.review.content }}</div>
   </div>
+
+  <ElDialog v-model="dialogVisible" width="50%">
+    <img :src="selectedImageUrl" alt="Expanded image" class="expanded-image" v-if="dialogVisible" />
+  </ElDialog>
 </template>
 
 <style scoped>
@@ -40,7 +54,7 @@ const props = defineProps<{
 .header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start; /* align-items를 flex-start로 설정 */
+  align-items: flex-start;
   margin-bottom: 12px;
 }
 
@@ -58,11 +72,11 @@ const props = defineProps<{
 .details {
   display: flex;
   align-items: center;
-  margin-top: 5px; /* 상단 여백 추가 */
+  margin-top: 5px;
 }
 
 .details .el-rate {
-  margin-right: 10px; /* 점수와 날짜 사이의 여백 */
+  margin-right: 10px;
 }
 
 .regDate {
@@ -78,11 +92,13 @@ const props = defineProps<{
 
 .images {
   display: flex;
-  gap: 10px;
+  flex-wrap: wrap;
   margin-bottom: 20px;
+  justify-content: flex-start; /* 이미지들을 왼쪽 정렬 */
 }
 
 .image-container {
+  margin: 5px;
   width: 100px;
   height: 100px;
   overflow: hidden;
@@ -94,12 +110,22 @@ const props = defineProps<{
   width: 100%;
   height: 100%;
   object-fit: cover;
+  cursor: pointer;
 }
 
 .content {
   font-size: 1rem;
   color: #333;
-  margin-top: 12px; /* 텍스트 부분에 마진 추가 */
-  text-align: left; /* 텍스트를 왼쪽 정렬 */
+  margin-top: 12px;
+  text-align: left;
+}
+
+.expanded-image {
+  max-width: 80%;  /* 다이얼로그 크기의 80%를 최대 크기로 설정 */
+  max-height: 80vh; /* 화면 높이의 80%를 최대 높이로 설정 */
+  border-radius: 8px;
+  object-fit: contain; /* 이미지가 잘리지 않도록 설정 */
+  margin: 0 auto;
+  display: block;
 }
 </style>

@@ -7,7 +7,7 @@ import com.example.reviewservice.exception.ReviewNotFoundException;
 import com.example.reviewservice.exception.UnauthorizedException;
 import com.example.reviewservice.repository.ReviewRepository;
 import com.example.reviewservice.request.ReviewRequest;
-import com.example.reviewservice.request.ReviewRevise;
+import com.example.reviewservice.request.ReviewUpdate;
 import com.example.reviewservice.response.ItemScoreResponse;
 import com.example.reviewservice.response.PageResponse;
 import com.example.reviewservice.response.ReviewResponse;
@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class ReviewService {
 
@@ -71,15 +73,15 @@ public class ReviewService {
 
     }
 
-    public void revise(String reviewUUID, ReviewRevise revise ,UserInfo userInfo) {
+    public void update(String reviewUUID, ReviewUpdate update , UserInfo userInfo) {
         Review review = reviewRepository.findByReviewUUID(reviewUUID).orElseThrow(ReviewNotFoundException::new);
 
         if (!review.getUserUUID().equals(userInfo.getUuid())) {
             throw new UnauthorizedException();
         }
 
-        review.reviseContent(revise.getContent());
-        review.reviseScore(revise.getScore());
+        review.updateContent(update.getContent());
+        review.updateScore(update.getScore());
         review.changeUpdateTime(LocalDateTime.now());
 
     }
