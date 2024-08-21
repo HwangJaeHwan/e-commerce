@@ -85,7 +85,12 @@ public class ImageController {
     @DeleteMapping("/{userUUID}/{filename}")
     public void deleteImage(@PathVariable String userUUID,@PathVariable String filename) {
 
-        imageService.deleteUrl(userUUID,filename);
+        imageService.deleteUrlById(userUUID,filename);
 
+    }
+
+    @DeleteMapping("/review/{reviewUUID}")
+    public void deleteReviewImage(@PathVariable String reviewUUID){
+        imageService.deleteImage(reviewUUID, ImageType.REVIEW);
     }
 }

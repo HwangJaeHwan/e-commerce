@@ -20,7 +20,7 @@ export default class ReviewRepository {
 
     public get(reviewUUID: string) {
         return this.httpRepository.get<Review>({
-                path: `/api/review-service/reviews/${reviewUUID}`
+                path: `/api/review-service/get/${reviewUUID}`
             },
             Review
         )
@@ -36,7 +36,7 @@ export default class ReviewRepository {
 
     public update(request: ReviewUpdate, reviewUUID:string) {
         return this.httpRepository.patch({
-            path: `/api/item-service/update/${reviewUUID}`,
+            path: `/api/review-service/update/${reviewUUID}`,
             body: request
         })
     }

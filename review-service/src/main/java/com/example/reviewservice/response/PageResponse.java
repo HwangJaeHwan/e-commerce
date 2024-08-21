@@ -10,12 +10,12 @@ public class PageResponse {
 
     private int totalPage;
     private long totalElement;
-    private List<ReviewResponse> items;
+    private List<ReviewListResponse> items;
     private boolean isFirst;
     private boolean isLast;
 
     @Builder
-    public PageResponse(int totalPage, long totalElement, List<ReviewResponse> items,
+    public PageResponse(int totalPage, long totalElement, List<ReviewListResponse> items,
                         boolean isFirst, boolean isLast) {
         this.totalPage = totalPage;
         this.totalElement = totalElement;

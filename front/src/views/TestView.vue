@@ -127,14 +127,14 @@ function updateItem() {
     uploadImages();
   }
 
-  ITEM_REPOSITORY.update(state.item)
-      .then(()=>{
-    ElMessage({ type: "success", message: "아이템이 수정되었습니다." });
-    router.replace("/item/" + state.item.itemUUID);
-  })
-      .catch((e: HttpError) => {
-        ElMessage({ type: 'error', message: e.getMessage() });
-      })
+  // ITEM_REPOSITORY.update(state.item)
+  //     .then(()=>{
+  //   ElMessage({ type: "success", message: "아이템이 수정되었습니다." });
+  //   router.replace("/item/" + state.item.itemUUID);
+  // })
+  //     .catch((e: HttpError) => {
+  //       ElMessage({ type: 'error', message: e.getMessage() });
+  //     })
 
 
 }

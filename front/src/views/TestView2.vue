@@ -108,7 +108,7 @@ function updateReview() {
   if (state.imageFiles.length > 0 || state.deleteIds.length > 0) {
     uploadImages();
   }
-
+  console.log("review = " + JSON.stringify(state.reviewUpdate))
   REVIEW_REPOSITORY.update(state.reviewUpdate, props.reviewUUID)
       .then(() => {
         ElMessage({ type: "success", message: "리뷰가 수정되었습니다." });
@@ -135,9 +135,9 @@ function uploadImages() {
 
   return IMAGE_REPOSITORY.update(formData,props.reviewUUID)
       .then(() => true)
-      .catch(() => {
-        ElMessage({ type: "error", message: "이미지 업로드 실패" });
-        return false;
+      .catch((e: HttpError) => {
+        ElMessage({ type: 'error', message: e.getMessage() })
+        return false
       });
 }
 </script>

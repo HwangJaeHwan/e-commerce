@@ -1,6 +1,7 @@
 package com.example.reviewservice.service;
 
 import com.example.reviewservice.auth.UserInfo;
+import com.example.reviewservice.client.ImageServiceClient;
 import com.example.reviewservice.client.UserServiceClient;
 import com.example.reviewservice.domain.Review;
 import com.example.reviewservice.exception.ReviewNotFoundException;
@@ -10,6 +11,7 @@ import com.example.reviewservice.request.ReviewRequest;
 import com.example.reviewservice.request.ReviewUpdate;
 import com.example.reviewservice.response.ItemScoreResponse;
 import com.example.reviewservice.response.PageResponse;
+import com.example.reviewservice.response.ReviewListResponse;
 import com.example.reviewservice.response.ReviewResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +31,7 @@ public class ReviewService {
 
     private final ReviewRepository reviewRepository;
     private final UserServiceClient userServiceClient;
+    private final ImageServiceClient imageServiceClient;
 
 
     public void write(ReviewRequest request, String itemUUID, UserInfo userInfo) {
@@ -48,6 +51,13 @@ public class ReviewService {
     }
 
 
+    public ReviewResponse getReview(String reviewUUID) {
+        Review review = reviewRepository.findByReviewUUID(reviewUUID).orElseThrow(ReviewNotFoundException::new);
+
+        return new ReviewResponse(review);
+
+    }
+
     public PageResponse getReviews(String itemUUID, int page) {
 
         Page<Review> reviewPage = reviewRepository.getPage(page, itemUUID);
@@ -59,8 +69,8 @@ public class ReviewService {
 
         log.info("ids = {}", loginIds);
 
-        Page<ReviewResponse> map = reviewRepository.getPage(page, itemUUID)
-                .map(review -> new ReviewResponse(review).linkLoginId(loginIds.get(review.getUserUUID())));
+        Page<ReviewListResponse> map = reviewRepository.getPage(page, itemUUID)
+                .map(review -> new ReviewListResponse(review).linkLoginId(loginIds.get(review.getUserUUID())));
 
 
         return PageResponse.builder()
@@ -74,6 +84,9 @@ public class ReviewService {
     }
 
     public void update(String reviewUUID, ReviewUpdate update , UserInfo userInfo) {
+        log.info("content = {}",update.getContent());
+        log.info("score = {}",update.getScore());
+
         Review review = reviewRepository.findByReviewUUID(reviewUUID).orElseThrow(ReviewNotFoundException::new);
 
         if (!review.getUserUUID().equals(userInfo.getUuid())) {
@@ -94,6 +107,13 @@ public class ReviewService {
 
         return reviewRepository.averageScores(itemUUIDs);
 
+
+    }
+
+    public void delete(String reviewUUID) {
+
+        imageServiceClient.deleteReviewImage(reviewUUID);
+        reviewRepository.deleteReviewByReviewUUID(reviewUUID);
 
     }
 }

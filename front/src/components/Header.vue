@@ -18,12 +18,9 @@ const options = [
   { category: 'ETC', label: '기타' },
 ];
 
-onMounted(async () => {
-  await profileStore.fetchProfile();
-});
-
 function handleLogout() {
   profileStore.setProfile(null); // 로그아웃 시 프로필 초기화
+  localStorage.removeItem('token')
 }
 
 function handleSearch() {
@@ -36,9 +33,16 @@ function handleSearch() {
   });
 }
 
+onMounted(async () => {
+  if (!profileStore.profile) {
+    await profileStore.fetchProfile();  // 새로고침 시 서버로부터 프로필 데이터를 가져옴
+  }
+})
+
 // watchEffect를 사용하여 프로필 상태가 변경될 때마다 뷰를 강제로 업데이트
 watchEffect(() => {
   console.log("Profile updated:", profileStore.profile);
+
 });
 </script>
 
@@ -73,7 +77,7 @@ watchEffect(() => {
         <router-link class="link" to="mypage" v-else>
           {{ profileStore.profile?.loginId }}
         </router-link>
-        <router-link class="link" to="mypage" v-if="!profileStore.profile">
+        <router-link class="link" to="login" v-if="!profileStore.profile">
           로그인
         </router-link>
         <router-link class="link" to="tmp" v-else @click="handleLogout">

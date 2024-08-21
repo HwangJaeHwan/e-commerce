@@ -59,7 +59,7 @@ spring:
         - id: review-service
           uri: lb://REVIEW-SERVICE
           predicates:
-            - Path=/review-service/write/**, /review-service/revise/**
+            - Path=/review-service/write/**, /review-service/update/**
           filters:
             - name: AuthFilter
         - id: review-service

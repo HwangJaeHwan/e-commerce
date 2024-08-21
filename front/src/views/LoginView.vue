@@ -8,6 +8,7 @@ import UserRepository from '@/repository/UserRepository'
 import {container} from "tsyringe";
 import {ElMessage} from "element-plus";
 import Token from "@/entity/data/Token";
+import {useProfileStore} from "@/entity/user/Profile";
 
 const state = reactive({
   login: new Login()
@@ -15,20 +16,19 @@ const state = reactive({
 const router = useRouter()
 
 const USER_REPOSITORY = container.resolve(UserRepository)
-
+const profileStore = useProfileStore()
 function doLogin() {
 
-  USER_REPOSITORY.login(state.login)
-    .then((token) => {
-      ElMessage({type: 'success', message: '환영합니다.'})
-      console.log(token)
-      localStorage.setItem('token',token.token)
-      console.log(">>>>>>"+localStorage.getItem('token'))
-      router.replace('/')
-    })
-    .catch((e: HttpError) => {
-      ElMessage({ type: 'error', message: e.getMessage() })
-    })
+    USER_REPOSITORY.login(state.login)
+        .then((token)=>{
+          ElMessage({ type: 'success', message: '환영합니다.' })
+          localStorage.setItem('token', token.token)
+          profileStore.fetchProfile()
+          router.replace('/')
+        })
+        .catch((e: HttpError) => {
+          ElMessage({ type: "error", message: e.getMessage() });
+        })
 }
 
 

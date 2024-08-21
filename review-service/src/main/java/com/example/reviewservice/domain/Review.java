@@ -40,15 +40,15 @@ public class Review {
         this.updateTime = updateTime;
     }
 
-    public void updateContent(String revise) {
-        this.content = revise;
+    public void updateContent(String updateContent) {
+        this.content = updateContent;
     }
 
-    public void updateScore(double revise) {
-        this.score = revise;
+    public void updateScore(double updateScore) {
+        this.score = updateScore;
     }
 
-    public void changeUpdateTime(LocalDateTime revise) {
-        this.updateTime = revise;
+    public void changeUpdateTime(LocalDateTime updateTime) {
+        this.updateTime = updateTime;
     }
 }

@@ -5,6 +5,7 @@ import com.example.reviewservice.request.ReviewRequest;
 import com.example.reviewservice.request.ReviewUpdate;
 import com.example.reviewservice.response.ItemScoreResponse;
 import com.example.reviewservice.response.PageResponse;
+import com.example.reviewservice.response.ReviewResponse;
 import com.example.reviewservice.service.ReviewService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,11 @@ public class ReviewController {
     public void writeReview(@PathVariable String itemUUID, @RequestBody @Valid ReviewRequest request
             , UserInfo userInfo) {
         reviewService.write(request,itemUUID,userInfo);
+    }
+
+    @GetMapping("/get/{reviewUUID}")
+    public ReviewResponse getReview(@PathVariable String reviewUUID) {
+        return reviewService.getReview(reviewUUID);
     }
 
     @GetMapping("/{itemUUID}")
@@ -52,9 +58,15 @@ public class ReviewController {
 
     }
 
-    @PatchMapping("/revise/{reviewUUID}")
-    public void updateReview(@PathVariable String reviewUUID, ReviewUpdate revise , UserInfo userInfo) {
-        reviewService.update(reviewUUID, revise, userInfo);
+    @PatchMapping("/update/{reviewUUID}")
+    public void updateReview(@PathVariable String reviewUUID, @RequestBody ReviewUpdate update , UserInfo userInfo) {
+        reviewService.update(reviewUUID, update, userInfo);
+    }
+
+    @DeleteMapping("/{reviewUUID}")
+    public void deleteReview(@PathVariable String reviewUUID) {
+
+        reviewService.delete(reviewUUID);
     }
 
 }

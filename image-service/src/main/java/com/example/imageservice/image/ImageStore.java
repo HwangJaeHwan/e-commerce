@@ -28,6 +28,10 @@ public class ImageStore {
     public void storeImages(Image image, List<MultipartFile> multipartFiles)
             throws IOException {
 
+        if (multipartFiles == null) {
+            return;
+        }
+
         for (MultipartFile multipartFile : multipartFiles) {
             if (!multipartFile.isEmpty()) {
                 image.addUrl(storeImage(multipartFile));

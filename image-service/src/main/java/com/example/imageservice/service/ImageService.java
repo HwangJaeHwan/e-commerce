@@ -59,7 +59,7 @@ public class ImageService {
 
     }
 
-    public void deleteUrl(String userUUID, String filename) {
+    public void deleteUrlById(String userUUID, String filename) {
 
         ImageUrl url = urlRepository.findByStoredName(filename).orElseThrow(ImageNotFoundException::new);
 
@@ -184,7 +184,7 @@ public class ImageService {
         if (!request.getIds().isEmpty()) {
 
             for (Long id : request.getIds()) {
-                deleteUrl(id);
+                deleteUrlById(id);
             }
 
         }
@@ -194,7 +194,7 @@ public class ImageService {
 
     }
 
-    private void deleteUrl(Long id) {
+    private void deleteUrlById(Long id) {
 
         log.info("delete id = {}", id);
         ImageUrl url = urlRepository.findById(id).orElseThrow(ImageNotFoundException::new);
@@ -232,4 +232,20 @@ public class ImageService {
         return response;
     }
 
+    public void deleteImage(String UUID, ImageType imageType) {
+        Image image;
+
+        if (imageType.equals(ImageType.ITEM)) {
+            image = imageRepository.getItemImage(UUID).orElseThrow(ImageNotFoundException::new);
+        } else {
+            image = imageRepository.getReviewImage(UUID).orElseThrow(ImageNotFoundException::new);
+        }
+
+        for (ImageUrl url : image.getUrls()) {
+            imageStore.deleteImage(url.getStoredName());
+        }
+
+        imageRepository.delete(image);
+
+    }
 }
