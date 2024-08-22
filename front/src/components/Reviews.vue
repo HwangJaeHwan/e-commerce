@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {watchEffect, reactive} from "vue";
 import ReviewInfo from "@/components/ReviewInfo.vue";
-import type Review from "@/entity/review/Review";
+import type ReviewList from "@/entity/review/ReviewList";
 import type Paging from "@/entity/data/Paging";
 import {container} from "tsyringe";
 import ImageRepository from "@/repository/ImageRepository";
@@ -11,7 +11,7 @@ import HttpError from "@/http/HttpError";
 import {ElMessage} from "element-plus";
 
 const props = defineProps<{
-  paging : Paging<Review>
+  paging : Paging<ReviewList>
 }>()
 
 const IMAGE_REPOSITORY = container.resolve(ImageRepository)

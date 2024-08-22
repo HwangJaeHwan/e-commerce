@@ -138,9 +138,9 @@ public class OrderService {
     }
 
 
-    public void cancel(String userUUID, String orderUUID) {
+    public void cancel(String userUUID, Long orderId) {
 
-        Order deleteOrder = orderRepository.findByOrderUUID(orderUUID).orElseThrow(OrderNotFoundException::new);
+        Order deleteOrder = orderRepository.findById(orderId).orElseThrow(OrderNotFoundException::new);
 
         if (!deleteOrder.getUserUUID().equals(userUUID)) {
             throw new UnauthorizedException();

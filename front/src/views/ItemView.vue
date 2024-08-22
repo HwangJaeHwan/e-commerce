@@ -8,7 +8,7 @@ import Item from "@/entity/item/Item";
 import Reviews from "@/components/Reviews.vue";
 import ReviewRepository from "@/repository/ReviewRepository";
 import Paging from "@/entity/data/Paging";
-import Review from "@/entity/review/Review";
+import ReviewList from "@/entity/review/ReviewList";
 import ImageRepository from "@/repository/ImageRepository";
 import UserRepository from "@/repository/UserRepository";
 import CartMessage from "@/entity/data/CartMessage";
@@ -16,19 +16,19 @@ import ShoppingCartItem from "@/entity/item/ShoppingCartItem";
 import router from "@/router";
 
 const props = defineProps<{
-  itemUUID: string
+  itemId: number
 }>()
 
 type StateType = {
   item: Item,
-  reviewList: Paging<Review>,
+  reviewList: Paging<ReviewList>,
   imageUrl: string[] | null,
   quantity: number
 }
 
 const state = reactive<StateType>({
   item: new Item(),
-  reviewList: new Paging<Review>(),
+  reviewList: new Paging<ReviewList>(),
   imageUrl: [],
   quantity: 1
 })
@@ -39,7 +39,7 @@ const USER_REPOSITORY = container.resolve(UserRepository)
 const REVIEW_REPOSITORY = container.resolve(ReviewRepository)
 
 function getItem() {
-  ITEM_REPOSITORY.get(props.itemUUID)
+  ITEM_REPOSITORY.get(props.itemId)
       .then((item) => {
         state.item = item
         console.log(JSON.stringify(item))

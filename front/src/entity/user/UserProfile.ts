@@ -4,5 +4,6 @@ export default class UserProfile {
     public loginId =''
     public userUUID= ''
     public  email =''
+    public userType = ''
 
 }

@@ -51,7 +51,6 @@ function handleRemove(index: number) {
 
 function uploadImages() {
   const formData = new FormData();
-  state.itemAdd.itemUUID = uuidv4();
 
   const jsonData = {
     uuid: state.itemAdd.itemUUID,
@@ -74,17 +73,19 @@ function uploadImages() {
 }
 
 async function write() {
-  const imagesUploaded = await uploadImages();
-  if (imagesUploaded) {
+  state.itemAdd.itemUUID = uuidv4();
+  // const imagesUploaded = await uploadImages();
+  // if (imagesUploaded) {
     ITEM_REPOSITORY.write(state.itemAdd)
-        .then(() => {
+        .then((number) => {
           ElMessage({ type: 'success', message: '상품을 등록했습니다.' });
-          router.replace('/item/' + state.itemAdd.itemUUID);
+          console.log("number = ",JSON.stringify(number))
+          router.replace('/item/' + number);
         })
         .catch((e: HttpError) => {
           ElMessage({ type: 'error', message: e.getMessage() });
         });
-  }
+  // }
 }
 </script>
 

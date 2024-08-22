@@ -33,9 +33,9 @@ function handleSearch() {
   });
 }
 
-onMounted(async () => {
+onMounted(() => {
   if (!profileStore.profile) {
-    await profileStore.fetchProfile();  // 새로고침 시 서버로부터 프로필 데이터를 가져옴
+    profileStore.fetchProfile();  // 새로고침 시 서버로부터 프로필 데이터를 가져옴
   }
 })
 
@@ -71,13 +71,13 @@ watchEffect(() => {
       </div>
 
       <div class="login-info">
-        <router-link class="link" to="register" v-if="!profileStore.profile">
+        <router-link class="link" to="/register" v-if="!profileStore.profile">
           회원가입
         </router-link>
-        <router-link class="link" to="mypage" v-else>
+        <router-link class="link" to="/mypage" v-else>
           {{ profileStore.profile?.loginId }}
         </router-link>
-        <router-link class="link" to="login" v-if="!profileStore.profile">
+        <router-link class="link" to="/login" v-if="!profileStore.profile">
           로그인
         </router-link>
         <router-link class="link" to="tmp" v-else @click="handleLogout">

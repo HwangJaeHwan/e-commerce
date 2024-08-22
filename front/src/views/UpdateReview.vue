@@ -8,11 +8,13 @@ import ImageRepository from "@/repository/ImageRepository";
 import ReviewRepository from "@/repository/ReviewRepository";
 import ReviewUpdate from "@/entity/review/ReviewUpdate";
 import ImageUrl from "@/entity/image/ImageUrl";
-import type ImageInfo from "@/entity/image/ImageInfo";
+import ImageInfo from "@/entity/image/ImageInfo";
+import Review from "@/entity/review/Review";
 
-const props = defineProps<{ reviewUUID: string }>();
+const props = defineProps<{ reviewId: number }>();
 
 type StateType = {
+  review: Review,
   reviewUpdate: ReviewUpdate,
   imageUrl: ImageUrl[],
   imagePreviews: string[],
@@ -21,6 +23,7 @@ type StateType = {
 };
 
 const state = reactive<StateType>({
+  review: new Review(),
   reviewUpdate: new ReviewUpdate(),
   imageUrl: [],
   imagePreviews: [],
@@ -36,8 +39,9 @@ onMounted(() => {
 });
 
 function getReview(){
-  REVIEW_REPOSITORY.get(props.reviewUUID)
+  REVIEW_REPOSITORY.get(props.reviewId)
       .then((review) => {
+        state.review = review
         state.reviewUpdate.content = review.content;
         state.reviewUpdate.score = review.score;
         getImages()
@@ -48,7 +52,7 @@ function getReview(){
 }
 
 function getImages() {
-  IMAGE_REPOSITORY.getReviewImage(props.reviewUUID)
+  IMAGE_REPOSITORY.getReviewImage(state.review.reviewUUID)
       .then((response) => {
         for (const imageInfo of response.imageInfos) {
           base64ToImage(imageInfo);
@@ -109,7 +113,7 @@ function updateReview() {
     uploadImages();
   }
   console.log("review = " + JSON.stringify(state.reviewUpdate))
-  REVIEW_REPOSITORY.update(state.reviewUpdate, props.reviewUUID)
+  REVIEW_REPOSITORY.update(state.reviewUpdate, props.reviewId)
       .then(() => {
         ElMessage({ type: "success", message: "리뷰가 수정되었습니다." });
         router.replace("/orders");
@@ -133,7 +137,7 @@ function uploadImages() {
     formData.append("images", file);
   }
 
-  return IMAGE_REPOSITORY.update(formData,props.reviewUUID)
+  return IMAGE_REPOSITORY.update(formData,state.review.reviewUUID)
       .then(() => true)
       .catch((e: HttpError) => {
         ElMessage({ type: 'error', message: e.getMessage() })

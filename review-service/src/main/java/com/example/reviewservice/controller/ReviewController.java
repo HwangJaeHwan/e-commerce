@@ -30,9 +30,9 @@ public class ReviewController {
         reviewService.write(request,itemUUID,userInfo);
     }
 
-    @GetMapping("/get/{reviewUUID}")
-    public ReviewResponse getReview(@PathVariable String reviewUUID) {
-        return reviewService.getReview(reviewUUID);
+    @GetMapping("/get/{reviewId}")
+    public ReviewResponse getReview(@PathVariable Long reviewId) {
+        return reviewService.getReview(reviewId);
     }
 
     @GetMapping("/{itemUUID}")
@@ -58,15 +58,16 @@ public class ReviewController {
 
     }
 
-    @PatchMapping("/update/{reviewUUID}")
-    public void updateReview(@PathVariable String reviewUUID, @RequestBody ReviewUpdate update , UserInfo userInfo) {
-        reviewService.update(reviewUUID, update, userInfo);
+    @PatchMapping("/update/{reviewId}")
+    public void updateReview(@PathVariable Long reviewId, @RequestBody ReviewUpdate update , UserInfo userInfo) {
+        reviewService.update(reviewId, update, userInfo);
     }
 
-    @DeleteMapping("/{reviewUUID}")
-    public void deleteReview(@PathVariable String reviewUUID) {
+    @DeleteMapping("/{reviewId}")
+    public void deleteReview(@PathVariable Long reviewId, UserInfo userInfo) {
 
-        reviewService.delete(reviewUUID);
+        reviewService.delete(reviewId, userInfo);
+
     }
 
 }

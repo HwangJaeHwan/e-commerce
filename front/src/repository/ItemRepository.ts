@@ -3,6 +3,7 @@ import {inject, singleton} from "tsyringe";
 import type ItemAdd from "@/entity/item/ItemAdd";
 import Item from "@/entity/item/Item";
 import ItemUpdate from "@/entity/item/ItemUpdate";
+import Number from "@/entity/data/Number";
 
 @singleton()
 export default class ItemRepository {
@@ -11,14 +12,14 @@ export default class ItemRepository {
     }
 
     public write(request: ItemAdd) {
-        return this.httpRepository.post({
+        return this.httpRepository.post<Number>({
             path: "/api/item-service/add",
             body: request
-        })
+        },Number)
     }
 
-    public get(itemUUID: string) {
-        return this.httpRepository.get<Item>({path: `/api/item-service/${itemUUID}`},Item)
+    public get(itemId: number) {
+        return this.httpRepository.get<Item>({path: `/api/item-service/${itemId}`},Item)
 
     }
 
@@ -30,9 +31,9 @@ export default class ItemRepository {
         )
     }
 
-    public update(request: ItemUpdate) {
+    public update(request: ItemUpdate, itemId:number) {
         return this.httpRepository.patch({
-            path: `/api/item-service/update/${request.itemUUID}`,
+            path: `/api/item-service/update/${itemId}`,
             body: request
         })
     }

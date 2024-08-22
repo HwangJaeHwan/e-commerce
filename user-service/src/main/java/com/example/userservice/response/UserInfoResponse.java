@@ -1,6 +1,7 @@
 package com.example.userservice.response;
 
 import com.example.userservice.domain.User;
+import com.example.userservice.domain.UserType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -12,6 +13,7 @@ public class UserInfoResponse {
     private String loginId;
     private String userUUID;
     private String email;
+    private UserType userType;
 
 
     public UserInfoResponse(User user) {
@@ -19,6 +21,7 @@ public class UserInfoResponse {
         this.loginId = user.getLoginId();
         this.userUUID = user.getUserUUID();
         this.email = user.getEmail();
+        this.userType = user.getUserType();
 
     }
 }

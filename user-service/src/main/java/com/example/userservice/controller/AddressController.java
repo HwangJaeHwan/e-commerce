@@ -38,7 +38,7 @@ public class AddressController {
         addressService.reviseAddress(info, id, addressRevise);
     }
 
-    @DeleteMapping("/address/delete/{id}")
+    @DeleteMapping("/address/{id}")
     public void deleteAddress(UserInfo info, @PathVariable Long id) {
 
         addressService.removeAddress(info, id);

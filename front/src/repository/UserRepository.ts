@@ -6,6 +6,7 @@ import Token from "@/entity/data/Token";
 import type Register from "@/entity/user/Register";
 import type CartMessage from "@/entity/data/CartMessage";
 import ShoppingCartItem from "@/entity/item/ShoppingCartItem";
+import PasswordChange from "@/entity/user/PasswordChange";
 
 @singleton()
 export default class UserRepository {
@@ -30,6 +31,13 @@ export default class UserRepository {
         return this.httpRepository.get<UserProfile>({
             path: "/api/user-service/info"
         },UserProfile)
+    }
+
+    public passwordChange(request: PasswordChange){
+        return this.httpRepository.patch({
+            path: "/api/user-service/passwordChange",
+            body: request
+        })
     }
 
     public getCartItems() {

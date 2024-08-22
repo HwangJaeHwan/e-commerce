@@ -53,10 +53,10 @@ export default class ImageRepository {
         },Array<ImageResponse>)
     }
 
-    public update(request: FormData, itemUUID: string) {
+    public update(request: FormData, reviewUUID: string) {
 
         return this.httpRepository.post({
-            path:`/api/image-service/update/${itemUUID}`,
+            path:`/api/image-service/update/${reviewUUID}`,
             body: request
         })
     }

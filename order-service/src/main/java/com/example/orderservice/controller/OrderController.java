@@ -40,10 +40,10 @@ public class OrderController {
         return orderService.getOrder(userInfo, orderId);
     }
 
-    @PutMapping("/{orderUUID}")
-    public void cancelOrder(UserInfo userInfo, @PathVariable String orderUUID) {
+    @PutMapping("/{orderId}")
+    public void cancelOrder(UserInfo userInfo, @PathVariable Long orderId) {
 
-        orderService.cancel(userInfo.getUuid(), orderUUID);
+        orderService.cancel(userInfo.getUuid(), orderId);
 
     }
 

@@ -3,8 +3,10 @@ import { onMounted, reactive } from 'vue';
 import { useProfileStore } from "@/entity/user/Profile";
 import AddressModal from '@/views/AddressModal.vue';
 import AddressListModal from '@/views/AddressListModal.vue';
+import { useRouter } from 'vue-router';
 
 const profileStore = useProfileStore();
+const router = useRouter();
 
 const state = reactive({
   userProfile: {
@@ -14,21 +16,22 @@ const state = reactive({
   },
   showAddressModal: false,
   showAddressListModal: false,
+  showPasswordChangeModal: false,
 });
 
-onMounted(async () => {
-  await profileStore.fetchProfile();
+onMounted(() => {
+  profileStore.fetchProfile();
   if (profileStore.profile) {
     state.userProfile = profileStore.profile;
   }
 });
 
 function handleChangePassword() {
-  // 비밀번호 변경 페이지로 이동
+  state.showPasswordChangeModal = true
 }
 
 function handleViewOrders() {
-  // 주문 목록 페이지로 이동
+  router.replace('/orders')
 }
 
 function handleAddAddress() {
@@ -45,6 +48,10 @@ function closeAddressModal() {
 
 function closeAddressListModal() {
   state.showAddressListModal = false;
+}
+
+function handleAddProduct() {
+  router.push('/add');
 }
 </script>
 
@@ -65,6 +72,7 @@ function closeAddressListModal() {
       <el-button class="action-button" type="warning" @click="handleChangePassword">비밀번호 변경</el-button>
       <el-button class="action-button" type="success" @click="handleAddAddress">주소지 등록</el-button>
       <el-button class="action-button" type="info" @click="handleViewAddressList">주소지 리스트 보기</el-button>
+      <el-button class="action-button" type="primary" @click="handleAddProduct">상품 등록</el-button> <!-- 상품 등록 버튼 추가 -->
     </div>
 
     <!-- 주소지 등록 모달 -->

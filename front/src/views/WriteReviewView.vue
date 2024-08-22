@@ -10,7 +10,7 @@ import WriteReview from "@/entity/review/WriteReview";
 import { v4 as uuidv4 } from "uuid";
 
 const props = defineProps<{
-  itemUUID: string
+  itemId: number
 }>();
 
 const state = reactive({
@@ -74,9 +74,9 @@ function uploadImages() {
 async function write() {
   const imagesUploaded = await uploadImages();
   if (imagesUploaded) {
-    REVIEW_REPOSITORY.write(state.writeReview, props.itemUUID)
+    REVIEW_REPOSITORY.write(state.writeReview, props.itemId)
         .then(() => { ElMessage({ type: 'success', message: '리뷰를 등록했습니다.' });
-          router.replace('/item/' + props.itemUUID);
+          router.replace('/item/' + props.itemId);
         })
         .catch((e: HttpError) => {
           ElMessage({ type: 'error', message: e.getMessage() });

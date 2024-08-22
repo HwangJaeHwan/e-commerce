@@ -18,9 +18,9 @@ export default class OrderRepository {
         })
     }
 
-    public getOrder(orderUUID:string) {
+    public getOrder(orderId:number) {
         return this.httpRepository.get<Order>({
-            path: `/api/order-service/orders/${orderUUID}`
+            path: `/api/order-service/orders/${orderId}`
         },Order)
     }
 

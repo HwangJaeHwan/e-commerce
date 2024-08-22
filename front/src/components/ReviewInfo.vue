@@ -1,15 +1,21 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import type Review from "@/entity/review/Review";
+import { ref, computed } from 'vue';
+import type ReviewList from "@/entity/review/ReviewList";
 import { ElDialog } from "element-plus";
+import { useProfileStore } from "@/entity/user/Profile";
 
 const props = defineProps<{
-  review: Review,
+  review: ReviewList,
   imageMap: Map<string, string[]>
 }>()
 
+const profileStore = useProfileStore();
 const dialogVisible = ref(false);
 const selectedImageUrl = ref('');
+
+const canDelete = computed(() => {
+  return props.review.userUUID === profileStore.profile?.userUUID;
+});
 
 function openImageDialog(url: string) {
   selectedImageUrl.value = url;
@@ -27,7 +33,7 @@ function openImageDialog(url: string) {
           <div class="regDate">{{ props.review.getDisplaySimpleRegDate() }}</div>
         </div>
       </div>
-      <div class="delete">삭제</div>
+      <div class="delete" v-if="canDelete">삭제</div>
     </div>
     <div class="images">
       <div v-for="(url, index) in props.imageMap.get(props.review.reviewUUID)" :key="index" class="image-container">

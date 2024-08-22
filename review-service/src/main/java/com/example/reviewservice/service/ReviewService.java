@@ -3,6 +3,7 @@ package com.example.reviewservice.service;
 import com.example.reviewservice.auth.UserInfo;
 import com.example.reviewservice.client.ImageServiceClient;
 import com.example.reviewservice.client.UserServiceClient;
+import com.example.reviewservice.data.UserType;
 import com.example.reviewservice.domain.Review;
 import com.example.reviewservice.exception.ReviewNotFoundException;
 import com.example.reviewservice.exception.UnauthorizedException;
@@ -51,8 +52,8 @@ public class ReviewService {
     }
 
 
-    public ReviewResponse getReview(String reviewUUID) {
-        Review review = reviewRepository.findByReviewUUID(reviewUUID).orElseThrow(ReviewNotFoundException::new);
+    public ReviewResponse getReview(Long reviewId) {
+        Review review = reviewRepository.findById(reviewId).orElseThrow(ReviewNotFoundException::new);
 
         return new ReviewResponse(review);
 
@@ -83,15 +84,11 @@ public class ReviewService {
 
     }
 
-    public void update(String reviewUUID, ReviewUpdate update , UserInfo userInfo) {
+    public void update(Long reviewId, ReviewUpdate update , UserInfo userInfo) {
         log.info("content = {}",update.getContent());
         log.info("score = {}",update.getScore());
 
-        Review review = reviewRepository.findByReviewUUID(reviewUUID).orElseThrow(ReviewNotFoundException::new);
-
-        if (!review.getUserUUID().equals(userInfo.getUuid())) {
-            throw new UnauthorizedException();
-        }
+        Review review = reviewAuthCheck(reviewId, userInfo);
 
         review.updateContent(update.getContent());
         review.updateScore(update.getScore());
@@ -110,10 +107,27 @@ public class ReviewService {
 
     }
 
-    public void delete(String reviewUUID) {
+    public void delete(Long reviewId, UserInfo userInfo) {
 
-        imageServiceClient.deleteReviewImage(reviewUUID);
-        reviewRepository.deleteReviewByReviewUUID(reviewUUID);
+        Review review = reviewAuthCheck(reviewId, userInfo);
 
+        imageServiceClient.deleteReviewImage(review.getReviewUUID());
+        reviewRepository.delete(review);
+
+    }
+
+    private Review reviewAuthCheck(Long reviewId, UserInfo userInfo) {
+        Review review = reviewRepository.findById(reviewId).orElseThrow(ReviewNotFoundException::new);
+
+        if (!review.getUserUUID().equals(userInfo.getUuid())) {
+            userTypeCheck(userInfo.getUuid());
+        }
+        return review;
+    }
+
+    private void userTypeCheck(String userUUID) {
+        if (!userServiceClient.getType(userUUID).equals(UserType.ADMIN)) {
+            throw new UnauthorizedException();
+        }
     }
 }

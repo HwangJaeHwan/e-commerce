@@ -30,14 +30,17 @@ public class User {
     @Column(nullable = false,unique = true)
     private String userUUID;
 
+    private UserType userType;
+
 
     @Builder
-    public User(Long id, String loginId, String email, String password, String userUUID) {
+    public User(Long id, String loginId, String email, String password, String userUUID, UserType userType) {
         this.id = id;
         this.loginId = loginId;
         this.email = email;
         this.password = password;
         this.userUUID = userUUID;
+        this.userType = userType;
     }
 
     public void changePassword(String changePassword) {

@@ -20,6 +20,7 @@ public class OrderResponse {
     private Long orderId;
     private String orderUUID;
     private LocalDateTime orderDate;
+    private String name;
     private String address;
     private String detailAddress;
     private String zipcode;
@@ -46,6 +47,7 @@ public class OrderResponse {
         this.orderId = order.getId();
         this.orderUUID = order.getOrderUUID();
         this.orderDate = order.getOrderDate();
+        this.name = order.getName();
         this.address = order.getAddress();
         this.detailAddress = order.getDetailAddress();
         this.zipcode = order.getZipcode();

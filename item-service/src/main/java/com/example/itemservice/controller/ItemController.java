@@ -41,17 +41,17 @@ public class ItemController {
 
     }
 
-    @GetMapping("/{itemUUID}")
-    public ItemDetailResponse getItem(@PathVariable String itemUUID) {
+    @GetMapping("/{itemId}")
+    public ItemDetailResponse getItem(@PathVariable Long itemId) {
 
-        return itemService.getItem(itemUUID);
+        return itemService.getItem(itemId);
 
     }
 
     @PostMapping("/add")
-    public void addItem(@RequestBody @Valid ItemRequest itemRequest, UserInfo userInfo) {
+    public Long addItem(@RequestBody @Valid ItemRequest itemRequest, UserInfo userInfo) {
 
-        itemService.addItem(itemRequest, userInfo);
+        return itemService.addItem(itemRequest, userInfo);
 
     }
 
@@ -62,28 +62,19 @@ public class ItemController {
 
     }
     @DeleteMapping("/{itemId}")
-    public void deleteItem(@PathVariable String itemId,UserInfo userInfo) {
+    public void deleteItem(@PathVariable Long itemId,UserInfo userInfo) {
 
         itemService.deleteItem(itemId, userInfo);
 
     }
 
-    @PatchMapping("/update/{itemUUID}")
-    public void updateItem(@PathVariable String itemUUID, @RequestBody ItemUpdate itemUpdate, UserInfo userInfo) {
-        itemService.update(itemUUID, itemUpdate, userInfo);
+    @PatchMapping("/update/{itemID}")
+    public void updateItem(@PathVariable Long itemID, @RequestBody ItemUpdate itemUpdate, UserInfo userInfo) {
+        itemService.update(itemID, itemUpdate, userInfo);
     }
 
-//    @PatchMapping("/quantity/add")
-//    public void quantityAdd(@RequestBody List<ItemQuantity> quantities) {
-//        itemService.addQuantity(quantities);
-//
-//    }
-//
-//    @PatchMapping("/quantity/reduce")
-//    public void quantityReduce(@RequestBody List<ItemQuantity> quantities) {
-//        itemService.reduceQuantity(quantities);
-//
-//    }
+
+
 
 
 }

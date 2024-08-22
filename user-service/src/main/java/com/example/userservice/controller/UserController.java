@@ -3,6 +3,7 @@ package com.example.userservice.controller;
 import com.example.userservice.config.auth.UserInfo;
 import com.example.userservice.config.jwt.JwtProvider;
 import com.example.userservice.domain.User;
+import com.example.userservice.domain.UserType;
 import com.example.userservice.request.CartRequest;
 import com.example.userservice.request.CreateUser;
 import com.example.userservice.request.LoginRequest;
@@ -49,6 +50,11 @@ public class UserController {
     public UserInfoResponse info(UserInfo userInfo) {
 
         return userService.info(userInfo.getId());
+    }
+
+    @GetMapping("/type/{userUUID}")
+    UserType getType(@PathVariable String userUUID){
+        return userService.getType(userUUID);
     }
 
     @PostMapping("/loginId")

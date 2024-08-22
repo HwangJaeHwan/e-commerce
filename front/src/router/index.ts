@@ -8,10 +8,13 @@ import WriteReviewView from "@/views/WriteReviewView.vue";
 import ShoppingCartView from "@/views/ShoppingCartView.vue";
 import OrderListView from "@/views/OrderListView.vue";
 import PaymentForm from "@/views/PaymentForm.vue";
-import TestView from "@/views/TestView.vue";
+import TestView from "@/views/UpdateItem.vue";
 import OrderInfo from "@/views/OrderInfo.vue";
 import Mypage from "@/views/Mypage.vue";
-import TestView2 from "@/views/TestView2.vue";
+import TestView2 from "@/views/UpdateReview.vue";
+import UpdateReview from "@/views/UpdateReview.vue";
+import UpdateItem from "@/views/UpdateItem.vue";
+import PasswordChangeModal from "@/views/PasswordChangeModal.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -38,7 +41,7 @@ const router = createRouter({
       component: RegisterUser
     },
     {
-      path: "/item/:itemUUID",
+      path: "/item/:itemId",
       name: "item",
       component: ItemView,
       props: true
@@ -74,9 +77,9 @@ const router = createRouter({
       component: Mypage,
     },
     {
-      path: "/test/:itemUUID",
-      name: "test",
-      component: TestView,
+      path: "/update/item/:itemId",
+      name: "updateItem",
+      component: UpdateItem,
       props: true
     },
     {
@@ -86,11 +89,11 @@ const router = createRouter({
       props: route => ({ orderId: Number(route.params.orderId) })
     },
     {
-      path: "/test2/:reviewUUID",
-      name: "test2",
-      component: TestView2,
+      path: "/update/review/:reviewId",
+      name: "updateReview",
+      component: UpdateReview,
       props: true
-    }
+    },
 
   ]
 })

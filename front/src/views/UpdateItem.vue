@@ -11,7 +11,7 @@ import ItemUpdate from "@/entity/item/ItemUpdate";
 import ImageUrl from "@/entity/image/ImageUrl";
 import type ImageInfo from "@/entity/image/ImageInfo";
 
-const props = defineProps<{ itemUUID: string }>();
+const props = defineProps<{ itemId: number }>();
 
 type StateType = {
   item: ItemUpdate;
@@ -47,11 +47,10 @@ onMounted(() => {
 });
 
 function getItem() {
-  ITEM_REPOSITORY.get(props.itemUUID)
+  ITEM_REPOSITORY.get(props.itemId)
       .then((item) => {
         state.item.name = item.name
         state.item.itemDescription = item.itemDescription
-        state.item.itemUUID = item.itemUUID
         state.item.stock = item.stock
         state.item.price = item.price
         state.item.category = item.category
@@ -127,14 +126,14 @@ function updateItem() {
     uploadImages();
   }
 
-  // ITEM_REPOSITORY.update(state.item)
-  //     .then(()=>{
-  //   ElMessage({ type: "success", message: "아이템이 수정되었습니다." });
-  //   router.replace("/item/" + state.item.itemUUID);
-  // })
-  //     .catch((e: HttpError) => {
-  //       ElMessage({ type: 'error', message: e.getMessage() });
-  //     })
+  ITEM_REPOSITORY.update(state.item,props.itemId)
+      .then(()=>{
+    ElMessage({ type: "success", message: "아이템이 수정되었습니다." });
+    router.replace("/item/" + props.itemId);
+  })
+      .catch((e: HttpError) => {
+        ElMessage({ type: 'error', message: e.getMessage() });
+      })
 
 
 }
@@ -154,7 +153,7 @@ function uploadImages() {
     formData.append("images", file);
   }
 
-  return IMAGE_REPOSITORY.update(formData,props.itemUUID)
+  return IMAGE_REPOSITORY.update(formData,props.itemId)
       .then(() => true)
       .catch((e: HttpError) => {
         ElMessage({ type: 'error', message: e.getMessage() })

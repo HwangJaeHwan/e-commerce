@@ -2,6 +2,7 @@ package com.example.userservice.service;
 
 import com.example.userservice.config.auth.UserInfo;
 import com.example.userservice.domain.User;
+import com.example.userservice.domain.UserType;
 import com.example.userservice.exception.*;
 import com.example.userservice.messagequeue.KafkaProducer;
 import com.example.userservice.repository.UserRepository;
@@ -52,6 +53,7 @@ public class UserService {
                 .password(passwordEncoder.encode(createUser.getPassword()))
                 .email(createUser.getEmail())
                 .userUUID(UUID.randomUUID().toString())
+                .userType(UserType.GUEST)
                 .build());
 
     }
@@ -70,6 +72,11 @@ public class UserService {
 
     public UserInfoResponse info(Long id) {
         return new UserInfoResponse(userRepository.findById(id).orElseThrow(UserNotFoundException::new));
+    }
+
+    public UserType getType(String userUUID) {
+
+        return userRepository.findByUserUUID(userUUID).orElseThrow(UserNotFoundException::new).getUserType();
     }
 
     public void changePassword(Long userId, PasswordChange passwordChange) {
@@ -135,6 +142,7 @@ public class UserService {
 
 
     }
+
 
 
 }

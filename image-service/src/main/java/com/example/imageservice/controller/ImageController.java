@@ -93,4 +93,9 @@ public class ImageController {
     public void deleteReviewImage(@PathVariable String reviewUUID){
         imageService.deleteImage(reviewUUID, ImageType.REVIEW);
     }
+
+    @DeleteMapping("/image/{itemUUID}")
+    public void deleteImageImage(@PathVariable String itemUUID){
+        imageService.deleteImage(itemUUID, ImageType.ITEM);
+    }
 }

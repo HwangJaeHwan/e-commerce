@@ -10,11 +10,11 @@ public class ReviewResponse {
 
     private Double score;
 
-    private String userUUID;
+    private String reviewUUID;
 
     public ReviewResponse(Review review) {
         this.content = review.getContent();
         this.score = review.getScore();
-        this.userUUID = review.getUserUUID();
+        this.reviewUUID = review.getReviewUUID();
     }
 }

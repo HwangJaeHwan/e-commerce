@@ -3,7 +3,9 @@ package com.example.itemservice.service;
 import com.example.itemservice.auth.UserInfo;
 import com.example.itemservice.client.ImageServiceClient;
 import com.example.itemservice.client.ReviewServiceClient;
+import com.example.itemservice.client.UserServiceClient;
 import com.example.itemservice.data.ImageType;
+import com.example.itemservice.data.UserType;
 import com.example.itemservice.domain.item.Category;
 import com.example.itemservice.domain.item.Item;
 import com.example.itemservice.exception.ItemNotFoundException;
@@ -35,6 +37,7 @@ public class ItemService {
     private final ItemRepository itemRepository;
     private final ImageServiceClient imageServiceClient;
     private final ReviewServiceClient reviewServiceClient;
+    private final UserServiceClient userServiceClient;
 
     @Transactional(readOnly = true)
     public PageResponse items(String search, Category category, int page) {
@@ -70,9 +73,9 @@ public class ItemService {
 
     }
     @Transactional(readOnly = true)
-    public ItemDetailResponse getItem(String itemUUID) {
+    public ItemDetailResponse getItem(Long itemId) {
 
-        Item item = itemRepository.findByItemUUID(itemUUID).orElseThrow(ItemNotFoundException::new);
+        Item item = itemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new);
 
         log.info("item uuid ={}",item.getItemUUID());
         ItemDetailResponse response = new ItemDetailResponse(item);
@@ -86,9 +89,11 @@ public class ItemService {
 
     }
 
-    public void addItem(ItemRequest itemRequest , UserInfo userInfo) {
+    public Long addItem(ItemRequest itemRequest , UserInfo userInfo) {
 
-        itemRepository.save(
+        userTypeCheck(userInfo.getUuid());
+
+        Item item = itemRepository.save(
                 Item.builder()
                         .name(itemRequest.getName())
                         .itemDescription(itemRequest.getItemDescription())
@@ -100,20 +105,21 @@ public class ItemService {
                         .build()
         );
 
+        return item.getId();
+
     }
 
 
-    public void deleteItem(String itemUUID, UserInfo userInfo) {
+    public void deleteItem(Long itemId, UserInfo userInfo) {
 
-        Item item = itemRepository.findByItemUUID(itemUUID).orElseThrow(ItemNotFoundException::new);
+        Item item = itemAuthCheck(itemId, userInfo);
 
-        if (item.getUserUUID().equals(userInfo.getUuid())) {
-            throw new UnauthorizedException();
-        }
-
+        imageServiceClient.deleteItemImage(item.getItemUUID());
         itemRepository.delete(item);
 
     }
+
+
 
     public BigDecimal amount(List<ItemQuantity> quantities) {
         int sum = 0;
@@ -136,16 +142,33 @@ public class ItemService {
         }).toList();
     }
 
-    public void update(String itemUUID, ItemUpdate itemUpdate, UserInfo userInfo) {
+    public void update(Long itemId, ItemUpdate itemUpdate, UserInfo userInfo) {
 
-        Item item = itemRepository.findByItemUUID(itemUUID).orElseThrow(ItemNotFoundException::new);
-
-        if (!item.getUserUUID().equals(userInfo.getUuid())) {
-            throw new UnauthorizedException();
-        }
+        Item item = itemAuthCheck(itemId, userInfo);
 
         item.update(itemUpdate);
 
+    }
+
+
+    private Item itemAuthCheck(Long itemId, UserInfo userInfo) {
+
+        Item item = itemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new);
+
+        if (!item.getUserUUID().equals(userInfo.getUuid())) {
+
+            userTypeCheck(userInfo.getUuid());
+
+        }
+
+
+        return item;
+    }
+
+    private void userTypeCheck(String userUUID) {
+        if (!userServiceClient.getType(userUUID).equals(UserType.ADMIN)) {
+            throw new UnauthorizedException();
+        }
     }
 
 
