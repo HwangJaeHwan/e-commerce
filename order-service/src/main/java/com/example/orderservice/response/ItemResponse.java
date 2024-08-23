@@ -5,6 +5,7 @@ import lombok.Getter;
 
 @Getter
 public class ItemResponse {
+    private Long itemId;
     private String name;
     private String itemUUID;
     private int quantity;
@@ -12,6 +13,7 @@ public class ItemResponse {
 
 
     public ItemResponse(OrderItem orderItem) {
+        this.itemId = orderItem.getItemId();
         this.name = orderItem.getName();
         this.itemUUID = orderItem.getItemUUID();
         this.quantity = orderItem.getQuantity();

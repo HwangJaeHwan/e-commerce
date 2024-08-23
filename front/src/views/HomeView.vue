@@ -68,7 +68,7 @@ function getList() {
 
   ITEM_REPOSITORY.getList(queryString)
     .then((itemList => {
-      console.log("리스트>>"+ itemList);
+      console.log("리스트>>"+ JSON.stringify(itemList));
       state.itemList = itemList;
       getImages()
     }))

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, reactive } from "vue";
-import type Order from "@/entity/order/Order";
+import Order from "@/entity/order/Order";
 import { container } from "tsyringe";
 import OrderRepository from "@/repository/OrderRepository";
 import ImageListRequest from "@/entity/image/ImageListRequest";

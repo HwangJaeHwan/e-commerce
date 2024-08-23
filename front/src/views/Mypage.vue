@@ -4,26 +4,32 @@ import { useProfileStore } from "@/entity/user/Profile";
 import AddressModal from '@/views/AddressModal.vue';
 import AddressListModal from '@/views/AddressListModal.vue';
 import { useRouter } from 'vue-router';
+import type UserProfile from "@/entity/user/UserProfile";
 
 const profileStore = useProfileStore();
 const router = useRouter();
 
-const state = reactive({
-  userProfile: {
-    id: 0,
-    loginId: '',
-    email: ''
-  },
+type StateType = {
+  userProfile: UserProfile | null,
+  showAddressModal: boolean,
+  showAddressListModal: boolean,
+  showPasswordChangeModal: boolean,
+}
+
+const state = reactive<StateType>({
+  userProfile: null,
   showAddressModal: false,
   showAddressListModal: false,
   showPasswordChangeModal: false,
 });
 
-onMounted(() => {
-  profileStore.fetchProfile();
+onMounted(async () => {
+  await profileStore.fetchProfile();
   if (profileStore.profile) {
     state.userProfile = profileStore.profile;
   }
+
+  console.log("아아아아",JSON.stringify(state.userProfile))
 });
 
 function handleChangePassword() {
@@ -62,8 +68,8 @@ function handleAddProduct() {
     <div class="profile-section">
       <h2 class="section-title">내 정보</h2>
       <div class="profile-details">
-        <p><strong>아이디:</strong> {{ state.userProfile.loginId }}</p>
-        <p><strong>이메일:</strong> {{ state.userProfile.email }}</p>
+        <p><strong>아이디:</strong> {{ state.userProfile?.loginId }}</p>
+        <p><strong>이메일:</strong> {{ state.userProfile?.email }}</p>
       </div>
     </div>
 
@@ -72,7 +78,7 @@ function handleAddProduct() {
       <el-button class="action-button" type="warning" @click="handleChangePassword">비밀번호 변경</el-button>
       <el-button class="action-button" type="success" @click="handleAddAddress">주소지 등록</el-button>
       <el-button class="action-button" type="info" @click="handleViewAddressList">주소지 리스트 보기</el-button>
-      <el-button class="action-button" type="primary" @click="handleAddProduct">상품 등록</el-button> <!-- 상품 등록 버튼 추가 -->
+      <el-button v-if="state.userProfile?.userType === 'ADMIN'" class="action-button" type="primary" @click="handleAddProduct">상품 등록</el-button>
     </div>
 
     <!-- 주소지 등록 모달 -->

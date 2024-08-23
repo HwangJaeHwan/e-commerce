@@ -25,7 +25,7 @@ const hasScore = computed(() => props.item.score != null);
 </script>
 
 <template>
-  <router-link :to="{ name: 'item', params: { itemId: props.item.id } }">
+  <router-link :to="{ name: 'item', params: { itemUUID: props.item.itemUUID } }">
     <div class="item-list-container">
       <div class="item-list-image-wrapper mb-3">
         <img :src="props.map.get(props.item.itemUUID)?.[0] || '/images/dog.jpg'" alt="logo" class="item-list-image"/>

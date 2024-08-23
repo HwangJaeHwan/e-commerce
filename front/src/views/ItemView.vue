@@ -16,7 +16,7 @@ import ShoppingCartItem from "@/entity/item/ShoppingCartItem";
 import router from "@/router";
 
 const props = defineProps<{
-  itemId: number
+  itemUUID: string
 }>()
 
 type StateType = {
@@ -39,7 +39,7 @@ const USER_REPOSITORY = container.resolve(UserRepository)
 const REVIEW_REPOSITORY = container.resolve(ReviewRepository)
 
 function getItem() {
-  ITEM_REPOSITORY.get(props.itemId)
+  ITEM_REPOSITORY.get(props.itemUUID)
       .then((item) => {
         state.item = item
         console.log(JSON.stringify(item))
@@ -124,20 +124,13 @@ onMounted(() => {
 
     <div class="details-container">
       <div class="item-info">
-        <div class="mt-2">{{ state.item.name }}</div>
-        <div class="mt-2">{{ state.item.price }}</div>
-<!--        <el-rate-->
-<!--            v-model="state.item.score"-->
-<!--            disabled-->
-<!--            show-score-->
-<!--            text-color="#ff9900"-->
-<!--            score-template="{value}"-->
-<!--        />-->
+        <div class="item-name">{{ state.item.name }}</div>
+        <div class="item-price">{{ state.item.price }}원</div>
       </div>
 
       <div class="action-buttons">
         <el-form-item>
-          <el-input v-model="state.quantity" type="number" style="width: 80px" />
+          <el-input v-model="state.quantity" type="number" style="width: 80px" :min="1" />
         </el-form-item>
         <el-button type="primary" style="width: 40%" @click="toPayment">상품 주문</el-button>
         <el-button type="primary" style="width: 40%" @click="addCart">장바구니</el-button>
@@ -146,7 +139,7 @@ onMounted(() => {
   </div>
 
   <div>
-    <h2>상품평</h2>
+    <h2>상품설명</h2>
     <p>{{state.item.itemDescription}}</p>
   </div>
   <div>
@@ -170,20 +163,27 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  padding-left: 20px; /* 이미지와의 여백 추가 */
 }
 
-.action-buttons {
+.item-info {
   display: flex;
-  justify-content: space-around;
-}
-
-.item-info{
-  display: flex;
-  height: 100%;
   flex-direction: column;
   justify-content: space-between;
   align-items: flex-start;
   padding-bottom: 20px;
+}
+
+.item-name, .item-price {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+
+.action-buttons {
+  display: flex;
+  justify-content: space-around;
 }
 
 .carousel-image {

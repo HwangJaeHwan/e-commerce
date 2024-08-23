@@ -74,18 +74,18 @@ function uploadImages() {
 
 async function write() {
   state.itemAdd.itemUUID = uuidv4();
-  // const imagesUploaded = await uploadImages();
-  // if (imagesUploaded) {
+  const imagesUploaded = await uploadImages();
+  if (imagesUploaded) {
     ITEM_REPOSITORY.write(state.itemAdd)
         .then((number) => {
           ElMessage({ type: 'success', message: '상품을 등록했습니다.' });
           console.log("number = ",JSON.stringify(number))
-          router.replace('/item/' + number);
+          router.replace('/item/' + state.itemAdd.itemUUID);
         })
         .catch((e: HttpError) => {
           ElMessage({ type: 'error', message: e.getMessage() });
         });
-  // }
+  }
 }
 </script>
 

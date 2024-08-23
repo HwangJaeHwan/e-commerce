@@ -73,9 +73,9 @@ public class ItemService {
 
     }
     @Transactional(readOnly = true)
-    public ItemDetailResponse getItem(Long itemId) {
+    public ItemDetailResponse getItem(String itemUUID) {
 
-        Item item = itemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new);
+        Item item = itemRepository.findByItemUUID(itemUUID).orElseThrow(ItemNotFoundException::new);
 
         log.info("item uuid ={}",item.getItemUUID());
         ItemDetailResponse response = new ItemDetailResponse(item);
@@ -88,6 +88,8 @@ public class ItemService {
 
 
     }
+
+
 
     public Long addItem(ItemRequest itemRequest , UserInfo userInfo) {
 

@@ -1,7 +1,6 @@
 package com.example.orderservice.controller;
 
 import com.example.orderservice.config.auth.UserInfo;
-import com.example.orderservice.domain.CartItem;
 import com.example.orderservice.request.OrderRequest;
 import com.example.orderservice.response.CartItemResponse;
 import com.example.orderservice.response.OrderResponse;
@@ -35,7 +34,7 @@ public class OrderController {
     }
 
     @GetMapping("/orders/{orderId}")
-    public OrderResponse orders(UserInfo userInfo, @PathVariable Long orderId) {
+    public OrderResponse getOrder(UserInfo userInfo, @PathVariable Long orderId) {
 
         return orderService.getOrder(userInfo, orderId);
     }

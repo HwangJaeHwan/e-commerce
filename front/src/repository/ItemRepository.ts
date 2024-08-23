@@ -18,8 +18,8 @@ export default class ItemRepository {
         },Number)
     }
 
-    public get(itemId: number) {
-        return this.httpRepository.get<Item>({path: `/api/item-service/${itemId}`},Item)
+    public get(itemUUID: string) {
+        return this.httpRepository.get<Item>({path: `/api/item-service/${itemUUID}`},Item)
 
     }
 

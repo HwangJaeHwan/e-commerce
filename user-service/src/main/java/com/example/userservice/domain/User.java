@@ -29,7 +29,7 @@ public class User {
 
     @Column(nullable = false,unique = true)
     private String userUUID;
-
+    @Enumerated(EnumType.STRING)
     private UserType userType;
 
 

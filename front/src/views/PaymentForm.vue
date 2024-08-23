@@ -38,7 +38,7 @@ const totalPrice = computed(() => {
   return state.itemList.reduce((total, item) => total + item.itemPrice * item.quantity, 0);
 })
 
-function createOrder(){
+async function createOrder(){
 
   console.log("저둥저둥")
 
@@ -52,7 +52,7 @@ function createOrder(){
 
   console.log("여기여기ㅋㅋㅋ")
   const request = new OrderRequest()
-
+  await user.fetchProfile()
   request.userUUID = user?.profile?.userUUID
   request.name = state.selectedAddress?.name
   request.address = state.selectedAddress?.address
@@ -67,7 +67,7 @@ function createOrder(){
   ORDER_REPOSITORY.createOrder(request)
       .then((id) =>{
         console.log("아이디다 : " + id)
-        router.push({ name: "OrderInfo", params: { orderId: id } })
+        router.push({ name: "orderInfo", params: { orderId: String(id) } })
       })
       .catch((e:HttpError) => {
         ElMessage({ type: 'error', message: e.getMessage() })

@@ -62,6 +62,7 @@ public class OrderService {
             order.addItem(
                     OrderItem.builder()
                             .name(item.getName())
+                            .itemId(item.getItemId())
                             .itemUUID(item.getItemUUID())
                             .quantity(item.getQuantity())
                             .price(item.getPrice())

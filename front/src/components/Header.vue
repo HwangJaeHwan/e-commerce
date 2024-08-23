@@ -33,9 +33,9 @@ function handleSearch() {
   });
 }
 
-onMounted(() => {
+onMounted(async () => {
   if (!profileStore.profile) {
-    profileStore.fetchProfile();  // 새로고침 시 서버로부터 프로필 데이터를 가져옴
+    await profileStore.fetchProfile();  // 새로고침 시 서버로부터 프로필 데이터를 가져옴
   }
 })
 

@@ -41,12 +41,13 @@ public class ItemController {
 
     }
 
-    @GetMapping("/{itemId}")
-    public ItemDetailResponse getItem(@PathVariable Long itemId) {
+    @GetMapping("/{itemUUID}")
+    public ItemDetailResponse getItem(@PathVariable String itemUUID) {
 
-        return itemService.getItem(itemId);
+        return itemService.getItem(itemUUID);
 
     }
+
 
     @PostMapping("/add")
     public Long addItem(@RequestBody @Valid ItemRequest itemRequest, UserInfo userInfo) {

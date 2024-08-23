@@ -41,7 +41,7 @@ const router = createRouter({
       component: RegisterUser
     },
     {
-      path: "/item/:itemId",
+      path: "/item/:itemUUID",
       name: "item",
       component: ItemView,
       props: true
@@ -84,9 +84,9 @@ const router = createRouter({
     },
     {
       path: '/order/:orderId',
-      name: 'OrderInfo',
+      name: 'orderInfo',
       component: OrderInfo,
-      props: route => ({ orderId: Number(route.params.orderId) })
+      props: true
     },
     {
       path: "/update/review/:reviewId",
