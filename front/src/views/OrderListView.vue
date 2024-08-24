@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, reactive } from "vue";
+import {onMounted, reactive, watch} from "vue";
 import Order from "@/entity/order/Order";
 import { container } from "tsyringe";
 import OrderRepository from "@/repository/OrderRepository";
@@ -8,52 +8,57 @@ import ImageResponse from "@/entity/image/ImageResponse";
 import ImageRepository from "@/repository/ImageRepository";
 import OrderItem from "@/components/OrderItem.vue";
 import Paging from "@/entity/data/Paging";
+import router from "@/router";
+import {useRoute} from "vue-router";
 
-const ORDER_REPOSITORY = container.resolve(OrderRepository)
-const IMAGE_REPOSITORY = container.resolve(ImageRepository)
+const ORDER_REPOSITORY = container.resolve(OrderRepository);
+const IMAGE_REPOSITORY = container.resolve(ImageRepository);
+
+const route = useRoute();
 
 type StateType = {
-  orderList: Paging<Order>,
-  imageMap: Map<string, string[]>
-}
+  orderList: Paging<Order>;
+  imageMap: Map<string, string[]>;
+  currentPage: number;
+};
 
 const state = reactive<StateType>({
   orderList: new Paging<Order>(),
-  imageMap: new Map<string, string[]>()
-})
+  imageMap: new Map<string, string[]>(),
+  currentPage: 1,
+});
 
 function getOrders() {
-  ORDER_REPOSITORY.getOrders()
+  ORDER_REPOSITORY.getOrders(state.currentPage)
       .then((orders) => {
-        state.orderList = orders
-        getImages()
-      })
+        state.orderList = orders;
+        getImages();
+      });
 }
 
 function getImages() {
-  const request = new ImageListRequest()
-  request.imageType = 'ITEM'
-  state.orderList.items.forEach(order => {
-    order.items.forEach(orderItem => {
+  const request = new ImageListRequest();
+  request.imageType = "ITEM";
+  state.orderList.items.forEach((order) => {
+    order.items.forEach((orderItem) => {
       request.uuids.push(orderItem.itemUUID);
-    })
-  })
+    });
+  });
 
-  IMAGE_REPOSITORY.getImages(request)
-      .then((imageList: ImageResponse[]) => {
-        for (const image of imageList) {
-          for (const imageInfo of image.imageInfos) {
-            const url = base64ToImage(imageInfo.imageData, imageInfo.mimeType);
-            if (!state.imageMap.has(image.uuid)) {
-              state.imageMap.set(image.uuid, []);
-            }
-            state.imageMap.get(image.uuid)?.push(url);
-          }
+  IMAGE_REPOSITORY.getImages(request).then((imageList: ImageResponse[]) => {
+    for (const image of imageList) {
+      for (const imageInfo of image.imageInfos) {
+        const url = base64ToImage(imageInfo.imageData, imageInfo.mimeType);
+        if (!state.imageMap.has(image.uuid)) {
+          state.imageMap.set(image.uuid, []);
         }
-      })
+        state.imageMap.get(image.uuid)?.push(url);
+      }
+    }
+  });
 }
 
-function base64ToImage(base64String, mimeType) {
+function base64ToImage(base64String: string, mimeType: string) {
   const byteCharacters = atob(base64String);
   const byteNumbers = new Array(byteCharacters.length);
   for (let i = 0; i < byteCharacters.length; i++) {
@@ -62,12 +67,24 @@ function base64ToImage(base64String, mimeType) {
   const byteArray = new Uint8Array(byteNumbers);
   const blob = new Blob([byteArray], { type: mimeType });
 
-  return URL.createObjectURL(blob)
+  return URL.createObjectURL(blob);
 }
 
+function handlePageChange(page: number) {
+  state.currentPage = page;
+  router.push({ query: { ...route.query, page: String(page) } }); // 페이지 변경 시 쿼리 문자열 업데이트
+}
+
+watch(route, () => {
+  if (route.query.page) {
+    state.currentPage = Number(route.query.page);
+    getOrders();
+  }
+});
+
 onMounted(() => {
-  getOrders()
-})
+  getOrders();
+});
 </script>
 
 <template>
@@ -79,13 +96,19 @@ onMounted(() => {
       <div v-for="(order, index) in state.orderList.items" :key="index" class="order-item-wrapper">
         <OrderItem :map="state.imageMap" :order="order" />
       </div>
-      <div class="order-summary">
-        <div>
-          <h2>20000원</h2>
-          <el-button style="width: 150px" type="primary">구매하기</el-button>
-        </div>
-      </div>
     </div>
+
+    <!-- 페이지네이션 -->
+    <el-pagination
+        v-if="state.orderList.totalElement > 0"
+        layout="prev, pager, next"
+        :total="state.orderList.totalElement"
+        :page-size="5"
+        :current-page="state.currentPage"
+        @current-change="handlePageChange"
+        class="pagination"
+    />
+
   </div>
 </template>
 
@@ -120,14 +143,12 @@ onMounted(() => {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.order-summary {
-  width: 50%;
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 20px;
-}
 
 .order-summary div {
   text-align: right;
+}
+
+.pagination {
+  margin-top: 20px;
 }
 </style>

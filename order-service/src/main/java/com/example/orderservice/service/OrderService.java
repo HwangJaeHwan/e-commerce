@@ -101,7 +101,7 @@ public class OrderService {
 
         List<OrderResponse> orderResponses = new ArrayList<>();
 
-        Page<Order> pageOrders = orderRepository.findAllByUserUUID(userUUID,PageRequest.of(page-1, 10));
+        Page<Order> pageOrders = orderRepository.findAllByUserUUID(userUUID,PageRequest.of(page-1, 5));
         List<Order> orders = pageOrders.getContent();
 
         for (Order order : orders) {
@@ -111,15 +111,7 @@ public class OrderService {
 
             List<OrderItem> orderItems = order.getOrderItems();
 
-            OrderResponse orderResponse = OrderResponse.builder()
-                    .orderId(order.getId())
-                    .orderUUID(order.getOrderUUID())
-                    .orderStatus(order.getOrderStatus())
-                    .zipcode(order.getZipcode())
-                    .address(order.getAddress())
-                    .detailAddress(order.getDetailAddress())
-                    .orderDate(order.getOrderDate())
-                    .build();
+            OrderResponse orderResponse = new OrderResponse(order);
 
             orderResponse.addItems(orderItems.stream().map(ItemResponse::new).toList());
             orderResponse.calTotalPrice(orderItems);

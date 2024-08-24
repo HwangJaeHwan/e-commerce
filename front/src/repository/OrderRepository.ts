@@ -24,10 +24,10 @@ export default class OrderRepository {
         },Order)
     }
 
-    public getOrders() {
+    public getOrders(page: number) {
         return this.httpRepository.getList<Order>({
-            path: "/api/order-service/orders"
-        },Order)
+            path: `/api/order-service/orders?page=${page}`
+        }, Order);
     }
 
 

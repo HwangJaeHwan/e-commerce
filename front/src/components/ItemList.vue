@@ -25,7 +25,7 @@ const hasScore = computed(() => props.item.score != null);
 </script>
 
 <template>
-  <router-link :to="{ name: 'item', params: { itemUUID: props.item.itemUUID } }">
+  <router-link :to="{ name: 'item', params: { itemUUID: props.item.itemUUID } }" class="item-link">
     <div class="item-list-container">
       <div class="item-list-image-wrapper mb-3">
         <img :src="props.map.get(props.item.itemUUID)?.[0] || '/images/dog.jpg'" alt="logo" class="item-list-image"/>
@@ -35,7 +35,7 @@ const hasScore = computed(() => props.item.score != null);
           {{ props.item.name }}
         </div>
         <div class="item-list-price mb-3">
-          {{ props.item.price }}
+          {{ props.item.price }}원
         </div>
         <div v-if="hasScore" class="item-list-score mb-3">
           <el-rate
@@ -53,6 +53,11 @@ const hasScore = computed(() => props.item.score != null);
 </template>
 
 <style scoped>
+.item-link {
+  text-decoration: none; /* 기본 링크 스타일 제거 */
+  color: inherit; /* 링크의 색상이 부모 요소에서 상속되도록 설정 */
+}
+
 .item-list-container {
   display: flex;
   flex-direction: column;
@@ -93,15 +98,15 @@ const hasScore = computed(() => props.item.score != null);
 }
 
 .item-list-name {
-  font-size: 1.2rem;
-  font-weight: bold;
-  color: #333;
-  text-align: left; /* 왼쪽 정렬 */
+  font-size: 1.1rem; /* 원래 가격의 폰트 크기로 변경 */
+  color: #000; /* 가격에 사용된 검은색으로 변경 */
+  font-weight: normal; /* 가격의 굵기로 변경 */
 }
 
 .item-list-price {
-  font-size: 1.1rem;
-  color: #E91E63;
+  font-size: 1.5rem; /* 폰트 크기를 더 키움 */
+  color: #E91E63; /* 빨간색으로 변경 */
+  font-weight: bold; /* 이름의 굵기로 변경 */
   text-align: left; /* 왼쪽 정렬 */
 }
 

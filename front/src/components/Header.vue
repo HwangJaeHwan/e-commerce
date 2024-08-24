@@ -20,7 +20,7 @@ const options = [
 
 function handleLogout() {
   profileStore.setProfile(null); // 로그아웃 시 프로필 초기화
-  localStorage.removeItem('token')
+  localStorage.removeItem('token');
 }
 
 function handleSearch() {
@@ -37,12 +37,11 @@ onMounted(async () => {
   if (!profileStore.profile) {
     await profileStore.fetchProfile();  // 새로고침 시 서버로부터 프로필 데이터를 가져옴
   }
-})
+});
 
 // watchEffect를 사용하여 프로필 상태가 변경될 때마다 뷰를 강제로 업데이트
 watchEffect(() => {
   console.log("Profile updated:", profileStore.profile);
-
 });
 </script>
 
@@ -74,13 +73,16 @@ watchEffect(() => {
         <router-link class="link" to="/register" v-if="!profileStore.profile">
           회원가입
         </router-link>
-        <router-link class="link" to="/mypage" v-else>
+        <router-link class="cart-link" to="/cart" v-if="profileStore.profile">
+          🛒
+        </router-link>
+        <router-link class="link" to="/mypage" v-if="profileStore.profile">
           {{ profileStore.profile?.loginId }}
         </router-link>
         <router-link class="link" to="/login" v-if="!profileStore.profile">
           로그인
         </router-link>
-        <router-link class="link" to="tmp" v-else @click="handleLogout">
+        <router-link class="link" to="tmp" v-if="profileStore.profile" @click="handleLogout">
           로그아웃
         </router-link>
       </div>
@@ -155,6 +157,7 @@ watchEffect(() => {
 .login-info {
   display: flex;
   gap: 1rem;
+  align-items: center;
 }
 
 .link {
@@ -165,5 +168,14 @@ watchEffect(() => {
 
 .link:hover {
   text-decoration: underline;
+}
+
+.cart-link {
+  font-size: 1.5rem; /* 이모티콘 크기 설정 */
+  text-decoration: none; /* 밑줄 제거 */
+}
+
+.cart-link:hover {
+  text-decoration: none; /* 마우스 오버 시에도 밑줄 제거 */
 }
 </style>

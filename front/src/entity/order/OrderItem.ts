@@ -12,7 +12,7 @@ export default class OrderItem {
             this.name = cartItem.name;
             this.itemUUID = cartItem.itemUUID;
             this.quantity = cartItem.quantity;
-            this.price = cartItem.price;
+            this.price = cartItem.itemPrice;
         }
     }
 
