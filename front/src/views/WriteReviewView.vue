@@ -8,10 +8,9 @@ import ImageRepository from "@/repository/ImageRepository";
 import ReviewRepository from "@/repository/ReviewRepository";
 import WriteReview from "@/entity/review/WriteReview";
 import { v4 as uuidv4 } from "uuid";
+import { useRoute } from "vue-router";
 
-const props = defineProps<{
-  itemUUID: string
-}>();
+const route = useRoute();
 
 const state = reactive({
   writeReview: new WriteReview(),
@@ -48,8 +47,11 @@ function handleRemove(index: number) {
 }
 
 function uploadImages() {
+  if (state.imageFiles.length === 0) {
+    return Promise.resolve(true);
+  }
+
   const formData = new FormData();
-  state.writeReview.reviewUUID = uuidv4();
 
   const jsonData = {
     uuid: state.writeReview.reviewUUID,
@@ -72,11 +74,17 @@ function uploadImages() {
 }
 
 async function write() {
+  const orderUUID = route.query.orderUUID as string;
+  const itemUUID = route.query.itemUUID as string;
+
+  state.writeReview.reviewUUID = uuidv4();
+
   const imagesUploaded = await uploadImages();
   if (imagesUploaded) {
-    REVIEW_REPOSITORY.write(state.writeReview, props.itemUUID)
-        .then(() => { ElMessage({ type: 'success', message: '리뷰를 등록했습니다.' });
-          router.replace('/item/' + props.itemUUID);
+    REVIEW_REPOSITORY.write(state.writeReview, itemUUID, orderUUID)  // orderUUID 추가
+        .then(() => {
+          ElMessage({ type: 'success', message: '리뷰를 등록했습니다.' });
+          router.replace('/item/' + itemUUID);
         })
         .catch((e: HttpError) => {
           ElMessage({ type: 'error', message: e.getMessage() });

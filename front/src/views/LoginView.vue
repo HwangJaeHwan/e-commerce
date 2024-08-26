@@ -23,7 +23,7 @@ function doLogin() {
         .then((token)=>{
           ElMessage({ type: 'success', message: '환영합니다.' })
           localStorage.setItem('token', token.token)
-          profileStore.fetchProfile()
+          // profileStore.fetchProfile()
           router.replace('/')
         })
         .catch((e: HttpError) => {

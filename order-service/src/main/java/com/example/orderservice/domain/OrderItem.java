@@ -24,8 +24,6 @@ public class OrderItem {
 
     private String name;
 
-    private Long itemId;
-
     private String itemUUID;
 
     private int quantity;
@@ -33,10 +31,9 @@ public class OrderItem {
     private int price;
 
     @Builder
-    public OrderItem(String name, Long itemId,String itemUUID,int quantity, int price) {
+    public OrderItem(String name,String itemUUID,int quantity, int price) {
         this.name = name;
         this.itemUUID = itemUUID;
-        this.itemId = itemId;
         this.quantity = quantity;
         this.price = price;
     }

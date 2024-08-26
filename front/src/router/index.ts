@@ -48,7 +48,7 @@ const router = createRouter({
 
     },
     {
-      path: "/review/write/:itemUUID",
+      path: "/review/write/",
       name: "writeReview",
       component: WriteReviewView,
       props: true

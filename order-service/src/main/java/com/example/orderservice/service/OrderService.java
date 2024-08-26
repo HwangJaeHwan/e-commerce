@@ -17,6 +17,7 @@ import com.example.orderservice.request.ItemRequest;
 import com.example.orderservice.request.OrderRequest;
 import com.example.orderservice.response.ItemResponse;
 import com.example.orderservice.response.OrderResponse;
+import com.example.orderservice.response.OrderTransfer;
 import com.example.orderservice.response.PageResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -62,7 +63,6 @@ public class OrderService {
             order.addItem(
                     OrderItem.builder()
                             .name(item.getName())
-                            .itemId(item.getItemId())
                             .itemUUID(item.getItemUUID())
                             .quantity(item.getQuantity())
                             .price(item.getPrice())
@@ -91,6 +91,20 @@ public class OrderService {
 
         response.addItems(order.getOrderItems().stream().map(ItemResponse::new).toList());
         response.calTotalPrice(order.getOrderItems());
+
+        return response;
+
+
+    }
+
+    public OrderTransfer getOrderByOrderUUID(String orderUUID) {
+
+        Order order = orderRepository.findByOrderUUID(orderUUID).orElseThrow(OrderNotFoundException::new);
+
+
+        OrderTransfer response = new OrderTransfer(order);
+
+        response.addItems(order.getOrderItems().stream().map(ItemResponse::new).toList());
 
         return response;
 
@@ -149,5 +163,6 @@ public class OrderService {
                 new OrderMessage(deleteOrder.getOrderItems().stream().map(ItemQuantity::new).toList()));
 
     }
+
 
 }

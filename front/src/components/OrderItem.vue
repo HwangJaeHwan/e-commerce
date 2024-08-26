@@ -27,6 +27,16 @@ function getOrderStatusText(status: string) {
       return '알 수 없는 상태';
   }
 }
+
+function handleWriteReview(itemUUID: string) {
+  router.push({
+    name: 'writeReview',
+    query: {
+      orderUUID: props.order.orderUUID,
+      itemUUID: itemUUID
+    }
+  });
+}
 </script>
 
 <template>
@@ -48,6 +58,13 @@ function getOrderStatusText(status: string) {
         </div>
         <div class="order-item-price mb-2">
           가격: {{ orderItem.price }}
+        </div>
+
+        <!-- 리뷰 작성 버튼 -->
+        <div v-if="props.order.orderStatus === 'COMPLETED'" class="review-button-wrapper" @click.stop>
+          <el-button type="primary" @click="handleWriteReview(orderItem.itemUUID)">
+            리뷰 작성
+          </el-button>
         </div>
       </div>
     </div>
@@ -112,6 +129,7 @@ function getOrderStatusText(status: string) {
   flex-direction: column;
   justify-content: center;
   flex-grow: 1;
+  position: relative; /* 새로운 자식 요소의 위치 설정을 위해 추가 */
 }
 
 .order-item-name {
@@ -130,9 +148,16 @@ function getOrderStatusText(status: string) {
   margin-bottom: 10px;
 }
 
+.review-button-wrapper {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
 .order-info-button-wrapper {
   display: flex;
-  justify-content: flex-end; /* 왼쪽 아래에 위치 */
+  justify-content: flex-end;
   margin-top: 20px;
 }
 

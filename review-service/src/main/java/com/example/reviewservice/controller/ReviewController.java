@@ -1,6 +1,7 @@
 package com.example.reviewservice.controller;
 
 import com.example.reviewservice.auth.UserInfo;
+import com.example.reviewservice.request.OrderInfo;
 import com.example.reviewservice.request.ReviewRequest;
 import com.example.reviewservice.request.ReviewUpdate;
 import com.example.reviewservice.response.ItemScoreResponse;
@@ -24,10 +25,12 @@ public class ReviewController {
 
     private final ReviewService reviewService;
 
-    @PostMapping("/write/{itemUUID}")
-    public void writeReview(@PathVariable String itemUUID, @RequestBody @Valid ReviewRequest request
+    @PostMapping("/write")
+    public void writeReview(OrderInfo orderInfo, @RequestBody @Valid ReviewRequest request
             , UserInfo userInfo) {
-        reviewService.write(request,itemUUID,userInfo);
+
+        reviewService.write(request, orderInfo, userInfo);
+
     }
 
     @GetMapping("/get/{reviewId}")

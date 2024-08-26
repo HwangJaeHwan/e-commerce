@@ -4,6 +4,7 @@ import com.example.orderservice.config.auth.UserInfo;
 import com.example.orderservice.request.OrderRequest;
 import com.example.orderservice.response.CartItemResponse;
 import com.example.orderservice.response.OrderResponse;
+import com.example.orderservice.response.OrderTransfer;
 import com.example.orderservice.response.PageResponse;
 import com.example.orderservice.service.CartService;
 import com.example.orderservice.service.OrderService;
@@ -37,6 +38,12 @@ public class OrderController {
     public OrderResponse getOrder(UserInfo userInfo, @PathVariable Long orderId) {
 
         return orderService.getOrder(userInfo, orderId);
+    }
+
+    @GetMapping("/orders/uuid/{orderUUID}")
+    public OrderTransfer getOrderByUUID(@PathVariable String orderUUID) {
+
+        return orderService.getOrderByOrderUUID(orderUUID);
     }
 
     @PutMapping("/{orderId}")

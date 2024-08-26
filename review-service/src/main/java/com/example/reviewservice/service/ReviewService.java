@@ -2,12 +2,18 @@ package com.example.reviewservice.service;
 
 import com.example.reviewservice.auth.UserInfo;
 import com.example.reviewservice.client.ImageServiceClient;
+import com.example.reviewservice.client.OrderServiceClient;
 import com.example.reviewservice.client.UserServiceClient;
-import com.example.reviewservice.data.UserType;
+import com.example.reviewservice.data.order.ItemResponse;
+import com.example.reviewservice.data.order.OrderResponse;
+import com.example.reviewservice.data.order.OrderStatus;
+import com.example.reviewservice.data.user.UserType;
 import com.example.reviewservice.domain.Review;
 import com.example.reviewservice.exception.ReviewNotFoundException;
+import com.example.reviewservice.exception.ReviewWriteException;
 import com.example.reviewservice.exception.UnauthorizedException;
 import com.example.reviewservice.repository.ReviewRepository;
+import com.example.reviewservice.request.OrderInfo;
 import com.example.reviewservice.request.ReviewRequest;
 import com.example.reviewservice.request.ReviewUpdate;
 import com.example.reviewservice.response.ItemScoreResponse;
@@ -33,9 +39,31 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final UserServiceClient userServiceClient;
     private final ImageServiceClient imageServiceClient;
+    private final OrderServiceClient orderServiceClient;
 
 
-    public void write(ReviewRequest request, String itemUUID, UserInfo userInfo) {
+    public void write(ReviewRequest request, OrderInfo orderInfo, UserInfo userInfo) {
+
+
+        OrderResponse orderResponse = orderServiceClient.getOrderByOrderUUID(orderInfo.getOrderUUID());
+        Set<String> uuids = orderResponse.getItems().stream().map(ItemResponse::getItemUUID).collect(Collectors.toSet());
+
+        if (reviewRepository.findByUserUUIDAndItemUUID(userInfo.getUuid(), orderInfo.getItemUUID()).isPresent()) {
+            throw new ReviewWriteException();
+        }
+
+        if (!orderResponse.getUserUUID().equals(userInfo.getUuid())) {
+            throw new UnauthorizedException();
+        }
+
+        if (!orderResponse.getOrderStatus().equals(OrderStatus.COMPLETED)) {
+            throw new ReviewWriteException();
+        }
+
+        if (!uuids.contains(orderInfo.getItemUUID())) {
+            throw new ReviewWriteException();
+        }
+
 
         reviewRepository.save(
                 Review.builder()
@@ -43,7 +71,7 @@ public class ReviewService {
                         .score(request.getScore())
                         .userUUID(userInfo.getUuid())
                         .reviewUUID(request.getReviewUUID())
-                        .itemUUID(itemUUID)
+                        .itemUUID(orderInfo.getItemUUID())
                         .createTime(LocalDateTime.now())
                         .updateTime(LocalDateTime.now())
                         .build()

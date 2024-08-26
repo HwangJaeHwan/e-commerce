@@ -12,9 +12,9 @@ export default class ReviewRepository {
     constructor(@inject(HttpRepository) private readonly httpRepository: HttpRepository) {
     }
 
-    public write(request: WriteReview,itemUUID:string) {
+    public write(request: WriteReview, itemUUID: string, orderUUID: string) {
         return this.httpRepository.post({
-            path: `/api/review-service/write/${itemUUID}`,
+            path: `/api/review-service/write?itemUUID=${itemUUID}&orderUUID=${orderUUID}`,
             body: request
         })
     }
