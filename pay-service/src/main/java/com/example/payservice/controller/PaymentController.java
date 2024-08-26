@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("pay-service/")
+@RequestMapping("/pay-service")
 @RequiredArgsConstructor
 public class PaymentController {
 

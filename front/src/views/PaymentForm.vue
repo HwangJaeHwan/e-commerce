@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useRoute } from 'vue-router';
+import {useRoute} from 'vue-router';
 import ShoppingCartItem from '@/entity/item/ShoppingCartItem';
 import {computed, onMounted, reactive} from 'vue';
 import AddressModal from '@/views/AddressModal.vue';
@@ -13,11 +13,15 @@ import OrderItem from "@/entity/order/OrderItem";
 import router from "@/router";
 import HttpError from "@/http/HttpError";
 import {ElMessage} from "element-plus";
+import PaymentRepository from "@/repository/PaymentRepository";
+import PaymentValidate from "@/entity/payment/PaymentValidate";
+import type PaymentValidateItem from "@/entity/payment/PaymentValidateItem";
 
 const route = useRoute();
 
 const user  = useProfileStore()
 const ORDER_REPOSITORY =container.resolve(OrderRepository)
+const PAYMENT_REPOSITORY = container.resolve(PaymentRepository)
 
 
 type StateType = {
@@ -98,34 +102,50 @@ onMounted(() => {
 });
 
 function requestPay() {
-  // const IMP = window.IMP; // Iamport 객체
-  // IMP.init('imp14316717'); // Iamport 가맹점 식별코드
-  //
-  // const sum = state.itemList.reduce((total, cartItem) => total + cartItem.price * cartItem.quantity, 0);
+  const IMP = window.IMP; // Iamport 객체
+  IMP.init('imp14316717'); // Iamport 가맹점 식별코드
+
+  const sum = state.itemList.reduce((total, cartItem) => total + cartItem.price * cartItem.quantity, 0);
+
+  const paymentValidate =  new PaymentValidate()
+
+
+  const paymentItems: PaymentValidateItem[] = state.itemList.map(cartItem => {
+    const paymentItem: PaymentValidateItem = {
+      itemUUID: cartItem.itemUUID,
+      quantity: cartItem.quantity
+    };
+    return paymentItem;
+  });
+  paymentValidate.items.push(...paymentItems)
+
 
   createOrder()
 
-  // IMP.request_pay(
-  //     {
-  //       pg: 'html5_inicis', // 결제 모듈 종류
-  //       pay_method: 'card', // 결제 수단
-  //       merchant_uid: `mid_${new Date().getTime()}`, // 주문번호
-  //       name: '결제 테스트', // 결제창에서 보여질 상품명
-  //       amount: sum, // 금액
-  //     },
-  //     (rsp) => {
-  //       // callback
-  //       if (rsp.success) {
-  //         // 결제 성공 시 로직
-  //         console.log('결제 성공', rsp);
-  //         alert('결제가 성공적으로 완료되었습니다.');
-  //       } else {
-  //         // 결제 실패 시 로직
-  //         console.log('결제 실패', rsp);
-  //         alert('결제에 실패하였습니다.');
-  //       }
-  //     }
-  // );
+  IMP.request_pay(
+      {
+        pg: 'html5_inicis', // 결제 모듈 종류
+        pay_method: 'card', // 결제 수단
+        merchant_uid: `mid_${new Date().getTime()}`, // 주문번호
+        name: '결제 테스트', // 결제창에서 보여질 상품명
+        amount: sum, // 금액
+      },
+      (rsp) => {
+        // callback
+        if (rsp.success) {
+          paymentValidate.impUid = rsp.imp_uid
+
+          PAYMENT_REPOSITORY.validate(paymentValidate)
+          // 결제 성공 시 로직
+          console.log('결제 성공', rsp);
+          alert('결제가 성공적으로 완료되었습니다.');
+        } else {
+          // 결제 실패 시 로직
+          console.log('결제 실패', rsp);
+          alert('결제에 실패하였습니다.');
+        }
+      }
+  );
 }
 </script>
 
