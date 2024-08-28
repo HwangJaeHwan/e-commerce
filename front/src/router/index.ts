@@ -68,7 +68,10 @@ const router = createRouter({
       path: "/payment/:items",
       name: "PaymentForm",
       component: PaymentForm,
-      props: route => ({ items: route.params.items })
+      props: (route) => ({
+        items: route.params.items,
+        fromCart: route.query.fromCart === 'true' // fromCart를 props로 전달
+      })
     },
 
     {

@@ -30,5 +30,8 @@ public class OrderRequest {
     @NotBlank(message = "전화번호가 없습니다.")
     private String phoneNumber;
 
+    @NotNull
+    private Boolean fromCart;
+
 
 }

@@ -11,7 +11,7 @@ import java.util.List;
 @FeignClient(name = "pay-service")
 public interface PayServiceClient {
     @PostMapping("/pay-service/cancel")
-    List<CartItemResponse> cartItemsInfo(@RequestBody OrderCancelRequest request);
+    void cancelOrder(@RequestBody OrderCancelRequest request);
 
 
 

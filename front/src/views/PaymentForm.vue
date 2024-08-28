@@ -29,6 +29,7 @@ type StateType = {
   showModal: boolean;
   showListModal: boolean;
   selectedAddress: Address | null;
+  fromCart: boolean;
 };
 
 const state = reactive<StateType>({
@@ -36,6 +37,7 @@ const state = reactive<StateType>({
   showModal: false,
   showListModal: false,
   selectedAddress: null,
+  fromCart: false,
 });
 
 const totalPrice = computed(() => {
@@ -44,6 +46,7 @@ const totalPrice = computed(() => {
 
 async function createOrder(impUid : string){
 
+  route.query
   console.log("저둥저둥")
 
   console.log("info >>" , JSON.stringify(state.itemList))
@@ -58,6 +61,7 @@ async function createOrder(impUid : string){
   await user.fetchProfile()
   request.userUUID = user?.profile?.userUUID
   request.impUid = impUid
+  request.fromCart = state.fromCart
   request.name = state.selectedAddress?.name
   request.address = state.selectedAddress?.address
   request.detailAddress = state.selectedAddress?.detailAddress
@@ -92,6 +96,7 @@ function closeList() {
 
 onMounted(() => {
   const encodedItems = route.params.items as string;
+  state.fromCart = route.query.fromCart === 'true';
   if (encodedItems) {
     try {
       const parsedItems = JSON.parse(atob(encodedItems));
@@ -121,34 +126,36 @@ function requestPay() {
   });
   paymentValidate.items.push(...paymentItems)
 
+  createOrder("rsp.imp_uid")
 
-
-  IMP.request_pay(
-      {
-        pg: 'html5_inicis', // 결제 모듈 종류
-        pay_method: 'card', // 결제 수단
-        merchant_uid: `mid_${new Date().getTime()}`, // 주문번호
-        name: '결제 테스트', // 결제창에서 보여질 상품명
-        amount: sum, // 금액
-      },
-      (rsp) => {
-        // callback
-        if (rsp.success) {
-          paymentValidate.impUid = rsp.imp_uid
-
-          PAYMENT_REPOSITORY.validate(paymentValidate)
-
-          createOrder(rsp.imp_uid)
-          // 결제 성공 시 로직
-          console.log('결제 성공', rsp);
-          alert('결제가 성공적으로 완료되었습니다.');
-        } else {
-          // 결제 실패 시 로직
-          console.log('결제 실패', rsp);
-          alert('결제에 실패하였습니다.');
-        }
-      }
-  );
+  // IMP.request_pay(
+  //     {
+  //       pg: 'html5_inicis', // 결제 모듈 종류
+  //       pay_method: 'card', // 결제 수단
+  //       merchant_uid: `mid_${new Date().getTime()}`, // 주문번호
+  //       name: '결제 테스트', // 결제창에서 보여질 상품명
+  //       buyer_name: user?.profile?.loginId,
+  //       buyer_email: user?.profile?.email,
+  //       amount: sum, // 금액
+  //     },
+  //     (rsp) => {
+  //       // callback
+  //       if (rsp.success) {
+  //         paymentValidate.impUid = rsp.imp_uid
+  //
+  //         PAYMENT_REPOSITORY.validate(paymentValidate)
+  //
+  //         createOrder(rsp.imp_uid)
+  //         // 결제 성공 시 로직
+  //         console.log('결제 성공', rsp);
+  //         ElMessage({ type: 'success', message: '결제를 성공했습니다.' })
+  //       } else {
+  //         // 결제 실패 시 로직
+  //         console.log('결제 실패', rsp);
+  //         ElMessage({ type: 'error', message: '결제에 실패했습니다.' })
+  //       }
+  //     }
+  // );
 }
 </script>
 

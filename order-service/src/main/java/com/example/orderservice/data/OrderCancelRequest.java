@@ -10,4 +10,7 @@ public class OrderCancelRequest {
     private String impUid;
     private List<CancelItem> items = new ArrayList<>();
 
+    public OrderCancelRequest(String impUid) {
+        this.impUid = impUid;
+    }
 }

@@ -27,8 +27,8 @@ public class PaymentController {
 
     }
 
-    @PatchMapping("/cancel")
-    public Payment cancel(@RequestBody @Valid PaymentRequest request) {
-        return paymentService.cancel(request);
+    @PostMapping("/cancel")
+    public void cancel(@RequestBody @Valid PaymentRequest request) {
+        paymentService.cancel(request);
     }
 }

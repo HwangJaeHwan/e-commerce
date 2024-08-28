@@ -9,11 +9,13 @@ import com.siot.IamportRestClient.exception.IamportResponseException;
 import com.siot.IamportRestClient.request.CancelData;
 import com.siot.IamportRestClient.response.Payment;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class PaymentService {
 
@@ -57,14 +59,15 @@ public class PaymentService {
         }
     }
 
-    public Payment cancel(PaymentRequest request) {
+    public void cancel(PaymentRequest request) {
+
+        log.info("request = {}", request);
 
         try {
 
             iamportClient.cancelPaymentByImpUid(new CancelData(request.getImpUid(), true,
                     itemService.amount(request.getItems())));
 
-            return iamportClient.paymentByImpUid(request.getImpUid()).getResponse();
 
         } catch (IamportResponseException e) {
             throw new PaymentException(e);

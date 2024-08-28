@@ -3,6 +3,8 @@ package com.example.orderservice.service;
 import com.example.orderservice.client.ItemServiceClient;
 import com.example.orderservice.client.PayServiceClient;
 import com.example.orderservice.config.auth.UserInfo;
+import com.example.orderservice.data.CancelItem;
+import com.example.orderservice.data.OrderCancelRequest;
 import com.example.orderservice.domain.Order;
 import com.example.orderservice.domain.OrderItem;
 import com.example.orderservice.domain.OrderStatus;
@@ -11,8 +13,10 @@ import com.example.orderservice.exception.OrderNotFoundException;
 import com.example.orderservice.exception.UnauthorizedException;
 import com.example.orderservice.messagequeue.KafkaProducer;
 import com.example.orderservice.messagequeue.message.OrderMessage;
+import com.example.orderservice.repository.CartItemRepository;
 import com.example.orderservice.repository.OrderItemRepository;
 import com.example.orderservice.repository.OrderRepository;
+import com.example.orderservice.repository.ShoppingCartRepository;
 import com.example.orderservice.request.ItemQuantity;
 import com.example.orderservice.request.ItemRequest;
 import com.example.orderservice.request.OrderRequest;
@@ -44,6 +48,8 @@ public class OrderService {
     private final ItemServiceClient itemServiceClient;
     private final PayServiceClient payServiceClient;
     private final KafkaProducer kafkaProducer;
+    private final ShoppingCartRepository shoppingCartRepository;
+    private final CartItemRepository cartItemRepository;
 
 
     public Long createOrder(OrderRequest orderRequest) {
@@ -73,6 +79,10 @@ public class OrderService {
                             .price(item.getPrice())
                             .build()
             );
+        }
+
+        if (orderRequest.getFromCart()) {
+            shoppingCartRepository.findByUserUUID(orderRequest.getUserUUID()).ifPresent(cartItemRepository::deleteAllByCart);
         }
 
 
@@ -162,7 +172,13 @@ public class OrderService {
             throw new OrderCancellationDeniedException();
         }
 
+        OrderCancelRequest request = new OrderCancelRequest(deleteOrder.getImpUid());
 
+        List<CancelItem> items = deleteOrder.getOrderItems().stream().map(CancelItem::new).toList();
+
+        request.getItems().addAll(items);
+
+        payServiceClient.cancelOrder(request);
 
         deleteOrder.changeStatus(OrderStatus.CANCELLED);
 

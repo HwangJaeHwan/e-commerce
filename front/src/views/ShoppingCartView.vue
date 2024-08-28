@@ -84,7 +84,12 @@ function updateItem(updatedItem: ShoppingCartItem) {
 
 function toPayment() {
   const encodedParam = btoa(JSON.stringify(state.itemList));
-  router.push({ name: "PaymentForm", params: { items: encodedParam } });
+
+  router.push({
+    name: 'PaymentForm',
+    params: { items: encodedParam },
+    query: { fromCart: 'true' } // fromCart를 true로 설정
+  });
 }
 
 onMounted(() => {

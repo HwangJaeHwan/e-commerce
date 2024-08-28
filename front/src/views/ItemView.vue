@@ -104,7 +104,12 @@ function toPayment() {
   param.quantity = state.quantity
   param.price = state.quantity * state.item.price
   const encodedParam = btoa(JSON.stringify(param))
-  router.push({ name: "PaymentForm", params: { items: encodedParam } })
+
+  router.push({
+    name: 'PaymentForm',
+    params: { items: encodedParam },
+    query: { fromCart: 'false' } // fromCart를 false로 설정
+  });
 }
 
 onMounted(() => {

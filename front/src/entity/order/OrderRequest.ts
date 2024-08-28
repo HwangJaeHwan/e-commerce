@@ -10,6 +10,7 @@ export default class OrderRequest {
     public detailAddress =''
     public zipcode =''
     public  phoneNumber =''
+    public fromCart = true
 
 
     public addItem(item: OrderItem): void {
