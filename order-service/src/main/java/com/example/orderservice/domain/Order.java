@@ -32,6 +32,7 @@ public class Order {
     private String orderUUID;
     private LocalDateTime orderDate;
     private String name;
+    private String impUid;
 
     private String address;
     private String detailAddress;
@@ -41,16 +42,17 @@ public class Order {
 
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
-
     @Builder
     public Order(String userUUID, String orderUUID, LocalDateTime orderDate,
-                 String address, String detailAddress, String zipcode, String name,
-                 String phoneNumber, OrderStatus orderStatus) {
+                 String name, String impUid, String address, String detailAddress,
+                 String zipcode, String phoneNumber, OrderStatus orderStatus) {
+
 
         this.userUUID = userUUID;
         this.orderUUID = orderUUID;
         this.orderDate = orderDate;
         this.name = name;
+        this.impUid = impUid;
         this.address = address;
         this.detailAddress = detailAddress;
         this.zipcode = zipcode;

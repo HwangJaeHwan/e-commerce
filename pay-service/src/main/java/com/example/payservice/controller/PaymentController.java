@@ -4,6 +4,7 @@ import com.example.payservice.request.PaymentRequest;
 import com.example.payservice.service.PaymentService;
 import com.siot.IamportRestClient.response.Payment;
 import jakarta.validation.Valid;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,6 +14,11 @@ import org.springframework.web.bind.annotation.*;
 public class PaymentController {
 
     private final PaymentService paymentService;
+
+    @GetMapping("/{impUid}")
+    public Payment info(@PathVariable String impUid) {
+        return paymentService.info(impUid);
+    }
 
     @PostMapping("/validate")
     public Payment validate(@RequestBody @Valid PaymentRequest request) {

@@ -42,7 +42,7 @@ const totalPrice = computed(() => {
   return state.itemList.reduce((total, item) => total + item.itemPrice * item.quantity, 0);
 })
 
-async function createOrder(){
+async function createOrder(impUid : string){
 
   console.log("저둥저둥")
 
@@ -54,10 +54,10 @@ async function createOrder(){
     throw new Error('주소가 선택되지 않았습니다.');
   }
 
-  console.log("여기여기ㅋㅋㅋ")
   const request = new OrderRequest()
   await user.fetchProfile()
   request.userUUID = user?.profile?.userUUID
+  request.impUid = impUid
   request.name = state.selectedAddress?.name
   request.address = state.selectedAddress?.address
   request.detailAddress = state.selectedAddress?.detailAddress
@@ -67,6 +67,8 @@ async function createOrder(){
   for (const item of state.itemList) {
     request.addItem(new OrderItem(item))
   }
+
+  console.log("리퀘스트 =",JSON.stringify(request))
 
   ORDER_REPOSITORY.createOrder(request)
       .then((id) =>{
@@ -120,7 +122,6 @@ function requestPay() {
   paymentValidate.items.push(...paymentItems)
 
 
-  createOrder()
 
   IMP.request_pay(
       {
@@ -136,6 +137,8 @@ function requestPay() {
           paymentValidate.impUid = rsp.imp_uid
 
           PAYMENT_REPOSITORY.validate(paymentValidate)
+
+          createOrder(rsp.imp_uid)
           // 결제 성공 시 로직
           console.log('결제 성공', rsp);
           alert('결제가 성공적으로 완료되었습니다.');

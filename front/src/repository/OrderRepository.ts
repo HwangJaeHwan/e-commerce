@@ -30,6 +30,12 @@ export default class OrderRepository {
         }, Order);
     }
 
+    public cancelOrder(orderId:number) {
+        return this.httpRepository.patch<Order>({
+            path: `/api/order-service/${orderId}`
+        })
+    }
+
 
 
 

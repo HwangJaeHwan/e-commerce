@@ -5,6 +5,7 @@ export default class OrderRequest {
     private items : OrderItem[] = []
     public address =''
     public name = ''
+    public impUid = ''
 
     public detailAddress =''
     public zipcode =''

@@ -21,6 +21,20 @@ public class PaymentService {
     private final ItemServiceClient itemService;
 
 
+    public Payment info(String impUid) {
+        try {
+
+            return iamportClient.paymentByImpUid(impUid).getResponse();
+
+        } catch (IamportResponseException e) {
+            throw new PaymentException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+
     public Payment valid(PaymentRequest request) {
         
         try {

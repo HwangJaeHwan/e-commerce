@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
 import Order from "@/entity/order/Order";
+import {container} from "tsyringe";
+import OrderRepository from "@/repository/OrderRepository";
+import {ElMessage} from "element-plus";
+import HttpError from "@/http/HttpError";
 
 const props = defineProps<{
   map: Map<string, string[]>,
@@ -8,6 +12,7 @@ const props = defineProps<{
 }>();
 
 const router = useRouter();
+const ORDER_REPOSITORY = container.resolve(OrderRepository)
 
 function navigateToItemDetail(itemUUID: string) {
   router.push({ name: 'item', params: { itemUUID } });
@@ -36,6 +41,18 @@ function handleWriteReview(itemUUID: string) {
       itemUUID: itemUUID
     }
   });
+}
+
+function handleCancelOrder() {
+  // 주문 취소 로직 추가
+
+  ORDER_REPOSITORY.cancelOrder(props.order.orderId)
+      .then(()=>{
+        ElMessage({ type: 'success', message: '주문을 취소했습니다.' })
+      })
+      .catch((e: HttpError) => {
+        ElMessage({ type: 'error', message: e.getMessage() });
+      })
 }
 </script>
 
@@ -67,6 +84,13 @@ function handleWriteReview(itemUUID: string) {
           </el-button>
         </div>
       </div>
+    </div>
+
+    <!-- 주문 취소 버튼 -->
+    <div v-if="props.order.orderStatus === 'ORDER'" class="cancel-button-wrapper">
+      <el-button type="danger" @click="handleCancelOrder">
+        주문 취소
+      </el-button>
     </div>
 
     <!-- 주문 상세 정보로 이동하는 버튼 -->
@@ -102,12 +126,12 @@ function handleWriteReview(itemUUID: string) {
   overflow: hidden;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   padding: 10px;
-  cursor: pointer; /* 클릭 가능하게 커서 변경 */
-  transition: background-color 0.3s; /* 마우스 오버 시 배경색 변화 */
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
 .order-item-row:hover {
-  background-color: #f0f0f0; /* 마우스 오버 시 배경색 변경 */
+  background-color: #f0f0f0;
 }
 
 .order-item-image {
@@ -129,7 +153,7 @@ function handleWriteReview(itemUUID: string) {
   flex-direction: column;
   justify-content: center;
   flex-grow: 1;
-  position: relative; /* 새로운 자식 요소의 위치 설정을 위해 추가 */
+  position: relative;
 }
 
 .order-item-name {
@@ -153,6 +177,12 @@ function handleWriteReview(itemUUID: string) {
   right: 0;
   top: 50%;
   transform: translateY(-50%);
+}
+
+.cancel-button-wrapper {
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-end;
 }
 
 .order-info-button-wrapper {

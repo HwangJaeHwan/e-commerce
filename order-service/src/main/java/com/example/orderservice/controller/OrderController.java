@@ -46,7 +46,7 @@ public class OrderController {
         return orderService.getOrderByOrderUUID(orderUUID);
     }
 
-    @PutMapping("/{orderId}")
+    @PatchMapping("/{orderId}")
     public void cancelOrder(UserInfo userInfo, @PathVariable Long orderId) {
 
         orderService.cancel(userInfo.getUuid(), orderId);

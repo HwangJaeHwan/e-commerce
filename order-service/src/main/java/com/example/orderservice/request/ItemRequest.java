@@ -1,9 +1,11 @@
 package com.example.orderservice.request;
 
 import lombok.Getter;
+import lombok.ToString;
 
 
 @Getter
+@ToString
 public class ItemRequest {
 
     private Long itemId;

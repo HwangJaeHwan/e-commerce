@@ -1,6 +1,7 @@
 package com.example.orderservice.service;
 
 import com.example.orderservice.client.ItemServiceClient;
+import com.example.orderservice.client.PayServiceClient;
 import com.example.orderservice.config.auth.UserInfo;
 import com.example.orderservice.domain.Order;
 import com.example.orderservice.domain.OrderItem;
@@ -41,10 +42,13 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
     private final ItemServiceClient itemServiceClient;
+    private final PayServiceClient payServiceClient;
     private final KafkaProducer kafkaProducer;
 
 
     public Long createOrder(OrderRequest orderRequest) {
+
+        log.info("OrderRequest = {}", orderRequest);
 
 
         Order order = Order.builder()
@@ -53,6 +57,7 @@ public class OrderService {
                 .orderUUID(UUID.randomUUID().toString())
                 .orderDate(LocalDateTime.now())
                 .name(orderRequest.getName())
+                .impUid(orderRequest.getImpUid())
                 .address(orderRequest.getAddress())
                 .detailAddress(orderRequest.getDetailAddress())
                 .zipcode(orderRequest.getZipcode())
@@ -156,6 +161,8 @@ public class OrderService {
         if (!deleteOrder.getOrderStatus().equals(OrderStatus.ORDER)) {
             throw new OrderCancellationDeniedException();
         }
+
+
 
         deleteOrder.changeStatus(OrderStatus.CANCELLED);
 

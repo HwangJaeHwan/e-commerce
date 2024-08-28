@@ -82,6 +82,10 @@ spring:
           uri: lb://IMAGE-SERVICE
           predicates:
             - Path=/image-service/**
+        - id: pay-service
+          uri: lb://PAY-SERVICE
+          predicates:
+            - Path=/pay-service/**
 
 
 
