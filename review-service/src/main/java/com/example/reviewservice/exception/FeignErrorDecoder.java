@@ -1,4 +1,4 @@
-package com.example.itemservice.exception;
+package com.example.reviewservice.exception;
 
 import feign.Response;
 import feign.codec.ErrorDecoder;
