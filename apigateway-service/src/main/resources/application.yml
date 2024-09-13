@@ -11,6 +11,11 @@ eureka:
 spring:
   application:
     name: apigateway-service
+  rabbitmq:
+    host: 54.180.140.136
+    port: 5672
+    username: guest
+    password: guest
   cloud:
     gateway:
       default-filters:
@@ -86,6 +91,12 @@ spring:
           uri: lb://PAY-SERVICE
           predicates:
             - Path=/pay-service/**
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, busrefresh
 
 
 

@@ -3,6 +3,11 @@ server:
 spring:
   application:
     name: config-service
+  rabbitmq:
+    host: 54.180.140.136
+    port: 5672
+    username: guest
+    password: guest
   profiles:
     active: native
   cloud:
@@ -11,3 +16,8 @@ spring:
         native:
           search-locations: file:///C:\Users\ghkd3\work\git\e-commerce\config
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, busrefresh
