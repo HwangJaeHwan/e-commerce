@@ -4,6 +4,17 @@ server:
 spring:
   application:
     name: item-service
+  config:
+    import: configserver:http://127.0.0.1:8888
+  cloud:
+    config:
+      name: ecommerce
+
+  rabbitmq:
+    host: 54.180.140.136
+    port: 5672
+    username: guest
+    password: guest
 
   h2:
     console:

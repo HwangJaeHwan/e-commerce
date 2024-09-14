@@ -4,6 +4,17 @@ server:
 spring:
   application:
     name: order-service
+  config:
+    import: configserver:http://127.0.0.1:8888 # 구성정보 설정
+  cloud:
+    config:
+      name: ecommerce # yml 파일명 앞부분
+
+  rabbitmq:
+    host: 54.180.140.136
+    port: 5672
+    username: guest
+    password: guest
   h2:
     console:
       enabled: true

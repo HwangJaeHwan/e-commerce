@@ -1,4 +1,4 @@
 token:
   key: "c7L0+z1bI67OpGIeYN9NcKgXBsHKiR2RlYX1Vzj4ULA="
-test:
-  tmp: "테스트용 값 변경"
+kafka:
+  bootstrap-servers: "54.180.140.136:9092"

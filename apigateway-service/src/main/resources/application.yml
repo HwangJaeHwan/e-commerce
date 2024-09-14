@@ -11,12 +11,16 @@ eureka:
 spring:
   application:
     name: apigateway-service
+  config:
+    import: configserver:http://127.0.0.1:8888
   rabbitmq:
     host: 54.180.140.136
     port: 5672
     username: guest
     password: guest
   cloud:
+    config:
+      name: ecommerce
     gateway:
       default-filters:
         - name: GlobalFilter
@@ -99,8 +103,3 @@ management:
         include: health, busrefresh
 
 
-
-
-
-token:
-  key: "c7L0+z1bI67OpGIeYN9NcKgXBsHKiR2RlYX1Vzj4ULA="

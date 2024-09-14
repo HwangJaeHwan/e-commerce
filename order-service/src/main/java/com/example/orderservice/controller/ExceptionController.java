@@ -31,7 +31,7 @@ public class ExceptionController {
     }
 
     @ExceptionHandler
-    public ResponseEntity<ErrorResponse> userException(OrderException e) {
+    public ResponseEntity<ErrorResponse> orderException(OrderException e) {
 
         ErrorResponse body = ErrorResponse.builder()
                 .code(e.getStatusCode())
