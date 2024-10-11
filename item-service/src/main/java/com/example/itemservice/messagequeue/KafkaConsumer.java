@@ -2,6 +2,7 @@ package com.example.itemservice.messagequeue;
 
 import com.example.itemservice.domain.item.Item;
 import com.example.itemservice.exception.ItemNotFoundException;
+import com.example.itemservice.messagequeue.message.OrderFailMessage;
 import com.example.itemservice.repository.ItemRepository;
 import com.example.itemservice.request.ItemStock;
 import com.example.itemservice.request.ItemStockUpdate;
@@ -10,11 +11,14 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @Slf4j
@@ -23,6 +27,8 @@ import java.util.HashMap;
 public class KafkaConsumer {
 
     private final ItemRepository itemRepository;
+    private final RedisTemplate<String, String> redisTemplate;
+    private final KafkaProducer kafkaProducer;
     private final ObjectMapper mapper;
 
 
@@ -45,31 +51,79 @@ public class KafkaConsumer {
 
     }
 
-    private void consumeMessageValue(String message, boolean isAddition) {
+//    private void consumeMessageValue(String message, boolean isAddition) {
+//
+//        log.info("message = {}", message);
+//
+//        try {
+//
+//            ItemStockUpdate itemUpdate = mapper.readValue(message, ItemStockUpdate.class);
+//
+//
+//            for (ItemStock itemStock : itemUpdate.getItems()) {
+//
+//                String uuid = itemStock.getItemUUID();
+//                Integer qty = itemStock.getQuantity();
+//
+//
+//
+//                Item item = itemRepository.findByItemUUID(uuid)
+//                        .orElseThrow(ItemNotFoundException::new);
+//
+//                item.updateQuantity(qty, isAddition);
+//            }
+//        } catch (JsonProcessingException e) {
+//            throw new RuntimeException(e);
+//        }
+//
+//
+//    }
 
+    private void consumeMessageValue(String message, boolean isAddition) {
         log.info("message = {}", message);
 
         try {
-
             ItemStockUpdate itemUpdate = mapper.readValue(message, ItemStockUpdate.class);
 
-
             for (ItemStock itemStock : itemUpdate.getItems()) {
-
                 String uuid = itemStock.getItemUUID();
                 Integer qty = itemStock.getQuantity();
 
+                boolean isSuccess = false;
+                int retryCount = 0;
+                int maxRetries = 5;
+                long retryDelay = 500L;
 
+                while (!isSuccess && retryCount < maxRetries) {
+                    Boolean lock = redisTemplate.opsForValue().setIfAbsent(uuid, "LOCK", Duration.ofMillis(3_000));
 
-                Item item = itemRepository.findByItemUUID(uuid)
-                        .orElseThrow(ItemNotFoundException::new);
+                    if (Boolean.TRUE.equals(lock)) {
+                        try {
+                            Item item = itemRepository.findByItemUUID(uuid)
+                                    .orElseThrow(ItemNotFoundException::new);
 
-                item.updateQuantity(qty, isAddition);
+                            item.updateQuantity(qty, isAddition);
+
+                            isSuccess = true;
+                        } finally {
+                            redisTemplate.delete(uuid);
+                        }
+                    } else {
+                        retryCount++;
+                        Thread.sleep(retryDelay);
+                    }
+                }
+
+                if (!isSuccess) {
+                    OrderFailMessage orderFailMessage = new OrderFailMessage(itemUpdate.getOrderUUID());
+                    orderFailMessage.setMessage("Lock Time Out");
+
+                    kafkaProducer.send("order-fail-topic", orderFailMessage);
+
+                }
             }
-        } catch (JsonProcessingException e) {
+        } catch (JsonProcessingException | InterruptedException e) {
             throw new RuntimeException(e);
         }
-
-
     }
 }

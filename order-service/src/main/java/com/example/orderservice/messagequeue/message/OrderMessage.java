@@ -9,10 +9,12 @@ import java.util.List;
 @Getter
 public class OrderMessage {
 
+    private final String orderUUID;
     private final List<ItemQuantity> items;
 
 
-    public OrderMessage(List<ItemQuantity> items) {
+    public OrderMessage(String orderUUID, List<ItemQuantity> items) {
+        this.orderUUID = orderUUID;
         this.items = items;
     }
 }

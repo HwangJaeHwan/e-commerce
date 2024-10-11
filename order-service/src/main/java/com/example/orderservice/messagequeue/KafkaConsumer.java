@@ -1,13 +1,19 @@
 package com.example.orderservice.messagequeue;
 
 import com.example.orderservice.domain.CartItem;
+import com.example.orderservice.domain.Order;
+import com.example.orderservice.domain.OrderStatus;
 import com.example.orderservice.domain.ShoppingCart;
+import com.example.orderservice.exception.OrderNotFoundException;
 import com.example.orderservice.repository.CartItemRepository;
+import com.example.orderservice.repository.OrderRepository;
 import com.example.orderservice.repository.ShoppingCartRepository;
+import com.example.orderservice.service.OrderService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,11 +22,13 @@ import java.util.HashMap;
 import java.util.Optional;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class KafkaConsumer {
 
     private final CartItemRepository cartItemRepository;
     private final ShoppingCartRepository cartRepository;
+    private final OrderRepository orderRepository;
     private final ObjectMapper mapper;
 
 
@@ -63,6 +71,31 @@ public class KafkaConsumer {
         }
 
         cartItem.updateCartItemQuantity(quantity);
+
+
+    }
+
+    @KafkaListener(topics = "order-fail-topic",containerFactory = "stringJsonKafkaListenerContainerFactory")
+    @Transactional
+    public void consumeOrderFail(String message) {
+
+        HashMap<String, Object> map;
+
+        try {
+            map = mapper.readValue(message, new TypeReference<>() {});
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        String errorMessage = (String) map.get("message");
+        String orderUUID =(String) map.get("orderUUID");
+        log.error("Order Fail Message= {}", errorMessage);
+
+        Order order = orderRepository.findByOrderUUID(orderUUID).orElseThrow(OrderNotFoundException::new);
+
+        order.changeStatus(OrderStatus.CANCELLED);
+
+
 
 
     }

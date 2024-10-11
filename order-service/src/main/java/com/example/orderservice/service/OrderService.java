@@ -89,7 +89,7 @@ public class OrderService {
         Order save = orderRepository.save(order);
 
         kafkaProducer.send("item-reduce-topic"
-                , new OrderMessage(orderRequest.getItems().stream().map(ItemQuantity::new).toList()));
+                , new OrderMessage(order.getOrderUUID(), orderRequest.getItems().stream().map(ItemQuantity::new).toList()));
 
         return save.getId();
     }
@@ -183,7 +183,7 @@ public class OrderService {
         deleteOrder.changeStatus(OrderStatus.CANCELLED);
 
         kafkaProducer.send("item-add-topic",
-                new OrderMessage(deleteOrder.getOrderItems().stream().map(ItemQuantity::new).toList()));
+                new OrderMessage(deleteOrder.getOrderUUID(), deleteOrder.getOrderItems().stream().map(ItemQuantity::new).toList()));
 
     }
 
