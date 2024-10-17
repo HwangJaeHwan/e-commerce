@@ -1,6 +1,6 @@
 import HttpRepository from "@/repository/HttpRepository";
 import {inject, singleton} from "tsyringe";
-import type PaymentValidate from "@/entity/payment/PaymentValidate";
+import type OrderRequest from "@/entity/order/OrderRequest";
 
 @singleton()
 export default class PaymentRepository {
@@ -9,7 +9,7 @@ export default class PaymentRepository {
     }
 
 
-    public validate(request:PaymentValidate) {
+    public validate(request:OrderRequest) {
         return this.httpRepository.post( {
             path: '/api/pay-service/validate',
             body: request

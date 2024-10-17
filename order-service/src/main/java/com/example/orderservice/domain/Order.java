@@ -38,6 +38,7 @@ public class Order {
     private String detailAddress;
     private String zipcode;
     private String phoneNumber;
+    private String cancelReason;
 
 
     @Enumerated(EnumType.STRING)
@@ -67,5 +68,9 @@ public class Order {
 
     public void changeStatus(OrderStatus status) {
         this.orderStatus = status;
+    }
+
+    public void setCancelReason(String reason) {
+        this.cancelReason = reason;
     }
 }

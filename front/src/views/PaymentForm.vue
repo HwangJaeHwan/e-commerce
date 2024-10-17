@@ -47,12 +47,12 @@ const totalPrice = computed(() => {
 async function createOrder(impUid : string){
 
   route.query
-  console.log("저둥저둥")
+
 
   console.log("info >>" , JSON.stringify(state.itemList))
 
   if (!state.selectedAddress) {
-    console.log("여기여기")
+
     ElMessage({ type: 'error', message: '주소를 선택해주세요.' })
     throw new Error('주소가 선택되지 않았습니다.');
   }
@@ -72,11 +72,11 @@ async function createOrder(impUid : string){
     request.addItem(new OrderItem(item))
   }
 
-  console.log("리퀘스트 =",JSON.stringify(request))
 
-  ORDER_REPOSITORY.createOrder(request)
+
+  PAYMENT_REPOSITORY.validate(request)
       .then((id) =>{
-        console.log("아이디다 : " + id)
+
         router.push({ name: "orderInfo", params: { orderId: String(id) } })
       })
       .catch((e:HttpError) => {
@@ -128,34 +128,32 @@ function requestPay() {
 
   createOrder("rsp.imp_uid")
 
-  // IMP.request_pay(
-  //     {
-  //       pg: 'html5_inicis', // 결제 모듈 종류
-  //       pay_method: 'card', // 결제 수단
-  //       merchant_uid: `mid_${new Date().getTime()}`, // 주문번호
-  //       name: '결제 테스트', // 결제창에서 보여질 상품명
-  //       buyer_name: user?.profile?.loginId,
-  //       buyer_email: user?.profile?.email,
-  //       amount: sum, // 금액
-  //     },
-  //     (rsp) => {
-  //       // callback
-  //       if (rsp.success) {
-  //         paymentValidate.impUid = rsp.imp_uid
-  //
-  //         PAYMENT_REPOSITORY.validate(paymentValidate)
-  //
-  //         createOrder(rsp.imp_uid)
-  //         // 결제 성공 시 로직
-  //         console.log('결제 성공', rsp);
-  //         ElMessage({ type: 'success', message: '결제를 성공했습니다.' })
-  //       } else {
-  //         // 결제 실패 시 로직
-  //         console.log('결제 실패', rsp);
-  //         ElMessage({ type: 'error', message: '결제에 실패했습니다.' })
-  //       }
-  //     }
-  // );
+  IMP.request_pay(
+      {
+        pg: 'html5_inicis', // 결제 모듈 종류
+        pay_method: 'card', // 결제 수단
+        merchant_uid: `mid_${new Date().getTime()}`, // 주문번호
+        name: '결제 테스트', // 결제창에서 보여질 상품명
+        buyer_name: user?.profile?.loginId,
+        buyer_email: user?.profile?.email,
+        amount: sum, // 금액
+      },
+      (rsp) => {
+        // callback
+        if (rsp.success) {
+          paymentValidate.impUid = rsp.imp_uid
+
+          createOrder(rsp.imp_uid)
+          // 결제 성공 시 로직
+          console.log('결제 성공', rsp);
+          ElMessage({ type: 'success', message: '결제에 성공했습니다.' })
+        } else {
+          // 결제 실패 시 로직
+          console.log('결제 실패', rsp);
+          ElMessage({ type: 'error', message: '결제에 실패했습니다.' })
+        }
+      }
+  );
 }
 </script>
 

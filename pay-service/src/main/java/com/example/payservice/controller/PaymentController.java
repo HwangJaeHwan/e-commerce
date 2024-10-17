@@ -1,10 +1,9 @@
 package com.example.payservice.controller;
 
-import com.example.payservice.request.PaymentRequest;
+import com.example.payservice.request.OrderRequest;
 import com.example.payservice.service.PaymentService;
 import com.siot.IamportRestClient.response.Payment;
 import jakarta.validation.Valid;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,14 +20,14 @@ public class PaymentController {
     }
 
     @PostMapping("/validate")
-    public Payment validate(@RequestBody @Valid PaymentRequest request) {
+    public Payment validate(@RequestBody @Valid OrderRequest request) {
 
         return paymentService.valid(request);
 
     }
 
     @PostMapping("/cancel")
-    public void cancel(@RequestBody @Valid PaymentRequest request) {
+    public void cancel(@RequestBody @Valid OrderRequest request) {
         paymentService.cancel(request);
     }
 }

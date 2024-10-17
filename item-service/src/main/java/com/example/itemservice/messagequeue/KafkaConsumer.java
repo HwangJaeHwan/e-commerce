@@ -1,6 +1,7 @@
 package com.example.itemservice.messagequeue;
 
 import com.example.itemservice.domain.item.Item;
+import com.example.itemservice.exception.InsufficientStockException;
 import com.example.itemservice.exception.ItemNotFoundException;
 import com.example.itemservice.messagequeue.message.OrderFailMessage;
 import com.example.itemservice.repository.ItemRepository;
@@ -105,7 +106,18 @@ public class KafkaConsumer {
                             item.updateQuantity(qty, isAddition);
 
                             isSuccess = true;
-                        } finally {
+                        } catch (InsufficientStockException e){
+                            log.warn("재고 부족으로 주문 실패: {}", itemUpdate.getOrderUUID());
+
+                            OrderFailMessage orderFailMessage = new OrderFailMessage(itemUpdate.getOrderUUID());
+                            orderFailMessage.setMessage("Insufficient Stock: 재고 부족");
+                            kafkaProducer.send("order-fail-topic", orderFailMessage);
+
+                            throw e;
+
+
+                        }
+                        finally {
                             redisTemplate.delete(uuid);
                         }
                     } else {
@@ -126,4 +138,5 @@ public class KafkaConsumer {
             throw new RuntimeException(e);
         }
     }
+
 }

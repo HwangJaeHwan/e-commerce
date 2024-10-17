@@ -64,7 +64,6 @@ function getList() {
       page ? parseInt(page as string, 10) : undefined
   );
   const queryString = new URLSearchParams(params).toString();
-  console.log("시발 = ", JSON.stringify(params))
 
   ITEM_REPOSITORY.getList(queryString)
     .then((itemList => {

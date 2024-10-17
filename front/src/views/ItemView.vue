@@ -52,12 +52,12 @@ function getItem() {
 }
 
 function getReviews() {
-  console.log("슈슉슈슉 >>>" + state.item.itemUUID)
+
   REVIEW_REPOSITORY.getList(state.item.itemUUID)
       .then((reviewList) => {
-        console.log(">>>>", reviewList)
+
         state.reviewList = reviewList
-        console.log(">zz>>", state.reviewList)
+
       })
 }
 

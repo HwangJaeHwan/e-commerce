@@ -29,7 +29,7 @@ onMounted(async () => {
     state.userProfile = profileStore.profile;
   }
 
-  console.log("아아아아",JSON.stringify(state.userProfile))
+
 });
 
 function handleChangePassword() {

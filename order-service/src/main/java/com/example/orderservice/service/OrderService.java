@@ -54,44 +54,46 @@ public class OrderService {
 
     public Long createOrder(OrderRequest orderRequest) {
 
-        log.info("OrderRequest = {}", orderRequest);
+//        log.info("OrderRequest = {}", orderRequest);
+//
+//
+//        Order order = Order.builder()
+//                .orderStatus(OrderStatus.ORDER)
+//                .userUUID(orderRequest.getUserUUID())
+//                .orderUUID(UUID.randomUUID().toString())
+//                .orderDate(LocalDateTime.now())
+//                .name(orderRequest.getName())
+//                .impUid(orderRequest.getImpUid())
+//                .address(orderRequest.getAddress())
+//                .detailAddress(orderRequest.getDetailAddress())
+//                .zipcode(orderRequest.getZipcode())
+//                .phoneNumber(orderRequest.getPhoneNumber())
+//                .build();
+//
+//        for (ItemRequest item : orderRequest.getItems()) {
+//            order.addItem(
+//                    OrderItem.builder()
+//                            .name(item.getName())
+//                            .itemUUID(item.getItemUUID())
+//                            .quantity(item.getQuantity())
+//                            .price(item.getPrice())
+//                            .build()
+//            );
+//        }
+//
+//        if (orderRequest.getFromCart()) {
+//            shoppingCartRepository.findByUserUUID(orderRequest.getUserUUID()).ifPresent(cartItemRepository::deleteAllByCart);
+//        }
+//
+//
+//        Order save = orderRepository.save(order);
+//
+//        kafkaProducer.send("item-reduce-topic"
+//                , new OrderMessage(order.getOrderUUID(), orderRequest.getItems().stream().map(ItemQuantity::new).toList()));
+//
+//        return save.getId();
 
-
-        Order order = Order.builder()
-                .orderStatus(OrderStatus.ORDER)
-                .userUUID(orderRequest.getUserUUID())
-                .orderUUID(UUID.randomUUID().toString())
-                .orderDate(LocalDateTime.now())
-                .name(orderRequest.getName())
-                .impUid(orderRequest.getImpUid())
-                .address(orderRequest.getAddress())
-                .detailAddress(orderRequest.getDetailAddress())
-                .zipcode(orderRequest.getZipcode())
-                .phoneNumber(orderRequest.getPhoneNumber())
-                .build();
-
-        for (ItemRequest item : orderRequest.getItems()) {
-            order.addItem(
-                    OrderItem.builder()
-                            .name(item.getName())
-                            .itemUUID(item.getItemUUID())
-                            .quantity(item.getQuantity())
-                            .price(item.getPrice())
-                            .build()
-            );
-        }
-
-        if (orderRequest.getFromCart()) {
-            shoppingCartRepository.findByUserUUID(orderRequest.getUserUUID()).ifPresent(cartItemRepository::deleteAllByCart);
-        }
-
-
-        Order save = orderRepository.save(order);
-
-        kafkaProducer.send("item-reduce-topic"
-                , new OrderMessage(order.getOrderUUID(), orderRequest.getItems().stream().map(ItemQuantity::new).toList()));
-
-        return save.getId();
+        return null;
     }
 
     public OrderResponse getOrder(UserInfo userInfo, Long orderId) {

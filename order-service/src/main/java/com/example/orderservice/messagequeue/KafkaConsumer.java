@@ -1,16 +1,18 @@
 package com.example.orderservice.messagequeue;
 
-import com.example.orderservice.domain.CartItem;
-import com.example.orderservice.domain.Order;
-import com.example.orderservice.domain.OrderStatus;
-import com.example.orderservice.domain.ShoppingCart;
+import com.example.orderservice.domain.*;
 import com.example.orderservice.exception.OrderNotFoundException;
+import com.example.orderservice.messagequeue.message.OrderMessage;
 import com.example.orderservice.repository.CartItemRepository;
 import com.example.orderservice.repository.OrderRepository;
 import com.example.orderservice.repository.ShoppingCartRepository;
+import com.example.orderservice.request.ItemQuantity;
+import com.example.orderservice.request.ItemRequest;
+import com.example.orderservice.request.OrderRequest;
 import com.example.orderservice.service.OrderService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,22 +20,25 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @Slf4j
+@Transactional
 @RequiredArgsConstructor
 public class KafkaConsumer {
 
     private final CartItemRepository cartItemRepository;
     private final ShoppingCartRepository cartRepository;
+    private final KafkaProducer kafkaProducer;
     private final OrderRepository orderRepository;
     private final ObjectMapper mapper;
 
 
     @KafkaListener(topics = "cart-topic",containerFactory = "stringJsonKafkaListenerContainerFactory")
-    @Transactional
     public void consume(String message) {
 
         HashMap<String, Object> map;
@@ -75,8 +80,61 @@ public class KafkaConsumer {
 
     }
 
+
+
+    @KafkaListener(topics = "order-create-topic",containerFactory = "stringJsonKafkaListenerContainerFactory")
+    public void consumeOrderCreate(String message) {
+
+
+        try {
+
+            OrderRequest orderRequest = mapper.readValue(message, OrderRequest.class);
+
+            Order order = Order.builder()
+                    .orderStatus(OrderStatus.ORDER)
+                    .userUUID(orderRequest.getUserUUID())
+                    .orderUUID(UUID.randomUUID().toString())
+                    .orderDate(LocalDateTime.now())
+                    .name(orderRequest.getName())
+                    .impUid(orderRequest.getImpUid())
+                    .address(orderRequest.getAddress())
+                    .detailAddress(orderRequest.getDetailAddress())
+                    .zipcode(orderRequest.getZipcode())
+                    .phoneNumber(orderRequest.getPhoneNumber())
+                    .build();
+
+            for (ItemRequest item : orderRequest.getItems()) {
+                order.addItem(
+                        OrderItem.builder()
+                                .name(item.getName())
+                                .itemUUID(item.getItemUUID())
+                                .quantity(item.getQuantity())
+                                .price(item.getPrice())
+                                .build()
+                );
+            }
+
+            if (orderRequest.getFromCart()) {
+                cartRepository.findByUserUUID(orderRequest.getUserUUID()).ifPresent(cartItemRepository::deleteAllByCart);
+            }
+
+
+            orderRepository.save(order);
+
+            kafkaProducer.send("item-reduce-topic"
+                    , new OrderMessage(order.getOrderUUID(), orderRequest.getItems().stream().map(ItemQuantity::new).toList()));
+
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+
+
+
+
     @KafkaListener(topics = "order-fail-topic",containerFactory = "stringJsonKafkaListenerContainerFactory")
-    @Transactional
     public void consumeOrderFail(String message) {
 
         HashMap<String, Object> map;
@@ -94,6 +152,7 @@ public class KafkaConsumer {
         Order order = orderRepository.findByOrderUUID(orderUUID).orElseThrow(OrderNotFoundException::new);
 
         order.changeStatus(OrderStatus.CANCELLED);
+        order.setCancelReason(errorMessage);
 
 
 

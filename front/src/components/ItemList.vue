@@ -12,7 +12,6 @@ const roundedScore = computed(() => {
 });
 
 function getTest() {
-  console.log("크랙!");
   console.log(JSON.stringify(props.map.get(props.item.itemUUID)));
   console.log(JSON.stringify(props.item.itemUUID));
 }

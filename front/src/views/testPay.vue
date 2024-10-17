@@ -67,9 +67,9 @@ function closeList() {
 }
 
 onMounted(() => {
-  console.log('시;발');
+
   console.log(route.params.items as string);
-  console.log('ㅋㅋ');
+
   const encodedItems = route.params.items as string;
   if (route.params.items) {
     state.itemList = JSON.parse(atob(encodedItems)) as ShoppingCartItem[];
