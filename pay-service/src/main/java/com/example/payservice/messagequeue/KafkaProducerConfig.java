@@ -1,5 +1,6 @@
 package com.example.payservice.messagequeue;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,6 +14,7 @@ import org.springframework.kafka.core.ProducerFactory;
 import java.util.HashMap;
 
 @EnableKafka
+@Slf4j
 @Configuration
 public class KafkaProducerConfig {
 
