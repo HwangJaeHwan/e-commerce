@@ -1,4 +1,4 @@
-package com.example.eventservice.repository;
+package com.example.eventservice.repository.coupon;
 
 import com.example.eventservice.domain.Coupon;
 import lombok.RequiredArgsConstructor;

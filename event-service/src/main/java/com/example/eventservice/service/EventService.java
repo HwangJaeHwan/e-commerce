@@ -1,7 +1,9 @@
 package com.example.eventservice.service;
 
 import com.example.eventservice.domain.Coupon;
-import com.example.eventservice.repository.CouponRepository;
+import com.example.eventservice.messagequeue.KafkaProducer;
+import com.example.eventservice.repository.coupon.CouponCountRepository;
+import com.example.eventservice.repository.coupon.CouponRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -10,19 +12,19 @@ import org.springframework.stereotype.Service;
 public class EventService {
 
     private final CouponRepository couponRepository;
+    private final CouponCountRepository couponCountRepository;
+    private final KafkaProducer kafkaProducer;
 
+    public void add(String key,String userUUID) {
 
-
-    public void add(String userUUID) {
-
-        long count = couponRepository.count();
+        long count = couponCountRepository.increment(key);
 
         if (count > 100) {
             return;
         }
 
 
-        couponRepository.save(new Coupon(userUUID));
+        kafkaProducer.send(key, userUUID);
 
     }
 

@@ -22,8 +22,10 @@ public class Coupon {
 
     private String userUUID;
 
+    private int percent;
 
-    public Coupon(String userUUID) {
+    public Coupon(String userUUID, int percent) {
         this.userUUID = userUUID;
+        this.percent = percent;
     }
 }
