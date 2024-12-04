@@ -1,5 +1,6 @@
 package com.example.eventservice.domain;
 
+import com.example.eventservice.request.CouponRequest;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -22,10 +23,14 @@ public class Coupon {
 
     private String userUUID;
 
+    private String name;
+
     private int percent;
 
-    public Coupon(String userUUID, int percent) {
-        this.userUUID = userUUID;
-        this.percent = percent;
+    public Coupon(CouponRequest request) {
+        this.userUUID = request.getUserUUID();
+        this.name = request.getName();
+        this.percent = request.getPercent();
+
     }
 }
