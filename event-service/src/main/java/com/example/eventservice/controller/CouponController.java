@@ -2,13 +2,13 @@ package com.example.eventservice.controller;
 
 import com.example.eventservice.config.auth.UserInfo;
 import com.example.eventservice.request.CouponRequest;
+import com.example.eventservice.response.CouponListResponse;
 import com.example.eventservice.service.CouponService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/coupon-service")
@@ -28,5 +28,13 @@ public class CouponController {
 
     }
 
+    @GetMapping("/list")
+    public List<CouponListResponse> getList(UserInfo userInfo) {
+        return couponService.getList(userInfo.getUuid());
+    }
 
+    @PatchMapping("/{id}")
+    public void useCoupon(UserInfo userInfo,@PathVariable Long id) {
+        couponService.useCoupon(id, userInfo.getUuid());
+    }
 }

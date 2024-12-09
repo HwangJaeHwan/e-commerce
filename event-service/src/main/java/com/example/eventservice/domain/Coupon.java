@@ -27,10 +27,17 @@ public class Coupon {
 
     private int percent;
 
+    private boolean used;
+
     public Coupon(CouponRequest request) {
         this.userUUID = request.getUserUUID();
         this.name = request.getName();
         this.percent = request.getPercent();
+    }
 
+
+
+    public void use() {
+        this.used = true;
     }
 }
