@@ -96,7 +96,7 @@ public class KafkaConsumer {
                 long retryDelay = 500L;
 
                 while (!isSuccess && retryCount < maxRetries) {
-                    Boolean lock = redisTemplate.opsForValue().setIfAbsent(uuid, "LOCK", Duration.ofMillis(3_000));
+                    Boolean lock = redisTemplate.opsForValue().setIfAbsent(uuid, "ITEM:LOCK", Duration.ofMillis(3_000));
 
                     if (Boolean.TRUE.equals(lock)) {
                         try {

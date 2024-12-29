@@ -1,5 +1,6 @@
 package com.example.payservice.service;
 
+import com.example.payservice.client.EventServiceClient;
 import com.example.payservice.client.ItemServiceClient;
 import com.example.payservice.domain.PaymentDetail;
 import com.example.payservice.domain.PaymentStatus;
@@ -29,6 +30,7 @@ public class PaymentService {
     private final ItemServiceClient itemService;
     private final KafkaProducer kafkaProducer;
     private final PaymentRepository paymentRepository;
+    private final EventServiceClient eventServiceClient;
 
 
     public Payment info(String impUid) {
@@ -52,7 +54,31 @@ public class PaymentService {
         try {
             Payment payment = iamportClient.paymentByImpUid(request.getImpUid()).getResponse();
 
-            if (itemService.amount(request.getItems()).compareTo(payment.getAmount()) != 0) {
+            BigDecimal originalPrice = itemService.amount(request.getItems());
+
+            BigDecimal discountPercent = BigDecimal.ZERO;
+            BigDecimal hundred = new BigDecimal("100");
+
+            if (request.getCouponId() != null) {
+
+                try{
+                    discountPercent = eventServiceClient.useCoupon(request.getCouponId(), request.getUserUUID());
+
+                } catch (Exception e){
+                    throw new RuntimeException("올바른 쿠폰이 아닙니다.");
+                }
+                
+                
+            }
+
+            BigDecimal discountAmount = originalPrice.multiply(discountPercent)
+                    .divide(hundred);  // 10000 * 10 / 100 = 1000
+
+            BigDecimal finalPrice = originalPrice.subtract(discountAmount);
+            
+
+
+            if (finalPrice.compareTo(payment.getAmount()) != 0) {
 
                 try {
                     iamportClient.cancelPaymentByImpUid(new CancelData(request.getImpUid(), true));

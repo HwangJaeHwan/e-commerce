@@ -16,6 +16,8 @@ public class OrderRequest {
     @NotNull(message = "상품이 없습니다.")
     private List<ItemQuantity> items;
 
+    private Long couponId;
+
     @NotNull(message = "userID는 필수입니다.")
     private String userUUID;
     @NotBlank(message = "주소가 없습니다.")

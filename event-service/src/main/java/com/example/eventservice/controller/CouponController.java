@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -34,7 +35,7 @@ public class CouponController {
     }
 
     @PatchMapping("/{id}")
-    public void useCoupon(UserInfo userInfo,@PathVariable Long id) {
-        couponService.useCoupon(id, userInfo.getUuid());
+    public BigDecimal useCoupon(@PathVariable Long id, @RequestParam String userUUID) {
+        return couponService.useCoupon(id, userUUID);
     }
 }
