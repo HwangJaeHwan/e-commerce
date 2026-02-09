@@ -27,7 +27,6 @@ import java.util.UUID;
 
 @Service
 @Slf4j
-@Transactional
 @RequiredArgsConstructor
 public class KafkaConsumer {
 
@@ -38,6 +37,7 @@ public class KafkaConsumer {
     private final ObjectMapper mapper;
 
 
+    @Transactional
     @KafkaListener(topics = "cart-topic",containerFactory = "stringJsonKafkaListenerContainerFactory")
     public void consume(String message) {
 
@@ -57,8 +57,6 @@ public class KafkaConsumer {
 
         Optional<ShoppingCart> cartOptional = cartRepository.findByUserUUID(userUUID);
         cart = cartOptional.orElseGet(() -> cartRepository.save(new ShoppingCart(userUUID)));
-
-
 
 
         Optional<CartItem> itemOptional = cartItemRepository.findByMessage(cart, itemUUID);
@@ -81,7 +79,7 @@ public class KafkaConsumer {
     }
 
 
-
+    @Transactional
     @KafkaListener(topics = "order-create-topic",containerFactory = "stringJsonKafkaListenerContainerFactory")
     public void consumeOrderCreate(String message) {
 
@@ -90,10 +88,15 @@ public class KafkaConsumer {
 
             OrderRequest orderRequest = mapper.readValue(message, OrderRequest.class);
 
+
+            if (orderRepository.findByOrderUUID(orderRequest.getOrderUUID()).isPresent()) {
+                return;
+            }
+
             Order order = Order.builder()
                     .orderStatus(OrderStatus.ORDER)
                     .userUUID(orderRequest.getUserUUID())
-                    .orderUUID(UUID.randomUUID().toString())
+                    .orderUUID(orderRequest.getOrderUUID())
                     .orderDate(LocalDateTime.now())
                     .name(orderRequest.getName())
                     .impUid(orderRequest.getImpUid())
@@ -134,6 +137,7 @@ public class KafkaConsumer {
 
 
 
+    @Transactional
     @KafkaListener(topics = "order-fail-topic",containerFactory = "stringJsonKafkaListenerContainerFactory")
     public void consumeOrderFail(String message) {
 
