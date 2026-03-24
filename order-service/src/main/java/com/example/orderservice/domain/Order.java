@@ -27,8 +27,9 @@ public class Order {
 
     @OneToMany(mappedBy = "order", cascade = ALL)
     private List<OrderItem> orderItems = new ArrayList<>();
-
+    @Column(nullable = false, unique = true)
     private String userUUID;
+    @Column(nullable = false, unique = true)
     private String orderUUID;
     private LocalDateTime orderDate;
     private String name;

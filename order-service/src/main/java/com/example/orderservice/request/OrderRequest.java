@@ -13,6 +13,8 @@ public class OrderRequest {
 
     @NotNull(message = "userID는 필수입니다.")
     private String userUUID;
+    @NotNull(message = "orderID는 필수입니다.")
+    private String orderUUID;
     @NotNull(message = "상품이 없습니다.")
     private List<ItemRequest> items;
     @NotBlank(message = "주소가 없습니다.")

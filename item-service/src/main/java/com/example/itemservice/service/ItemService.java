@@ -8,17 +8,24 @@ import com.example.itemservice.data.ImageType;
 import com.example.itemservice.data.UserType;
 import com.example.itemservice.domain.item.Category;
 import com.example.itemservice.domain.item.Item;
+import com.example.itemservice.domain.log.OrderEventLog;
+import com.example.itemservice.domain.outbox.ItemOutbox;
+import com.example.itemservice.exception.InsufficientStockException;
 import com.example.itemservice.exception.ItemNotFoundException;
+import com.example.itemservice.exception.StockProcessException;
 import com.example.itemservice.exception.UnauthorizedException;
+import com.example.itemservice.messagequeue.message.OrderFailMessage;
+import com.example.itemservice.repository.EventRepository;
 import com.example.itemservice.repository.ItemRepository;
-import com.example.itemservice.request.CartItemInfo;
-import com.example.itemservice.request.ItemQuantity;
-import com.example.itemservice.request.ItemRequest;
-import com.example.itemservice.request.ItemUpdate;
+import com.example.itemservice.repository.OutboxRepository;
+import com.example.itemservice.request.*;
 import com.example.itemservice.response.*;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.io.UrlResource;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @Slf4j
@@ -38,6 +45,10 @@ public class ItemService {
     private final ImageServiceClient imageServiceClient;
     private final ReviewServiceClient reviewServiceClient;
     private final UserServiceClient userServiceClient;
+    private final ObjectMapper mapper;
+    private final OutboxRepository outboxRepository;
+    private final EventRepository eventRepository;
+    private final RedissonClient redissonClient;
 
     @Transactional(readOnly = true)
     public PageResponse items(String search, Category category, int page) {
@@ -172,22 +183,94 @@ public class ItemService {
             throw new UnauthorizedException();
         }
     }
+    
 
 
-//    public void reduceQuantity(List<ItemQuantity> quantities) {
-//
-//        for (ItemQuantity quantity : quantities) {
-//            Item item = itemRepository.findByItemUUID(quantity.getItemUUID()).orElseThrow(() -> new RuntimeException("아이템 없음"));
-//            item.reduceQuantity(quantity.getQuantity());
-//        }
-//
-//    }
+    private void createOutbox(ItemStockUpdate itemUpdate, String message) throws JsonProcessingException {
+        OrderFailMessage orderFailMessage = new OrderFailMessage(itemUpdate.getOrderUUID());
+        orderFailMessage.setMessage(message);
 
-//    public void addQuantity(List<ItemQuantity> quantities) {
-//
-//        for (ItemQuantity quantity : quantities) {
-//            Item item = itemRepository.findByItemUUID(quantity.getItemUUID()).orElseThrow(() -> new RuntimeException("아이템 없음"));
-//            item.addQuantity(quantity.getQuantity());
-//        }
-//    }
+        String failMessage = mapper.writeValueAsString(orderFailMessage);
+
+        outboxRepository.save(
+                ItemOutbox.builder()
+                        .eventType("ORDER-FAIL-LOCK")
+                        .orderUUID(itemUpdate.getOrderUUID())
+                        .message(failMessage)
+                        .build()
+        );
+    }
+
+    public void processStock(String message, boolean isAddition) {
+        log.info("message = {}", message);
+
+        try {
+            ItemStockUpdate itemUpdate = mapper.readValue(message, ItemStockUpdate.class);
+            String orderUUID = itemUpdate.getOrderUUID();
+
+            if (eventRepository.existsByOrderUUID(orderUUID)) {
+                log.info("OrderUUID 중복. orderUUID={}", orderUUID);
+                return;
+            }
+
+            for (ItemStock itemStock : itemUpdate.getItems()) {
+                processSingleItem(itemStock, isAddition);
+            }
+
+            eventRepository.save(new OrderEventLog(orderUUID));
+
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("메시지 파싱 실패", e);
+
+        } catch (StockProcessException e) {
+            log.info("재고 처리 실패. reason={}", e.getMessage());
+            try {
+                ItemStockUpdate itemUpdate = mapper.readValue(message, ItemStockUpdate.class);
+                createOutbox(itemUpdate, e.getMessage());
+            } catch (JsonProcessingException ex) {
+                throw new RuntimeException("메시지 재파싱 실패", ex);
+            }
+        }
+    }
+
+    private void processSingleItem(ItemStock itemStock, boolean isAddition) {
+        String itemUUID = itemStock.getItemUUID();
+        Integer qty = itemStock.getQuantity();
+
+        RLock lock = redissonClient.getLock("lock:item:" + itemUUID);
+
+
+        boolean locked = false;
+
+        try {
+            locked = lock.tryLock(5, 1, TimeUnit.SECONDS);
+
+            if (!locked) {
+                throw new StockProcessException("Lock Time Out");
+            }
+
+            Item item = itemRepository.findByItemUUID(itemUUID)
+                    .orElseThrow(ItemNotFoundException::new);
+
+            item.updateQuantity(qty, isAddition);
+
+        } catch (InsufficientStockException e) {
+            throw new StockProcessException("Insufficient Stock: 재고 부족, itemUUID = " + itemUUID);
+
+        } catch (InterruptedException e) {
+            throw new RuntimeException("락 대기 중 인터럽트 발생", e);
+
+        } finally {
+                lock.unlock();
+        }
+    }
+
+
+
+
+
+
+
+
+
 }
