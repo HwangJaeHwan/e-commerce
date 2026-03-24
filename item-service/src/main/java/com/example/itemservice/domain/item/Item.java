@@ -28,11 +28,13 @@ public class Item {
 
     private int stock;
 
+    @Column(nullable = false, unique = true)
     private String userUUID;
 
     @Enumerated(EnumType.STRING)
     private Category category;
 
+    @Column(nullable = false, unique = true)
     private String itemUUID;
     @Builder
     public Item(String name, String itemDescription, Integer price, int stock, Category category, String itemUUID,String userUUID) {
@@ -45,17 +47,6 @@ public class Item {
         this.userUUID = userUUID;
     }
 
-//    public void addQuantity(int quantity) {
-//        this.stock += quantity;
-//    }
-
-//    public void reduceQuantity(int quantity) {
-//        if (stock < quantity) {
-//            throw new RuntimeException("수량 부족");
-//        }
-//
-//        this.stock -= quantity;
-//    }
 
     public void updateQuantity(int quantity, boolean isAddition) {
         if (isAddition) {
