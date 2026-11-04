@@ -15,6 +15,10 @@ public interface OrderRepository extends JpaRepository<Order,Long> {
 
     Optional<Order> findByOrderUUID(String orderUUID);
 
+    @org.springframework.data.jpa.repository.Lock(jakarta.persistence.LockModeType.PESSIMISTIC_WRITE)
+    @Query("select o from Order o where o.orderUUID = :uuid")
+    Optional<Order> findForCancellation(@Param("uuid") String orderUUID);
+
     @Query("select distinct o from Order o join fetch o.orderItems where o.userUUID = :userUUID order by  o.orderDate desc")
     Page<Order> findAllByUserUUID(@Param("userUUID") String userUUID, Pageable pageable);
 

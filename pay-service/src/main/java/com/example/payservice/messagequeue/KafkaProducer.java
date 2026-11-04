@@ -1,6 +1,6 @@
 package com.example.payservice.messagequeue;
 
-import com.example.payservice.request.OrderRequest;
+import com.example.payservice.messagequeue.message.OrderCreatedEvent;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +14,7 @@ public class KafkaProducer {
     private final KafkaTemplate<String, String> kafkaTemplate;
     private final ObjectMapper mapper;
 
-    public void send(String topic, OrderRequest orderMessage) {
+    public void send(String topic, OrderCreatedEvent orderMessage) {
 
         String message;
 

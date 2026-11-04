@@ -5,7 +5,7 @@ import lombok.Getter;
 @Getter
 public class PaymentCancel {
 
-    private String ImpUid;
+    private String impUid;
 
     private String reason;
 
