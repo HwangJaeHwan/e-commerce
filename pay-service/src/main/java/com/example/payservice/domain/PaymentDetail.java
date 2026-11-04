@@ -34,6 +34,11 @@ public class PaymentDetail {
         this.amount = amount;
     }
 
+    public void markCancelled(String reason) {
+        this.paymentStatus = PaymentStatus.CANCEL;
+        this.reason = reason;
+    }
+
     public void changeStatus() {
 
         this.paymentStatus = PaymentStatus.CANCEL;

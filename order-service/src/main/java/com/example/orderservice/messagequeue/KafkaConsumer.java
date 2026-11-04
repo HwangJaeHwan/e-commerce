@@ -35,6 +35,7 @@ public class KafkaConsumer {
     private final KafkaProducer kafkaProducer;
     private final OrderRepository orderRepository;
     private final ObjectMapper mapper;
+    private final com.example.orderservice.service.OrderFailureService orderFailureService;
 
 
     @Transactional
@@ -137,31 +138,13 @@ public class KafkaConsumer {
 
 
 
-    @Transactional
-    @KafkaListener(topics = "order-fail-topic",containerFactory = "stringJsonKafkaListenerContainerFactory")
+    @KafkaListener(topics = "order-fail-topic", containerFactory = "stringJsonKafkaListenerContainerFactory")
     public void consumeOrderFail(String message) {
-
-        HashMap<String, Object> map;
-
         try {
-            map = mapper.readValue(message, new TypeReference<>() {});
+            orderFailureService.cancel(mapper.readValue(message,
+                    com.example.orderservice.messagequeue.message.OrderFailure.class));
         } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            throw new IllegalArgumentException("주문 실패 이벤트 파싱 실패", e);
         }
-
-        String errorMessage = (String) map.get("message");
-        String orderUUID =(String) map.get("orderUUID");
-        log.error("Order Fail Message= {}", errorMessage);
-
-        Order order = orderRepository.findByOrderUUID(orderUUID).orElseThrow(OrderNotFoundException::new);
-
-        order.changeStatus(OrderStatus.CANCELLED);
-        order.setCancelReason(errorMessage);
-
-
-
-
     }
-
-
 }
